@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Robot Controls</title>
+    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+    <link rel="shortcut icon" href="static/raspberry-pi-robot.ico" />
+    
+</head>
+<body>
+    <header>
+        <button class="hamburger" id="ham">&#9776;</button>
+        <button class="cross" id="cross">&#735;</button>
+    </header>
+    <div class="menu" id="menu">
+        <ul>
+            <a href="/remote"><li>Remote Control</li></a>
+            <a href="/extras"><li>Advanced Features</li></a>
+            <a href="/about"><li>About</li></a>
+        </ul>
+    </div>
+    <script src="/static/scripts/hamburger.js"></script>
+    {% block content %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<script src="/static/js/jquery-3.3.1.js" 
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" 
+    crossorigin="anonymous"></script>
+<script src="/static/js/sijax/sijax.js"></script>
+<script>{{ g.sijax.get_js()|safe }}</script>
+<script src="/static/scripts/controller.js"></script>
+<div id="canvasContainer">
+    <canvas id="canvas"></canvas>
+</div>
+<script>init();</script>
+
+{% endblock %}
