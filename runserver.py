@@ -4,32 +4,20 @@ This script runs the flask_controller application using a development server.
 
 import os
 from flask import Flask, g, render_template
-import flask_sijax
+from flask_socketio import SocketIO
 # from outputs.drivetrain import drivetrain
 
 # d = drivetrain(17, 27, 22, 23)
 called = False
-path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 
 app = Flask(__name__)
-app.config['SIJAX_STATIC_PATH'] = path
-app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
-flask_sijax.Sijax(app)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/remote', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/remote')
 def remote():
     """Renders the remote control page."""
-    def robot(obj_response, x, y, z):
-        #print("x: ", x, " y: ", y, " z: ", z)
-        # d.go(x, y)
-        print("function called successfully!")
-        if g.sijax.is_sijax_request:
-            obj_response.alert('function called successfully!')
-            # Sijax request detected - let Sijax handle it
-            g.sijax.register_callback('robot', robot)
-            return g.sijax.process_request()
-
     return render_template(
         'remote.html',
         title='Remote Control')

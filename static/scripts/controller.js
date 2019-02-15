@@ -56,11 +56,9 @@ function init() {
         ctx.clearRect(0, 0, W, H);
         controller.draw();
         let args = getArgs();
-        if (args[0] + args[1] + args[2] != 0){
-            //console.log("x: " + args[0] + " y: " + args[1] + " z: " + args[2]);
-            Sijax.request('robot', args);
-            // Sijax.request('robot', args);
-        }
+        
+        // put socket output here
+        
         window.requestAnimationFrame(loop);
     }
 }
