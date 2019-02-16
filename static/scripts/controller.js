@@ -5,6 +5,13 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+socket.on('connect', function() {
+    socket.emit('connect');
+});
+socket.on('disconnect', function() {
+    socket.emit('disconnect');
+});
 
 function getArgs(){
     let result = [];
@@ -49,16 +56,14 @@ function init() {
     controller = new Control();
     controller.draw();
     window.requestAnimationFrame(loop);
-    //Sijax.request('robot', getArgs());
     function loop() {
         updateDimensions();
         getAxis();
         ctx.clearRect(0, 0, W, H);
         controller.draw();
         let args = getArgs();
-        
-        // put socket output here
-        
+        // websocket event handler call
+        socket.emit('remoteOut', args);
         window.requestAnimationFrame(loop);
     }
 }

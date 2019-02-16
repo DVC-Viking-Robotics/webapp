@@ -8,11 +8,22 @@ from flask_socketio import SocketIO
 # from outputs.drivetrain import drivetrain
 
 # d = drivetrain(17, 27, 22, 23)
-called = False
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+
+@socketio.on('connect')
+def handle_connect():
+    print('websocket Client connected!')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('websocket Client disconnected')
+
+@socketio.on('remoteOut')
+def handle_remoteOut(args):
+    print('remote =', repr(args))
 
 @app.route('/')
 @app.route('/remote')
@@ -41,5 +52,4 @@ def about():
     )
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', 5555)
-
+    socketio.run(app, host='0.0.0.0', port=5555, debug=False)
