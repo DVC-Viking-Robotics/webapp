@@ -5,7 +5,7 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io.connect();
 socket.on('connect', function() {
     socket.emit('connect');
 });
