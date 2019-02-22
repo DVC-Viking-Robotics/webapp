@@ -1,5 +1,5 @@
-import pigpio
-import math
+import RPi.GPIO as pi
+pi.setmode(pi.BCM)
 
 """
 important info from datasheet
@@ -26,18 +26,17 @@ class biMotor:
     #pass the GPIO pin numbers connecting to L293D input pins
     #example varName = bimotor(pin1, pin2) in main script
     def __init__(self, pinF, pinB):
-        self.pi = pigpio.pi()
-        self.pi.set_mode(pinF, pigpio.OUTPUT)
-        self.pi.set_mode(pinB, pigpio.OUTPUT)
-        # set range of PWM from 0-255 (default) to 0-100
-        self.pi.set_PWM_range(pinF, 100)
-        self.pi.set_PWM_range(pinB, 100)
+        pi.setup(pinF, pi.OUT)
+        pi.setup(pinB, pi.OUT)
         # variables used to track acceleration
         self.init_speed = 0
         self.dest_speed = 0
-        # save pin numbers
-        self.pinF = pinF
-        self.pinB = pinB
+        # save pin numbers as GPIO.PWM objects
+        self.pinF = pi.PWM(pinF, 50)
+        self.pinB = pi.PWM(pinB, 50)
+        # start PWM signal
+        self.pinF.start(0)
+        self.pinB.start(0)
         
     #let finSpeed = target speed (-100 to 100)
     #let t = time to change(ramp) speed from initSpeed(current speed) to finSpeed
@@ -59,25 +58,26 @@ class biMotor:
     #let x be the percentual target speed (in range of -100 to 100)
     def setSpeed(self, x):
         # check proper range of variable x
-        x = max(-100, max(100, x))
+        x = max(-100, min(100, x))
         # going forward
         if x > 0: 
-            self.pi.set_PWM_dutycycle(self.pinF, x)
-            self.pi.set_PWM_dutycycle(self.pinB, 0)
+            self.pinF.ChangeDutyCycle(x)
+            self.pinB.ChangeDutyCycle(0)
         # going backward
         elif x < 0: 
-            self.pi.set_PWM_dutycycle(self.pinF, 0)
-            self.pi.set_PWM_dutycycle(self.pinB, x *-1)
+            self.pinF.ChangeDutyCycle(0)
+            self.pinB.ChangeDutyCycle(x *-1)
         # otherwise stop
         else: 
-            self.pi.set_PWM_dutycycle(self.pinF, 0)
-            self.pi.set_PWM_dutycycle(self.pinB, 0)
+            self.pinF.ChangeDutyCycle(0)
+            self.pinB.ChangeDutyCycle(0)
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
-        self.pi.set_PWM_dutycycle(self.pinF, 0)
-        self.pi.set_PWM_dutycycle(self.pinB, 0)
-        del self.pi
+        self.pinF.stop()
+        self.pinB.stop()
+        del self.pinF
+        del self.pinB
 
 #end motor object
     
@@ -97,7 +97,6 @@ class drivetrain:
     # pass backwards/forward (-100 to 100) as variable x
     # pass left/right (-100 to 100) as variable y
     def go(self, x, y):
-        self.speed = round(math.hypot(x,y))
         # make sure arguments are in their proper range
         x = max(-100, min(100, x))
         y = max(-100, min(100, y))
@@ -126,6 +125,7 @@ class drivetrain:
     def __del__(self):
         del self.motor1
         del self.motor2
+        pi.cleanup()
 #end drivetrain class
 
 """ example of how to use in main script:
