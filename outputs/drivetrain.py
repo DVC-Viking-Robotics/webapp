@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-GPIO.setmode(pi.BCM)
+GPIO.setmode(GPIO.BCM)
 
 """
 important info from datasheet
@@ -49,7 +49,7 @@ class biMotor:
             self.initSpeed = self.currSpeedF
         else: self.initSpeed = self.currSpeedB * -1
         del self.currSpeedF, self.currSpeedB # clean temp vars
-        # initial and destination speeds are now set (-100 to 100)
+        # initial and destination speeds are now set [-100 to 100]
         """
         add code to ramp speed here
         requires multi-threading
