@@ -1,5 +1,5 @@
-import RPi.GPIO as pi
-pi.setmode(pi.BCM)
+import RPi.GPIO as GPIO
+GPIO.setmode(pi.BCM)
 
 """
 important info from datasheet
@@ -26,14 +26,14 @@ class biMotor:
     #pass the GPIO pin numbers connecting to L293D input pins
     #example varName = bimotor(pin1, pin2) in main script
     def __init__(self, pinF, pinB):
-        pi.setup(pinF, pi.OUT)
-        pi.setup(pinB, pi.OUT)
+        GPIO.setup(pinF, GPIO.OUT)
+        GPIO.setup(pinB, GPIO.OUT)
         # variables used to track acceleration
         self.init_speed = 0
         self.dest_speed = 0
         # save pin numbers as GPIO.PWM objects
-        self.pinF = pi.PWM(pinF, 50)
-        self.pinB = pi.PWM(pinB, 50)
+        self.pinF = GPIO.PWM(pinF, 50)
+        self.pinB = GPIO.PWM(pinB, 50)
         # start PWM signal
         self.pinF.start(0)
         self.pinB.start(0)
@@ -125,7 +125,7 @@ class drivetrain:
     def __del__(self):
         del self.motor1
         del self.motor2
-        pi.cleanup()
+        GPIO.cleanup()
 #end drivetrain class
 
 """ example of how to use in main script:
