@@ -128,18 +128,17 @@ class drivetrain:
         GPIO.cleanup()
 #end drivetrain class
 
-""" example of how to use in main script:
+if __name__ == "__main__":
+    from drivetrain import drivetrain
+    import time
+    d = drivetrain(17, 27, 22, 23)
 
-from drivetrain import drivetrain
-d = drivetrain(17, 27, 22, 23)
+    d.go(75, 0)
+    time.sleep(8)
+    d.go(0, 75)
+    time.sleep(3.19)
+    d.go(75, 75)
+    time.sleep(3.19)
+    d.stop()
 
-d.go(75, 0)
-time.sleep(8)
-d.go(0, 75)
-time.sleep(3.19)
-d.go(75, 75)
-time.sleep(3.19)
-d.stop()
-
-del d
-"""
+    del d
