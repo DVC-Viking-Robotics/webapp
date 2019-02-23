@@ -12,6 +12,9 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
     socket.emit('disconnect');
 });
+socket.on('reconnect_attempt', function() {
+    socket.io.opts.transports = ['polling', 'websocket'];
+});
 
 function getArgs(){
     let result = [];
@@ -65,7 +68,11 @@ function init() {
         let args = getArgs();
         // websocket event handler call
         socket.emit('remoteOut', args);
-        window.requestAnimationFrame(loop);
+        // establish a base case when there is no input event
+        if (moving[0] || moving[1]) // currently ignores gamepads
+            window.requestAnimationFrame(loop);
+        else // no input: set output data to idle
+            socket.emit('remoteOut', [0, 0, 0]);
     }
 }
 
