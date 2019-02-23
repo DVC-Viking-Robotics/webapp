@@ -56,7 +56,7 @@ function init() {
     controller = new Control();
     controller.draw();
     window.requestAnimationFrame(loop);
-    setInterval(loop, 70000);
+    // setInterval(loop, 70000);
     function loop() {
         updateDimensions();
         getAxis();
