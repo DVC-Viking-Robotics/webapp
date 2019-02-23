@@ -23,7 +23,7 @@ def handle_disconnect():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go(args[1], args[2])
+    d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')
