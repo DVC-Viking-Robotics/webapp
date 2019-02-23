@@ -1,5 +1,4 @@
 from outputs.rccartrain import cartrain
-from outputs.drivetrain import drivetrain
 import time
 
 
