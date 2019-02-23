@@ -16,7 +16,7 @@ GPIO.setmode(GPIO.BOARD)
 
 class cartrain:
     #initialize all GPIO pins
-    def _init__(self, in1, in2, in3, in4):
+    def __init__(self, in1, in2, in3, in4):
         GPIO.setup(in1, GPIO.OUT)
         GPIO.setup(in2, GPIO.OUT)
         GPIO.setup(in3, GPIO.OUT)
