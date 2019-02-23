@@ -41,19 +41,20 @@ class cartrain:
             self.pwm3.changeDutyCycle(0)
             self.pwm4.changeDutyCycle(x)
         if x < 0: 
-            self.pwm3.changeDutyCycle(x)
+            self.pwm3.changeDutyCycle(abs(x))
             self.pwm4.changeDutyCycle(0)
+        else: 
+            self.pwm1.changeDutyCycle(0)
+            self.pwm2.changeDutyCycle(0)
 
         if y > 0: 
             self.pwm1.changeDutyCycle(0)
             self.pwm2.changeDutyCycle(y)
 
         if y < 0: 
-            self.pwm1.changeDutyCycle(y)
+            self.pwm1.changeDutyCycle(abs(y))
             self.pwm2.changeDutyCycle(0)
-        else: 
-            self.pwm1.changeDutyCycle(0)
-            self.pwm2.changeDutyCycle(0)
+        else:
 
             self.pwm3.changeDutyCycle(0)
             self.pwm4.changeDutyCycle(0)
