@@ -258,7 +258,7 @@ function getAxis() {
         }
         if (hasMovement) {
             moving[1] = true;
-            window.requestAnimationFrame(loop);
+            // window.requestAnimationFrame(loop);
         }
         else moving[1] = false;
     }

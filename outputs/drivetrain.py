@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False) # advised by useless debuggung prompts
 
 """
 important info from datasheet
