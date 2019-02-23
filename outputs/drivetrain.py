@@ -133,12 +133,18 @@ if __name__ == "__main__":
     import time
     d = drivetrain(17, 27, 22, 23)
 
-    d.go(75, 0)
-    time.sleep(8)
-    d.go(0, 75)
-    time.sleep(3.19)
-    d.go(75, 75)
-    time.sleep(3.19)
+    d.go(100, 0)
+    time.sleep(2)
+    d.go(0, 100)
+    time.sleep(2)
+    d.go(100, 100)
+    time.sleep(2)
+    d.go(-100, 0)
+    time.sleep(2)
+    d.go(0, -100)
+    time.sleep(2)
+    d.go(-100, -100)
+    time.sleep(2)
     d.stop()
 
     del d
