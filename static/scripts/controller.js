@@ -54,9 +54,9 @@ function init() {
             e.gamepad.index, e.gamepad.id);
     });
     controller = new Control();
-    controller.draw();
-    window.requestAnimationFrame(loop);
-    setInterval(loop, 70000);
+    loop();
+    // window.requestAnimationFrame(loop);
+    // setInterval(loop, 70000);
 }
 
 function loop() {
@@ -156,7 +156,7 @@ function touchStart(e) {
     //getTouchPos(e);   
     moving[0] = true;
     e.preventDefault();// prevent canceling this event
-    window.requestAnimationFrame(loop);
+    loop();
 }
 
 function touchMove(e) {
@@ -194,7 +194,7 @@ function mouseStart(e) {
     moving[0] = true;
     getMousePos(e);
     e.preventDefault();// prevent canceling this event
-    window.requestAnimationFrame(loop);
+    loop();
 }
 
 function mouseMove(e) {
@@ -258,7 +258,7 @@ function getAxis() {
         }
         if (hasMovement) {
             moving[1] = true;
-            // window.requestAnimationFrame(loop);
+            // loop();
         }
         else moving[1] = false;
     }
