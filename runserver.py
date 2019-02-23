@@ -11,7 +11,7 @@ d = drivetrain(17, 27, 22, 23)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = SocketIO(app, logger=True)
 
 @socketio.on('connect')
 def handle_connect():
