@@ -12,9 +12,6 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
     socket.emit('disconnect');
 });
-socket.on('reconnect_attempt', function() {
-    socket.io.opts.transports = ['polling', 'websocket'];
-});
 
 function getArgs(){
     let result = [];
@@ -60,20 +57,21 @@ function init() {
     controller.draw();
     window.requestAnimationFrame(loop);
     setInterval(loop, 70000);
-    function loop() {
-        updateDimensions();
-        getAxis();
-        ctx.clearRect(0, 0, W, H);
-        controller.draw();
-        let args = getArgs();
-        // websocket event handler call
-        socket.emit('remoteOut', args);
-        // establish a base case when there is no input event
-        if (moving[0] || moving[1]) // currently ignores gamepads
-            window.requestAnimationFrame(loop);
-        else // no input: set output data to idle
-            socket.emit('remoteOut', [0, 0, 0]);
-    }
+}
+
+function loop() {
+    updateDimensions();
+    getAxis();
+    ctx.clearRect(0, 0, W, H);
+    controller.draw();
+    let args = getArgs();
+    // websocket event handler call
+    socket.emit('remoteOut', args);
+    // establish a base case when there is no input event
+    if (moving[0] || moving[1]) // currently ignores gamepads
+        window.requestAnimationFrame(loop);
+    else // no input: set output data to idle
+        socket.emit('remoteOut', [0, 0, 0]);
 }
 
 // Controller object for use on canvas element
@@ -158,6 +156,7 @@ function touchStart(e) {
     //getTouchPos(e);   
     moving[0] = true;
     e.preventDefault();// prevent canceling this event
+    window.requestAnimationFrame(loop);
 }
 
 function touchMove(e) {
@@ -195,6 +194,7 @@ function mouseStart(e) {
     moving[0] = true;
     getMousePos(e);
     e.preventDefault();// prevent canceling this event
+    window.requestAnimationFrame(loop);
 }
 
 function mouseMove(e) {
@@ -256,7 +256,10 @@ function getAxis() {
             }
 */
         }
-        if (hasMovement) moving[1] = true;
+        if (hasMovement) {
+            moving[1] = true;
+            window.requestAnimationFrame(loop);
+        }
         else moving[1] = false;
     }
 }
