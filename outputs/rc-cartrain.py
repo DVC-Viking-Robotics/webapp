@@ -16,18 +16,16 @@ GPIO.setmode(GPIO.BOARD)
 
 class cartrain:
     #initialize all GPIO pins
-    def _init__(self, in1, in2, in3, in4, servo1):
+    def _init__(self, in1, in2, in3, in4):
         GPIO.setup(in1, GPIO.OUT)
         GPIO.setup(in2, GPIO.OUT)
         GPIO.setup(in3, GPIO.OUT)
         GPIO.setup(in4, GPIO.OUT)
-        GPIO.setup(servo1, GPIO.OUT)
 
         self.pwm1 = GPIO.PWM(in1, 50)
         self.pwm2 = GPIO.PWM(in2, 50)
         self.pwm3 = GPIO.PWM(in3, 50)
         self.pwm4 = GPIO.PWM(in4, 50)
-        self.servo1pwm =  GPIO.PWM(servo1, 50)
 
         self.pwm1.start(0)
         self.pwm2.start(0)
@@ -39,21 +37,20 @@ class cartrain:
         #input is x directino from -100 to 100 
         # when x is -100, need to reverse direction of servo 
         #motor to given value
-        if x > 0
-
+        if x > 0:
+            self.pwm3.changeDutyCycle(0)
+            self.pwm4.changeDutyCycle(x)
+        if x < 0: 
+            self.pwm3.changeDutyCycle(x)
+            self.pwm4.changeDutyCycle(0)
 
         if y > 0: 
             self.pwm1.changeDutyCycle(0)
             self.pwm2.changeDutyCycle(y)
 
-            self.pwm3.changeDutyCycle(0)
-            self.pwm4.changeDutyCycle(y)
         if y < 0: 
             self.pwm1.changeDutyCycle(y)
             self.pwm2.changeDutyCycle(0)
-
-            self.pwm3.changeDutyCycle(y)
-            self.pwm4.changeDutyCycle(0)
         else: 
             self.pwm1.changeDutyCycle(0)
             self.pwm2.changeDutyCycle(0)
