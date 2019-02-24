@@ -82,7 +82,7 @@ function init() {
     });
     window.addEventListener('resize', resize);// when window is resized
     window.requestAnimationFrame(loop);
-    window.setInterval(getAxis, 17); // because gamepads aren't handled with events
+    window.setInterval(getAxis, 16); // because gamepads aren't handled with events
 }
 
 // Controller object for use on canvas element
@@ -242,12 +242,12 @@ function getAxis() {
     hasMovement = false;
     for (i = 0; i < gamepads.length; i++) {
         if (gamepads[i] != null) {// Chrome specific workaround
-            if (gamepads[i].axes.length >= 2 && ((gamepads[i].axes[0] > 0.03 || gamepads[i].axes[0] < -0.04) || (gamepads[i].axes[1] > 0.04 || gamepads[i].axes[1] < -0.04))) {
+            if (gamepads[i].axes.length >= 2 && ((gamepads[i].axes[0] > 0.04 || gamepads[i].axes[0] < -0.04) || (gamepads[i].axes[1] > 0.04 || gamepads[i].axes[1] < -0.04))) {
                 controller.joystick.stick.x = controller.joystick.x + (controller.joystick.radius * (gamepads[i].axes[0] / 0.97));
                 controller.joystick.stick.y = controller.joystick.y + (controller.joystick.radius * (gamepads[i].axes[1] / 0.97));
                 hasMovement = true;
             }
-            if (gamepads[i].axes.length >= 3 && (gamepads[i].axes[2] > 0.03 || gamepads[i].axes[2] < -0.03)) {
+            if (gamepads[i].axes.length >= 3 && (gamepads[i].axes[2] > 0.04 || gamepads[i].axes[2] < -0.04)) {
                 controller.slider.stick.x = controller.slider.x + (controller.slider.length / 2) + ((controller.slider.length / 2 - controller.slider.height / 2) * (gamepads[i].axes[2] / 0.97));
                 hasMovement = true;
 
