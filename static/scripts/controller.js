@@ -5,6 +5,12 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
+// Create the event.
+var event = new Event('controlsInput');
+// Listen for the event.
+socket.on('controlsInput', function (e) {
+    socket.emit('remoteOut', getArgs());
+});
 var socket = io.connect();
 socket.on('connect', function() {
     socket.emit('connect');
@@ -13,6 +19,7 @@ socket.on('disconnect', function() {
     socket.emit('disconnect');
 });
 
+// gather data from the controller object
 function getArgs(){
     let result = [];
     let xDiameter = ((controller.joystick.x + controller.joystick.radius) - (controller.joystick.x - controller.joystick.radius)) / 2;
@@ -42,14 +49,14 @@ function loop() {
     // establish a base case when there is no input event
     if (moving[0] || moving[1]){ // currently ignores gamepads
         if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
-            // websocket event handler call
-            socket.emit('remoteOut', args);
+            dispatchEvent(event);
         }
         prevArgs = args;
         window.requestAnimationFrame(loop);
     }
     else{ // no input: set output data to idle
-        socket.emit('remoteOut', [0, 0, 0]);
+        // socket.emit('remoteOut', [0, 0, 0]);
+        dispatchEvent(event);
         prevArgs = [0, 0, 0];
     }
 }
