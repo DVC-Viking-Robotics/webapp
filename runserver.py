@@ -11,7 +11,7 @@ d = drivetrain(17, 27, 22, 23)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, logger=False)
+socketio = SocketIO(app, logger=True)
 
 @socketio.on('connect')
 def handle_connect():
@@ -24,7 +24,7 @@ def handle_disconnect():
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
     d.go(args[0], args[1])
-    print('remote =', repr(args))
+    # print('remote =', repr(args))
 
 @app.route('/')
 @app.route('/remote')
