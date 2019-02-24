@@ -5,7 +5,7 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-var socket = io.connect();
+var socket = io.connect({transports: ['websocket']});
 socket.on('connect', function() {
     socket.emit('connect');
 });
@@ -42,7 +42,7 @@ function loop() {
     controller.draw();
     let args = getArgs();
     // establish a base case when there is no input event
-    if (moving[0] || moving[1]){ // currently ignores gamepads
+    if (moving[0] || moving[1]){ 
         if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
             socket.emit('remoteOut', args);   
         }
@@ -50,7 +50,6 @@ function loop() {
         window.requestAnimationFrame(loop);
     }
     else{ // no input: set output data to idle
-        // socket.emit('remoteOut', [0, 0, 0]);
         socket.emit('remoteOut', [0, 0, 0]);  
         prevArgs = [0, 0, 0];
     }
