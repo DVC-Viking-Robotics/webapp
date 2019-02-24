@@ -42,7 +42,7 @@ function loop() {
     controller.draw();
     let args = getArgs();
     // establish a base case when there is no input event
-    if (moving[0] || moving[1]){ // currently ignores gamepads
+    if (moving[0] || moving[1]){ 
         if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
             socket.emit('remoteOut', args);   
         }
