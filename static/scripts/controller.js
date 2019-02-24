@@ -34,6 +34,7 @@ function updateDimensions() {
 }
 
 function loop() {
+    ctx.clearRect(0, 0, W, H);
     controller.draw();
     let args = getArgs();
     // establish a base case when there is no input event
