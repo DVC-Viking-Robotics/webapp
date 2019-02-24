@@ -13,6 +13,8 @@ socket.on('disconnect', function() {
     socket.emit('disconnect');
 });
 
+
+// gather data from the controller object
 function getArgs(){
     let result = [];
     let xDiameter = ((controller.joystick.x + controller.joystick.radius) - (controller.joystick.x - controller.joystick.radius)) / 2;
@@ -25,6 +27,8 @@ function getArgs(){
     result[2] = Math.round(zJoyPos / (controller.slider.length / 2) * 100);
     return result;
 }
+// for edge detecting changes in controller class
+var prevArgs = [0, 0, 0];
 
 function updateDimensions() {
     W = window.innerWidth - 5;
@@ -33,40 +37,54 @@ function updateDimensions() {
     canvas.height = H;
 }
 
+function loop() {
+    ctx.clearRect(0, 0, W, H);
+    controller.draw();
+    let args = getArgs();
+    // establish a base case when there is no input event
+    if (moving[0] || moving[1]){ // currently ignores gamepads
+        if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
+            socket.emit('remoteOut', args);   
+        }
+        prevArgs = args;
+        window.requestAnimationFrame(loop);
+    }
+    else{ // no input: set output data to idle
+        // socket.emit('remoteOut', [0, 0, 0]);
+        socket.emit('remoteOut', [0, 0, 0]);  
+        prevArgs = [0, 0, 0];
+    }
+}
+
+function resize(){
+    updateDimensions();
+    ctx.clearRect(0, 0, W, H);
+    controller.draw();
+}
+
 function init() {
     canvas = document.getElementById("canvas");
-    updateDimensions();
-    ctx = canvas.getContext("2d");
     canvas.addEventListener('touchstart', touchStart, false);
     canvas.addEventListener('touchmove', touchMove, false);
     canvas.addEventListener('touchend', touchEnd, false);
     canvas.addEventListener('mousedown', mouseStart, false);
     canvas.addEventListener('mouseup', mouseEnd, false);
     canvas.addEventListener('mousemove', mouseMove, false);
+    ctx = canvas.getContext("2d");
+    updateDimensions(); // needs to be called for instantiating the Control class
+    controller = new Control();
     window.addEventListener("gamepadconnected", function (e) {
-        //gamepads[e.gamepad.index] = e.gamepad;
         console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-            e.gamepad.index, e.gamepad.id,
-            e.gamepad.buttons.length, e.gamepad.axes.length);
+        e.gamepad.index, e.gamepad.id,
+        e.gamepad.buttons.length, e.gamepad.axes.length);
     });
     window.addEventListener("gamepaddisconnected", function (e) {
         console.log("Gamepad disconnected from index %d: %s",
-            e.gamepad.index, e.gamepad.id);
+        e.gamepad.index, e.gamepad.id);
     });
-    controller = new Control();
-    controller.draw();
+    window.addEventListener('resize', resize);// when window is resized
     window.requestAnimationFrame(loop);
-    setInterval(loop, 70000);
-    function loop() {
-        updateDimensions();
-        getAxis();
-        ctx.clearRect(0, 0, W, H);
-        controller.draw();
-        let args = getArgs();
-        // websocket event handler call
-        socket.emit('remoteOut', args);
-        window.requestAnimationFrame(loop);
-    }
+    window.setInterval(getAxis, 16); // because gamepads aren't handled with events
 }
 
 // Controller object for use on canvas element
@@ -151,6 +169,7 @@ function touchStart(e) {
     //getTouchPos(e);   
     moving[0] = true;
     e.preventDefault();// prevent canceling this event
+    window.requestAnimationFrame(loop);
 }
 
 function touchMove(e) {
@@ -188,6 +207,7 @@ function mouseStart(e) {
     moving[0] = true;
     getMousePos(e);
     e.preventDefault();// prevent canceling this event
+    window.requestAnimationFrame(loop);
 }
 
 function mouseMove(e) {
@@ -223,13 +243,13 @@ function getAxis() {
      */
     hasMovement = false;
     for (i = 0; i < gamepads.length; i++) {
-        if (gamepads[i] != null) {// Chrome specific bugfix
-            if (gamepads[i].axes.length >= 2 && ((gamepads[i].axes[0] > 0.03 || gamepads[i].axes[0] < -0.03) || (gamepads[i].axes[1] > 0.03 || gamepads[i].axes[1] < -0.03))) {
+        if (gamepads[i] != null) {// Chrome specific workaround
+            if (gamepads[i].axes.length >= 2 && ((gamepads[i].axes[0] > 0.04 || gamepads[i].axes[0] < -0.04) || (gamepads[i].axes[1] > 0.04 || gamepads[i].axes[1] < -0.04))) {
                 controller.joystick.stick.x = controller.joystick.x + (controller.joystick.radius * (gamepads[i].axes[0] / 0.97));
                 controller.joystick.stick.y = controller.joystick.y + (controller.joystick.radius * (gamepads[i].axes[1] / 0.97));
                 hasMovement = true;
             }
-            if (gamepads[i].axes.length >= 3 && (gamepads[i].axes[2] > 0.03 || gamepads[i].axes[2] < -0.03)) {
+            if (gamepads[i].axes.length >= 3 && (gamepads[i].axes[2] > 0.04 || gamepads[i].axes[2] < -0.04)) {
                 controller.slider.stick.x = controller.slider.x + (controller.slider.length / 2) + ((controller.slider.length / 2 - controller.slider.height / 2) * (gamepads[i].axes[2] / 0.97));
                 hasMovement = true;
 
@@ -249,7 +269,10 @@ function getAxis() {
             }
 */
         }
-        if (hasMovement) moving[1] = true;
+        if (hasMovement) {
+            moving[1] = true;
+            window.requestAnimationFrame(loop);
+        }
         else moving[1] = false;
     }
 }

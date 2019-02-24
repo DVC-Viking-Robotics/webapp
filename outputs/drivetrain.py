@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False) # advised by useless debuggung prompts
 
 """
 important info from datasheet
@@ -101,18 +102,18 @@ class drivetrain:
         x = max(-100, min(100, x))
         y = max(-100, min(100, y))
         # assuming left/right axis is null (just going forward or backward)
-        self.left = x
-        self.right = x
-        if x == 0: 
+        self.left = y
+        self.right = y
+        if y == 0: 
             # if forward/backward axis is null ("turning on a dime" functionality)
-            self.right = -1 * y
-            self.left = y
+            self.right = -1 * x
+            self.left = x
         else: 
             # if forward/backward axis is not null and left/right axis is not null
-            if y > 0:
-                self.right = x * ((100 - y) / 100.0)
-            elif y < 0:
-                self.left = x * ((-100 - y) / 100.0) * -1
+            if x > 0:
+                self.right = y * ((100 - x) / 100.0)
+            elif x < 0:
+                self.left = y * ((-100 - x) / 100.0) * -1
         # make sure speeds are an integer (not decimal/float) and send to motors
         self.motor1.setSpeed(int(round(self.right)))
         self.motor2.setSpeed(int(round(self.left)))
