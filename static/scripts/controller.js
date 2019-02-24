@@ -82,7 +82,7 @@ function init() {
     });
     window.addEventListener('resize', resize);// when window is resized
     window.requestAnimationFrame(loop);
-    window.setInterval(getAxis, 250); // because gamepads aren't handled with events
+    window.setInterval(getAxis, 100); // because gamepads aren't handled with events
 }
 
 // Controller object for use on canvas element
