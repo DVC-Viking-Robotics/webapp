@@ -5,7 +5,7 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-var socket = io.connect();
+var socket = io.connect({transports: ['websocket']});
 socket.on('connect', function() {
     socket.emit('connect');
 });
@@ -50,7 +50,6 @@ function loop() {
         window.requestAnimationFrame(loop);
     }
     else{ // no input: set output data to idle
-        // socket.emit('remoteOut', [0, 0, 0]);
         socket.emit('remoteOut', [0, 0, 0]);  
         prevArgs = [0, 0, 0];
     }
