@@ -39,11 +39,11 @@ function loop() {
     // establish a base case when there is no input event
     if (moving[0] || moving[1]){ // currently ignores gamepads
         // websocket event handler call
-        socket.volatile.emit('remoteOut', args);
+        socket.emit('remoteOut', args);
         window.requestAnimationFrame(loop);
     }
     else // no input: set output data to idle
-        socket.volatile.emit('remoteOut', [0, 0, 0]);
+        socket.emit('remoteOut', [0, 0, 0]);
 }
 
 function resize(){
