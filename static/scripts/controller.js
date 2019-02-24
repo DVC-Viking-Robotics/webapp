@@ -19,6 +19,7 @@ socket.on('disconnect', function() {
     socket.emit('disconnect');
 });
 
+
 // gather data from the controller object
 function getArgs(){
     let result = [];
