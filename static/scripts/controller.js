@@ -25,6 +25,8 @@ function getArgs(){
     result[2] = Math.round(zJoyPos / (controller.slider.length / 2) * 100);
     return result;
 }
+// for edge detecting changes in controller class
+var prevArgs = [0, 0, 0];
 
 function updateDimensions() {
     W = window.innerWidth - 5;
@@ -39,12 +41,17 @@ function loop() {
     let args = getArgs();
     // establish a base case when there is no input event
     if (moving[0] || moving[1]){ // currently ignores gamepads
-        // websocket event handler call
-        socket.emit('remoteOut', args);
+        if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
+            // websocket event handler call
+            socket.emit('remoteOut', args);
+        }
+        prevArgs = args;
         window.requestAnimationFrame(loop);
     }
-    else // no input: set output data to idle
+    else{ // no input: set output data to idle
         socket.emit('remoteOut', [0, 0, 0]);
+        prevArgs = [0, 0, 0];
+    }
 }
 
 function resize(){
