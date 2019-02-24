@@ -7,11 +7,11 @@ var moving = [ false, false ];
 var gamepads = {};
 // Create the event.
 var event = new Event('controlsInput');
+var socket = io.connect();
 // Listen for the event.
 socket.on('controlsInput', function (e) {
     socket.emit('remoteOut', getArgs());
 });
-var socket = io.connect();
 socket.on('connect', function() {
     socket.emit('connect');
 });
