@@ -5,13 +5,7 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-// Create the event.
-var event = new Event('controlsInput');
 var socket = io.connect();
-// Listen for the event.
-socket.on('controlsInput', function (e) {
-    socket.emit('remoteOut', getArgs());
-});
 socket.on('connect', function() {
     socket.emit('connect');
 });
@@ -50,14 +44,14 @@ function loop() {
     // establish a base case when there is no input event
     if (moving[0] || moving[1]){ // currently ignores gamepads
         if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
-            dispatchEvent(event);
+            socket.emit('remoteOut', args);   
         }
         prevArgs = args;
         window.requestAnimationFrame(loop);
     }
     else{ // no input: set output data to idle
         // socket.emit('remoteOut', [0, 0, 0]);
-        dispatchEvent(event);
+        socket.emit('remoteOut', [0, 0, 0]);  
         prevArgs = [0, 0, 0];
     }
 }
