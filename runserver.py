@@ -49,7 +49,7 @@ def about():
     return render_template(
         'about.html',
         title='About this project:',
-        message='This Web App is meant to control a robot powered by Raspberry Pi via WiFi hotspot. It uses various Python modules including Flask(web site server), HostAPD(hotspot), gpiozero(Robot and servo classes) and some custom written modules.'
+        message='This Web App is meant to control a robot powered by Raspberry Pi via WiFi or LAN. '
     )
 
 if __name__ == '__main__':
