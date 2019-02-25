@@ -5,7 +5,7 @@ This script runs the flask_controller application using a development server.
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO
-from outputs.drivetrain import drivetrain
+from outputs.DC_2 import drivetrain
 
 d = drivetrain(17, 27, 22, 23)
 
