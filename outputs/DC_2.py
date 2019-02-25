@@ -1,4 +1,4 @@
-from biMotor import biMotor   
+from outputs.biMotor import biMotor   
 class drivetrain:
       
     #using BCM pins 17, 27, 22, 23
