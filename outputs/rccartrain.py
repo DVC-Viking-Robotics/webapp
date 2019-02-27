@@ -40,7 +40,7 @@ class cartrain:
         if x > 0:
             self.pwm3.changeDutyCycle(0)
             self.pwm4.changeDutyCycle(x)
-        if x < 0: 
+        elif x < 0: 
             self.pwm3.changeDutyCycle(abs(x))
             self.pwm4.changeDutyCycle(0)
         else: 
@@ -51,7 +51,7 @@ class cartrain:
             self.pwm1.changeDutyCycle(0)
             self.pwm2.changeDutyCycle(y)
 
-        if y < 0: 
+        elif y < 0: 
             self.pwm1.changeDutyCycle(abs(y))
             self.pwm2.changeDutyCycle(0)
         else:
