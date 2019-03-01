@@ -5,9 +5,9 @@ This script runs the flask_controller application using a development server.
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO
-from outputs.drivetrain import drivetrain
+#from outputs.drivetrain import drivetrain
 
-d = drivetrain(17, 27, 22, 23)
+#d = drivetrain(17, 27, 22, 23)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -23,8 +23,8 @@ def handle_disconnect():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go(args[0], args[1])
-    # print('remote =', repr(args))
+    #d.go(args[0], args[1])
+    print('remote =', repr(args))
 
 @app.route('/')
 @app.route('/remote')
