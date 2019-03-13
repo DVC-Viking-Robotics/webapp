@@ -43,6 +43,15 @@ def extras():
         message='Try our more advanced features!'
     )
 
+@app.route('/automode')
+def automode():
+    """Google maps API with coordinate selection for auto mode."""
+    return render_template(
+        'automode.html',
+        title='Autonomous Navigation',
+        message='Autonomous Nav Mode'
+    )
+
 @app.route('/about')
 def about():
     """Renders the about page."""
