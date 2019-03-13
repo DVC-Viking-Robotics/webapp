@@ -2,10 +2,26 @@
 This script runs the flask_controller application using a development server.
 """
 
+try:
+    import cStringIO as io
+except ImportError:
+    import io
+
+import base64
 import os
 from flask import Flask, g, render_template
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 #from outputs.drivetrain import drivetrain
+
+on_raspi = False
+
+if on_raspi:
+    import picamera
+    camera = picamera.PiCamera()
+    camera.start_preview()
+else:
+    import cv2
+    camera = cv2.VideoCapture(0)
 
 #d = drivetrain(17, 27, 22, 23)
 
@@ -20,6 +36,19 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print('websocket Client disconnected')
+
+
+@socketio.on('webcam')
+def handle_webcam_request():
+    if on_raspi:
+        sio = io.StringIO()
+        camera.capture(sio, "jpeg", use_video_port=True)
+        buffer = sio.getvalue()
+    else:
+        _, frame = camera.read()
+        _, buffer = cv2.imencode('.jpg', frame)
+
+    emit('webcam-response', base64.b64encode(buffer))
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
