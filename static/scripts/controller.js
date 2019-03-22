@@ -32,7 +32,7 @@ socket.on('webcam-response', function(img_data) {
 // Webcam request loop
 var webcampRequestLock = setInterval(function() {
     socket.emit('webcam')
-}, 50);
+}, 250);
 
 // gather data from the controller object
 function getArgs(){

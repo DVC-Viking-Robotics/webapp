@@ -7,18 +7,22 @@ try:
 except ImportError:
     import io
 
+import time
 import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 #from outputs.drivetrain import drivetrain
 
-on_raspi = False
+on_raspi = not False
 
 if on_raspi:
     import picamera
     camera = picamera.PiCamera()
-    camera.start_preview()
+    camera.resolution = (256, 144)
+    camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
+    #sleep(1)
+    #camera.stop_preview()
 else:
     import cv2
     camera = cv2.VideoCapture(0)
@@ -41,13 +45,15 @@ def handle_disconnect():
 @socketio.on('webcam')
 def handle_webcam_request():
     if on_raspi:
-        sio = io.StringIO()
+        sio = io.BytesIO()
         camera.capture(sio, "jpeg", use_video_port=True)
         buffer = sio.getvalue()
     else:
         _, frame = camera.read()
         _, buffer = cv2.imencode('.jpg', frame)
 
+    b64 = base64.b64encode(buffer)
+    print(len(b64))
     emit('webcam-response', base64.b64encode(buffer))
 
 @socketio.on('remoteOut')
