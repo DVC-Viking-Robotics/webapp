@@ -88,16 +88,6 @@ function init() {
     window.addEventListener('resize', resize);// when window is resized
     window.requestAnimationFrame(loop);
 
-    function loop() {
-        updateDimensions();
-        getAxis();
-        ctx.clearRect(0, 0, W, H);
-        controller.draw();
-        let args = getArgs();
-        // websocket event handler call
-        socket.emit('remoteOut', args);
-        window.requestAnimationFrame(loop);
-    }
     window.setInterval(getAxis, 16); // because gamepads aren't handled with events
 }
 
