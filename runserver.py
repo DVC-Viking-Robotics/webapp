@@ -4,14 +4,17 @@ This script runs the flask_controller application using a development server.
 
 import os
 from flask import Flask, g, render_template
-from flask_socketio import SocketIO
+
+from flask_socketio import SocketIO, emit
 from outputs.DC_2 import drivetrain
 
 d = drivetrain(17, 27, 22, 23)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, logger=False)
+
+socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
+
 
 @socketio.on('connect')
 def handle_connect():

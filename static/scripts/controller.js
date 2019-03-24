@@ -5,12 +5,16 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-var socket = io.connect({transports: ['websocket']});
+var socket = io({ transports: ['websocket'] }).connect({'reconnection': true})
+
 socket.on('connect', function() {
     socket.emit('connect');
 });
 socket.on('disconnect', function() {
     socket.emit('disconnect');
+    socket.socket.connect();
+    
+
 });
 
 
@@ -83,6 +87,17 @@ function init() {
     });
     window.addEventListener('resize', resize);// when window is resized
     window.requestAnimationFrame(loop);
+
+    function loop() {
+        updateDimensions();
+        getAxis();
+        ctx.clearRect(0, 0, W, H);
+        controller.draw();
+        let args = getArgs();
+        // websocket event handler call
+        socket.emit('remoteOut', args);
+        window.requestAnimationFrame(loop);
+    }
     window.setInterval(getAxis, 16); // because gamepads aren't handled with events
 }
 
@@ -94,7 +109,7 @@ class Control {
             color: "grey",
             stick: {
                 x: 0, y: 0, radius: 0,
-                color: "blue",
+                color: "white",
                 angle: null,
                 touchRadius: 0
             },
@@ -121,13 +136,13 @@ class Control {
             color: "grey",
             stick: {
                 x: 0, y: 0, radius: 0,
-                color: "red",
+                color: "white",
             },
             draw: function () {
                 this.stick.x = Math.max(this.x, Math.min(this.stick.x, this.x + this.length));
                 ctx.strokeStyle = this.color;
                 ctx.beginPath();
-                ctx.lineCap = "round";
+                ctx.lineCap = "square";
                 ctx.lineWidth = this.height;
                 ctx.moveTo(this.x + this.height / 2, this.y);
                 ctx.lineTo(this.x + this.length - this.height / 2, this.y);
@@ -150,6 +165,8 @@ class Control {
         this.slider.length = W - this.slider.x - 10;
         this.slider.stick.radius = this.slider.height * 0.75;
         if (!moving[0] && !moving[1]) {// when in idle only
+
+            //WHAT THE FUCK IS THIS MOVING ARRAY
             this.joystick.stick.x = this.joystick.x;
             this.joystick.stick.y = this.joystick.y;
             this.slider.stick.x = this.slider.x + this.slider.length / 2;
