@@ -12,7 +12,7 @@ import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
-#from outputs.drivetrain import drivetrain
+from outputs.DC_2 import drivetrain
 
 on_raspi = not False
 
@@ -27,7 +27,7 @@ else:
     import cv2
     camera = cv2.VideoCapture(0)
 
-#d = drivetrain(17, 27, 22, 23)
+d = drivetrain(17, 27, 22, 23)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -58,7 +58,7 @@ def handle_webcam_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    #d.go(args[0], args[1])
+    d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')
