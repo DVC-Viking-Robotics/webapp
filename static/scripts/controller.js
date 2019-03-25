@@ -5,18 +5,35 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-var socket = io({ transports: ['websocket'] }).connect({'reconnection': true})
+var socket = io.connect({transports: ['websocket']});
+
 
 socket.on('connect', function() {
-    socket.emit('connect');
+    console.log('connected?', socket.connected)
 });
+
+socket.on('error', (error) => {
+    console.log('Error:', error)
+});
+
 socket.on('disconnect', function() {
-    socket.emit('disconnect');
-    socket.socket.connect();
-    
-
+    // stop requesting for the feed
+    clearInterval(webcampRequestLock);
+    console.log('connected?', socket.connected);
 });
 
+// Used to receive the live feed from the raspberry pi
+socket.on('webcam-response', function(img_data) {
+    var dec = new TextDecoder("utf-8");
+    var video = document.getElementById("video");
+    console.log(img_data)
+    video.src = "data:image/jpeg;base64," + dec.decode(img_data);
+})
+
+// Webcam request loop
+var webcampRequestLock = setInterval(function() {
+    socket.emit('webcam')
+}, 250);
 
 // gather data from the controller object
 function getArgs(){
@@ -46,15 +63,15 @@ function loop() {
     controller.draw();
     let args = getArgs();
     // establish a base case when there is no input event
-    if (moving[0] || moving[1]){ 
+    if (moving[0] || moving[1]){
         if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
-            socket.emit('remoteOut', args);   
+            socket.emit('remoteOut', args);
         }
         prevArgs = args;
         window.requestAnimationFrame(loop);
     }
     else{ // no input: set output data to idle
-        socket.emit('remoteOut', [0, 0, 0]);  
+        socket.emit('remoteOut', [0, 0, 0]);
         prevArgs = [0, 0, 0];
     }
 }
@@ -172,7 +189,7 @@ class Control {
 
 // capture data from touch and mouse input
 function touchStart(e) {
-    //getTouchPos(e);   
+    //getTouchPos(e);
     moving[0] = true;
     e.preventDefault();// prevent canceling this event
     window.requestAnimationFrame(loop);
@@ -240,7 +257,7 @@ function getMousePos(e) {
 // get data from physical gamepads
 function getAxis() {
     gamepads = navigator.getGamepads();
-    /*  according to the "standard" mapping scheme 
+    /*  according to the "standard" mapping scheme
      *  (compatible w/ xBox 360 & other xinput controllers):
      * axis[0] = left stick X axis
      * axis[1] = left stick Y axis
