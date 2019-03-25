@@ -27,11 +27,14 @@ else:
     import cv2
     camera = cv2.VideoCapture(0)
 
+
 d = drivetrain(17, 27, 22, 23)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, logger=False)
+
+socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
+
 
 @socketio.on('connect')
 def handle_connect():
@@ -93,7 +96,7 @@ def about():
     return render_template(
         'about.html',
         title='About this project:',
-        message='This Web App is meant to control a robot powered by Raspberry Pi via WiFi hotspot. It uses various Python modules including Flask(web site server), HostAPD(hotspot), gpiozero(Robot and servo classes) and some custom written modules.'
+        message='This Web App is meant to control a robot powered by Raspberry Pi via WiFi or LAN. '
     )
 
 if __name__ == '__main__':
