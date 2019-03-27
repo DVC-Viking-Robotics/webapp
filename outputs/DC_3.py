@@ -1,3 +1,60 @@
+
+# test code forward reverse.
+
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+pin1 = 17
+pin2 = 27
+pin3 = 22
+pin4 = 23
+
+while 1:
+    #motor nr 1
+    GPIO.setup(pin1, GPIO.OUT)
+    GPIO.setup(pin2, GPIO.OUT)
+    #motor nr 2
+    GPIO.setup(pin3, GPIO.OUT)
+    GPIO.setup(pin4, GPIO.OUT)
+
+    #spin the motors forward at full speed
+
+    #motor 1
+    GPIO.output(pin1,GPIO.HIGH)
+    pwm1 = GPIO.PWM(pin2, 50) #pin 27, at frequency of 50 Hz
+    pwm1.start(0)
+    pwm1.ChangeDutyCycle(100)
+    #motor2
+    GPIO.output(pin3,GPIO.HIGH)
+    pwm2 = GPIO.PWM(pin4, 50) #pin 27, at frequency of 50 Hz
+    pwm2.start(0)
+    pwm2.ChangeDutyCycle(100)
+
+    #pause
+    time.sleep(2)
+
+    #spin both motors in reverse
+
+    #motor 1
+    GPIO.output(pin1,GPIO.LOW)
+    pwm1 = GPIO.PWM(pin2, 50) #pin 27, at frequency of 50 Hz
+    pwm1.start(0)
+    pwm1.ChangeDutyCycle(100)
+    #motor2
+    GPIO.output(pin3,GPIO.LOW)
+    pwm2 = GPIO.PWM(pin4, 50) #pin 27, at frequency of 50 Hz
+    pwm2.start(0)
+    pwm2.ChangeDutyCycle(100)
+
+
+'''
+
+
+
+
 from outputs.newbiMotor import biMotor
 class drivetrain:
       
