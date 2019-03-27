@@ -2,3 +2,4 @@ env/
 venv/
 .vscode/settings.json
 /outputs/__pycache__/
+/venv/
