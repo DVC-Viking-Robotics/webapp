@@ -1,4 +1,6 @@
 
+'''
+
 # test code forward reverse.
 #import wiringpi
 import RPi.GPIO as GPIO
@@ -33,43 +35,12 @@ pwm2 = GPIO.PWM(pin4, 15000) #pin 27, at frequency of 50 Hz
 pwm2.start(0)
 pwm2.ChangeDutyCycle(100)
 
-#pause
-time.sleep(2)
-
-for i in range (10, 50000):
-    pwm1.ChangeDutyCycle(i/500)
-    pwm1.ChangeFrequency(i)
-    pwm2.ChangeDutyCycle(i/500)
-    pwm2.ChangeFrequency(i)
-
-pwm1.ChangeDutyCycle(100)
-pwm2.ChangeDutyCycle(100)
-
-for i in range (10, 50000):
-    pwm1.ChangeFrequency(i)
-    pwm2.ChangeFrequency(i)
-    time.sleep(0.01)
-
-#spin both motors in reverse
-#motor 1
-GPIO.output(pin1,GPIO.LOW)
-
-pwm1.ChangeDutyCycle(100)
-#motor2
-GPIO.output(pin3,GPIO.LOW)
-
-pwm2.ChangeDutyCycle(100)
-
-
 '''
-
-
-
 
 from outputs.newbiMotor import biMotor
 class drivetrain:
       
-    #using BCM pins 17, 27, 22, 23
+    #using BCM pins 17, 18, 22, 13
     def __init__(self, m1F, m1B,  m2F, m2B):
         self.motor1 = biMotor(m1F, m1B)
         self.motor2 = biMotor(m2F, m2B)
@@ -123,4 +94,4 @@ if __name__ == "__main__":
     d.stop()
 
     del d
-'''
+

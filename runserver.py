@@ -28,7 +28,7 @@ else:
     camera = cv2.VideoCapture(0)
 
 
-d = drivetrain(17, 27, 22, 23)
+d = drivetrain(17, 18, 22, 13)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'

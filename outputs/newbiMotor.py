@@ -26,15 +26,15 @@ class biMotor:
 
     #pass the GPIO pin numbers connecting to L293D input pins
     #example varName = bimotor(pin1, pin2) in main script
-    def __init__(self, pwmPin, dirPin):
+    def __init__(self, dirPin, pwmPin):
         GPIO.setup( pwmPin, GPIO.OUT)
         GPIO.setup(dirPin, GPIO.OUT)
         # variables used to track acceleration
         self.init_speed = 0
         self.dest_speed = 0
         # save pin numbers as GPIO.PWM objects
-        self.pwmPin = GPIO.PWM(pwmPin, 50)
         self.dirPin = True
+        self.pwmPin = GPIO.PWM(pwmPin, 15000)
         # start PWM signal
         self.pwmPin.start(0)
         #self.dirPin.start(0)  not needed
@@ -58,10 +58,10 @@ class biMotor:
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
-        self.pinF.stop()
-        self.pinB.stop()
-        del self.pinF
-        del self.pinB
+        self.pwmPin.stop()
+        self.dirPin = False
+        del self.pwmPin
+        del self.dirPin
 
 #end motor object
 
