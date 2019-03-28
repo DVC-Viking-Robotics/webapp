@@ -1,16 +1,16 @@
 
 # test code forward reverse.
-import wiringpi
-#import RPi.GPIO as GPIO
+#import wiringpi
+import RPi.GPIO as GPIO
 import time
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 pin1 = 17
-pin2 = 27
+pin2 = 18
 pin3 = 22
-pin4 = 23
+pin4 = 13
 
 
 #motor nr 1
@@ -36,7 +36,7 @@ pwm2.ChangeDutyCycle(100)
 #pause
 time.sleep(2)
 
-for i in range (0, 50000):
+for i in range (10, 50000):
     pwm1.ChangeDutyCycle(i/500)
     pwm1.ChangeFrequency(i)
     pwm2.ChangeDutyCycle(i/500)
@@ -45,10 +45,10 @@ for i in range (0, 50000):
 pwm1.ChangeDutyCycle(100)
 pwm2.ChangeDutyCycle(100)
 
-for i in range (0, 50000):
+for i in range (10, 50000):
     pwm1.ChangeFrequency(i)
     pwm2.ChangeFrequency(i)
-    sleep(0.01)
+    time.sleep(0.01)
 
 #spin both motors in reverse
 #motor 1
@@ -123,3 +123,4 @@ if __name__ == "__main__":
     d.stop()
 
     del d
+'''
