@@ -26,7 +26,7 @@ socket.on('disconnect', function() {
 socket.on('webcam-response', function(img_data) {
     var dec = new TextDecoder("utf-8");
     var video = document.getElementById("video");
-    console.log(img_data)
+    // console.log(img_data)
     video.src = "data:image/jpeg;base64," + dec.decode(img_data);
 })
 
