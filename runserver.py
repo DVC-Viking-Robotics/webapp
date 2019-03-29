@@ -65,22 +65,26 @@ def handle_webcam_request():
 @socketio.on('gps')
 def handle_gps_request():
     print('gps data sent')
-    emit('gps-response', gps.getCoords())
+    # NW = gps.getCoords()
+    NW = (37.967135, -122.071210)
+    emit('gps-response', {NW[0], NW[1]})
 
 @socketio.on('sensor9oF')
 def handle_9oF_request():
     accel = IMUsensor.acceleration()
     gyro = IMUsensor.gyro()
     mag = IMUsensor.magnetic()
-    # senses[0] = gyro[0] = x
-    # senses[0] = gyro[1] = y
-    # senses[0] = gyro[2] = z
-    # senses[1] = accel[0] = x
-    # senses[1] = accel[1] = y
-    # senses[1] = accel[2] = z
-    # senses[2] = mag[0] = x
-    # senses[2] = mag[1] = y
-    # senses[2] = mag[2] = z
+    '''
+    senses[0] = gyro[0] = x
+    senses[0] = gyro[1] = y
+    senses[0] = gyro[2] = z
+    senses[1] = accel[0] = x
+    senses[1] = accel[1] = y
+    senses[1] = accel[2] = z
+    senses[2] = mag[0] = x
+    senses[2] = mag[1] = y
+    senses[2] = mag[2] = z
+    '''
     senses = {gyro, accel, mag}
     print('9oF sensor data sent')
     emit('sensor9oF-response', senses)
