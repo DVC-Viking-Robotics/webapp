@@ -30,6 +30,16 @@ socket.on('webcam-response', function(img_data) {
     video.src = "data:image/jpeg;base64," + dec.decode(img_data);
 })
 
+// Used to receive gps data from the raspberry pi
+socket.on('gps-response', function(gps_data) {
+    //pass gps_data here
+})
+
+// Used to receive sensor9oF data from the raspberry pi
+socket.on('sensor9oF-response', function(sensor_data) {
+    //pass gps_data here
+})
+
 // Webcam request loop
 var webcampRequestLock = setInterval(function() {
     socket.emit('webcam')

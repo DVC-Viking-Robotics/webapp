@@ -13,7 +13,7 @@ import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPS6MV2 import GPS
-# from inputs.LSM9DS1 import LSM9DS1
+from inputs.LSM9DS1 import LSM9DS1
 # from outputs.DC_2 import drivetrain
 
 on_raspi = False
@@ -31,6 +31,8 @@ else:
 
 
 # d = drivetrain(17, 27, 22, 23)
+gps = GPS()
+IMUsensor = LSM9DS1()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -46,7 +48,6 @@ def handle_connect():
 def handle_disconnect():
     print('websocket Client disconnected')
 
-
 @socketio.on('webcam')
 def handle_webcam_request():
     if on_raspi:
@@ -60,6 +61,29 @@ def handle_webcam_request():
     b64 = base64.b64encode(buffer)
     print(len(b64))
     emit('webcam-response', base64.b64encode(buffer))
+
+@socketio.on('gps')
+def handle_gps_request():
+    print('gps data sent')
+    emit('gps-response', gps.getCoords())
+
+@socketio.on('sensor9oF')
+def handle_9oF_request():
+    accel = IMUsensor.acceleration()
+    gyro = IMUsensor.gyro()
+    mag = IMUsensor.magnetic()
+    # senses[0] = gyro[0] = x
+    # senses[0] = gyro[1] = y
+    # senses[0] = gyro[2] = z
+    # senses[1] = accel[0] = x
+    # senses[1] = accel[1] = y
+    # senses[1] = accel[2] = z
+    # senses[2] = mag[0] = x
+    # senses[2] = mag[1] = y
+    # senses[2] = mag[2] = z
+    senses = {gyro, accel, mag}
+    print('9oF sensor data sent')
+    emit('sensor9oF-response', senses)
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
