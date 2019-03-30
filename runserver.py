@@ -12,6 +12,7 @@ import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
+from outputs.DC_2 import drivetrain
 # from inputs.GPS6MV2 import GPS
 # from inputs.LSM9DS1 import LSM9DS1
 # from outputs.DC_2 import drivetrain
@@ -30,7 +31,7 @@ else:
     camera = cv2.VideoCapture(0)
 
 
-# d = drivetrain(17, 27, 22, 23)
+d = drivetrain(17, 18, 22, 13)
 # gps = GPS()
 # IMUsensor = LSM9DS1()
 
@@ -38,7 +39,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
-
 
 @socketio.on('connect')
 def handle_connect():
