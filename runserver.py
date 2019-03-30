@@ -12,7 +12,7 @@ import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
-# from inputs.GPS6MV2 import GPS
+from inputs.GPS6MV2 import GPS
 # from inputs.LSM9DS1 import LSM9DS1
 # from outputs.DC_2 import drivetrain
 
@@ -31,7 +31,7 @@ else:
 
 
 # d = drivetrain(17, 27, 22, 23)
-# gps = GPS()
+gps = GPS()
 # IMUsensor = LSM9DS1()
 
 app = Flask(__name__)
@@ -65,8 +65,8 @@ def handle_webcam_request():
 @socketio.on('gps')
 def handle_gps_request():
     print('gps data sent')
-    # NW = gps.getCoords()
-    NW = (37.967135, -122.071210)
+    NW = gps.getCoords()
+    # NW = (37.967135, -122.071210)
     emit('gps-response', [NW[0], NW[1]])
 
 @socketio.on('sensor9oF')
