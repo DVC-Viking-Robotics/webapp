@@ -18,7 +18,7 @@ socket.on('error', (error) => {
 
 socket.on('disconnect', function() {
     // stop requesting for the feed
-    clearInterval(webcampRequestLock);
+    clearInterval(webcamRequestLock);
     console.log('connected?', socket.connected);
 });
 
@@ -28,10 +28,10 @@ socket.on('webcam-response', function(img_data) {
     var video = document.getElementById("video");
     // console.log(img_data)
     video.src = "data:image/jpeg;base64," + dec.decode(img_data);
-})
+});
 
 // Webcam request loop
-var webcampRequestLock = setInterval(function() {
+var webcamRequestLock = setInterval(function() {
     socket.emit('webcam')
 }, 250);
 

@@ -12,8 +12,8 @@ import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
-from inputs.GPS6MV2 import GPS
-from inputs.LSM9DS1 import LSM9DS1
+# from inputs.GPS6MV2 import GPS
+# from inputs.LSM9DS1 import LSM9DS1
 # from outputs.DC_2 import drivetrain
 
 on_raspi = False
@@ -31,8 +31,8 @@ else:
 
 
 # d = drivetrain(17, 27, 22, 23)
-gps = GPS()
-IMUsensor = LSM9DS1()
+# gps = GPS()
+# IMUsensor = LSM9DS1()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -67,13 +67,16 @@ def handle_gps_request():
     print('gps data sent')
     # NW = gps.getCoords()
     NW = (37.967135, -122.071210)
-    emit('gps-response', {NW[0], NW[1]})
+    emit('gps-response', [NW[0], NW[1]])
 
 @socketio.on('sensor9oF')
 def handle_9oF_request():
-    accel = IMUsensor.acceleration()
-    gyro = IMUsensor.gyro()
-    mag = IMUsensor.magnetic()
+    # accel = IMUsensor.acceleration()
+    # gyro = IMUsensor.gyro()
+    # mag = IMUsensor.magnetic()
+    gyro = [1,2,3]
+    accel = [4,5,6]
+    mag = [7,8,9]
     '''
     senses[0] = gyro[0] = x
     senses[0] = gyro[1] = y
@@ -85,7 +88,7 @@ def handle_9oF_request():
     senses[2] = mag[1] = y
     senses[2] = mag[2] = z
     '''
-    senses = {gyro, accel, mag}
+    senses = [gyro, accel, mag]
     print('9oF sensor data sent')
     emit('sensor9oF-response', senses)
 
