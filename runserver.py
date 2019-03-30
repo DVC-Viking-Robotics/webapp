@@ -15,8 +15,9 @@ from flask_socketio import SocketIO, emit
 from outputs.DC_2 import drivetrain
 # from inputs.GPS6MV2 import GPS
 # from inputs.LSM9DS1 import LSM9DS1
+# from outputs.DC_2 import drivetrain
 
-on_raspi = not False
+on_raspi = False
 
 if on_raspi:
     import picamera
@@ -93,7 +94,7 @@ def handle_9oF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go(args[0], args[1])
+    # d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')
