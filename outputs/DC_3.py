@@ -1,43 +1,9 @@
 
 '''
-
-# test code forward reverse.
-#import wiringpi
-import RPi.GPIO as GPIO
-import time
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-
-pin1 = 17
-pin2 = 18
-pin3 = 22
-pin4 = 13
-
-
-#motor nr 1
-GPIO.setup(pin1, GPIO.OUT)
-GPIO.setup(pin2, GPIO.OUT)
-#motor nr 2
-GPIO.setup(pin3, GPIO.OUT)
-GPIO.setup(pin4, GPIO.OUT)
-
-#spin the motors forward at full speed
-
-#motor 1
-GPIO.output(pin1,GPIO.HIGH)
-pwm1 = GPIO.PWM(pin2, 15000) #pin 27, at frequency of 50 Hz
-pwm1.start(0)
-pwm1.ChangeDutyCycle(100)
-#motor2
-GPIO.output(pin3,GPIO.HIGH)
-pwm2 = GPIO.PWM(pin4, 15000) #pin 27, at frequency of 50 Hz
-pwm2.start(0)
-pwm2.ChangeDutyCycle(100)
-
+this class definition uses the "DROK DC 2-way H-Bridge Brush Motor Driver" via quad Level shifter IC (74AHT125) to drive a single bidirectional motor
 '''
 
-from outputs.newbiMotor import biMotor
+from outputs.biMotor_bool import biMotor
 class drivetrain:
       
     #using BCM pins 17, 18, 22, 13
@@ -71,27 +37,42 @@ class drivetrain:
     def __del__(self):
         del self.motor1
         del self.motor2
-        GPIO.cleanup()
-
 #end drivetrain class
 
 if __name__ == "__main__":
+    # test code forward reverse.
+    #import wiringpi
+    import RPi.GPIO as GPIO
     import time
-    d = drivetrain(17, 27, 22, 23)
 
-    d.go(100, 0)
-    time.sleep(2)
-    d.go(0, 100)
-    time.sleep(2)
-    d.go(100, 100)
-    time.sleep(2)
-    d.go(-100, 0)
-    time.sleep(2)
-    d.go(0, -100)
-    time.sleep(2)
-    d.go(-100, -100)
-    time.sleep(2)
-    d.stop()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
 
-    del d
+    pin1 = 17
+    pin2 = 18
+    pin3 = 22
+    pin4 = 13
+
+
+    #motor nr 1
+    GPIO.setup(pin1, GPIO.OUT)
+    GPIO.setup(pin2, GPIO.OUT)
+    #motor nr 2
+    GPIO.setup(pin3, GPIO.OUT)
+    GPIO.setup(pin4, GPIO.OUT)
+
+    #spin the motors forward at full speed
+
+    #motor 1
+    GPIO.output(pin1,GPIO.HIGH)
+    pwm1 = GPIO.PWM(pin2, 15000) #pin 27, @ frequency of 15000 Hz
+    pwm1.start(0)
+    pwm1.ChangeDutyCycle(100)
+    #motor2
+    GPIO.output(pin3,GPIO.HIGH)
+    pwm2 = GPIO.PWM(pin4, 15000) #pin 27, @ frequency of 15000 Hz
+    pwm2.start(0)
+    pwm2.ChangeDutyCycle(100)
+
+    
 

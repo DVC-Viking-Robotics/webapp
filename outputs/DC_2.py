@@ -43,7 +43,6 @@ class drivetrain:
     def __del__(self):
         del self.motor1
         del self.motor2
-        GPIO.cleanup()
 #end drivetrain class
 
 if __name__ == "__main__":
