@@ -13,8 +13,8 @@ import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPS6MV2 import GPS
+from outputs.DC_2 import drivetrain
 # from inputs.LSM9DS1 import LSM9DS1
-# from outputs.DC_2 import drivetrain
 
 on_raspi = False
 
@@ -38,7 +38,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
-
 
 @socketio.on('connect')
 def handle_connect():
