@@ -126,8 +126,9 @@ class GPS():
     def getData(self, raw = False):
         found = False
         # discard 1st two lines
-        self.line = self.ser.readline()
-        self.line = self.ser.readline()
+        if not self.dummy:
+            self.line = self.ser.readline()
+            self.line = self.ser.readline()
 
         while(not found and not self.dummy):
             self.line = self.ser.readline()
