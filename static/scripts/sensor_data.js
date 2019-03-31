@@ -9,7 +9,7 @@ var el_speed = document.getElementById('speed');
 // Sensor data request loop
 var dataRequestLock = setInterval(function() {
   socket.emit('gps');
-  socket.emit('sensor9oF');
+  socket.emit('sensorDoF');
 }, 1000);
 
 // Used to receive gps data from the raspberry pi
@@ -23,20 +23,21 @@ socket.on('gps-response', function(gps) {
     }
     markers[0].setPosition({lat: gps[0], lng: gps[1]});
     map.setCenter({lat: gps[0], lng: gps[1]});
-    // console.log('gps = ' + output);
+    console.log('gps = ' + output);
     // el_gps.innerHTML = output;
 });
 
-// Used to receive sensor9oF data from the raspberry pi
-socket.on('sensor9oF-response', function(senses) {
+// Used to receive sensorDoF data from the raspberry pi
+socket.on('sensorDoF-response', function(senses) {
   //pass sensor data here
   for (let i = 0; i < senses.length; i++){
     let output = '';
     for (let j = 0; j < senses[i].length; j++){
       output += senses[i][j];
-      if (j < senses[i].length - 1)
+      if (j < senses[i].length - 1){
         output += ', ';
+      }
     }
-    console.log('senses[' + i + '] = ' + output)
+    console.log('senses[' + i + '] = ' + output);
   }
 });

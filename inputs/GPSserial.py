@@ -10,10 +10,14 @@ class GPS():
         # open a "channel" (technically I think its called a "handle") to Serial port
         # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
         # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
+        self.dummy = False
         if onRaspi:
             self.ser = serial.Serial('/dev/ttyS0')
         else:
-            self.ser = serial.Serial('COM3')
+            try:
+                self.ser = serial.Serial('COM3')
+            except serial.SerialException:
+                self.dummy = True
         self.NS = 0.0
         self.EW = 0.0
         self.UTC = ""
@@ -32,7 +36,7 @@ class GPS():
     
     def getTime(self):
         if (self.UTC == ""):
-            return "no time"
+            return "no UTC"
         else:
             hr = int(self.UTC[0:2])
             min = int(self.UTC[3:4])
@@ -125,7 +129,7 @@ class GPS():
         self.line = self.ser.readline()
         self.line = self.ser.readline()
 
-        while(not found):
+        while(not found and not self.dummy):
             self.line = self.ser.readline()
             if (raw):
                 print(self.line)

@@ -38,6 +38,7 @@ function initMap() {
     
     // Adds a marker at the center of the map.
     addMarker(ground0, false, "Robot");
+    // ask's to Add your locaction to the map 
     getLocation();
 }
 

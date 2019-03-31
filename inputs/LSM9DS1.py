@@ -181,11 +181,11 @@ class LSM9DS1:
         elif val == const_9oF["M_GAIN_16GAUSS"]:
             self._mag_mgauss_lsb = const_9oF["MAG_MGAUSS_16GAUSS"]
 
-    def get_gyro_scale(self):
+    def get_gyro_range(self):
         reg = self.b.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG1_G"])
         return (reg & 0b00011000) & 0xFF
 
-    def set_gyro_scale(self, val):
+    def set_gyro_range(self, val):
         """The gyroscope scale.  Must be a value of:
           - G_SCALE_245DPS
           - G_SCALE_500DPS
@@ -218,7 +218,7 @@ class LSM9DS1:
         raw = axisTuple(self.buf[0:6])
         return raw
 
-    def acceleration(self):
+    def get_accel_data(self):
         """The accelerometer X, Y, Z axis values as a 3-tuple of
         m/s^2 values.
         """
@@ -239,7 +239,7 @@ class LSM9DS1:
         raw = axisTuple(self.buf[0:6])
         return raw
 
-    def magnetic(self):
+    def get_mag_data(self):
         """The magnetometer X, Y, Z axis values as a 3-tuple of
         gauss values.
         """
@@ -249,19 +249,15 @@ class LSM9DS1:
         z = raw[2]* self._mag_mgauss_lsb / 1000.0
         return (x, y, z)
 
-
     def read_gyro_raw(self):
         """Read the raw gyroscope sensor values and return it as a
-        3-tuple of X, Y, Z axis values that are 16-bit unsigned values.  If you
-        want the gyroscope in nice units you probably want to use the
-        gyroscope property!
-        """
+        3-tuple of X, Y, Z axis values that are 16-bit unsigned values"""
         # Read the gyroscope
         self.buf = self.b.read_i2c_block_data(const_9oF["ADDRESS_XLG"], const_9oF["OUT_X_L_G"])
         raw = axisTuple(self.buf[0:6])
         return raw
 
-    def gyro(self):
+    def get_gyro_data(self):
         """The gyroscope X, Y, Z axis values as a 3-tuple of
         degrees/second values.
         """
@@ -279,7 +275,7 @@ class LSM9DS1:
         # Read temp sensor
         return _twos_comp(self.b.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["TEMP_OUT_L"]) | ( (self.b.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["TEMP_OUT_H"]) & 0x0F) << 8 ), 12)
 
-    def temperature(self):
+    def get_temp(self):
         """The temperature of the sensor in degrees Celsius."""
         # This is just a guess since the starting point (21C here) isn't documented :(
         # See discussion from:
@@ -292,9 +288,13 @@ if __name__ == "__main__":
     sense = LSM9DS1()
     while True:
         try:
-            print('gyro (x,y,z) =', repr(sense.gyro()))
-            print('accel (x,y,z) =', repr(sense.acceleration()))
-            print('mag (x,y,z) =', repr(sense.magnetic()))
+            print('temp =', mpu.get_temp())
+            accel_data = sense.get_accel_data()
+            gyro_data = sense.get_gyro_data()
+            mag_data = sense.get_mag_data()
+            print('gyro =', repr(gyro_data))
+            print('accel =', repr(accel_data))
+            print('mag =', repr(mag_data))
             time.sleep(2)
         except KeyboardInterrupt:
             del sense

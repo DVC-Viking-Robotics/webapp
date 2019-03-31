@@ -13,26 +13,28 @@ import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
-# from outputs.DC_2 import drivetrain
-# from inputs.LSM9DS1 import LSM9DS1
+
 
 on_raspi = False
 
 if on_raspi:
+    from outputs.DC_2 import drivetrain
+    # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
+    from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     import picamera
     camera = picamera.PiCamera()
     camera.resolution = (256, 144)
     camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
     #sleep(1)
     #camera.stop_preview()
+    d = drivetrain(17, 27, 22, 23)
+    IMUsensor = mpu6050(0x68)
 else:
     import cv2
     camera = cv2.VideoCapture(0)
 
 
-# d = drivetrain(17, 27, 22, 23)
 gps = GPS(on_raspi)
-# IMUsensor = LSM9DS1()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -64,37 +66,43 @@ def handle_webcam_request():
 @socketio.on('gps')
 def handle_gps_request():
     print('gps data sent')
-    gps.getData()
-    NESW = (gps.NS, gps.EW)
-    # NW = (37.967135, -122.071210)
+    NESW = (0,0)
+    if (on_raspi):
+        gps.getData()
+        NESW = (gps.NS, gps.EW)
+    else:
+        NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
 
-@socketio.on('sensor9oF')
-def handle_9oF_request():
-    # accel = IMUsensor.acceleration()
-    # gyro = IMUsensor.gyro()
-    # mag = IMUsensor.magnetic()
-    gyro = [1,2,3]
-    accel = [4,5,6]
-    mag = [7,8,9]
+@socketio.on('sensorDoF')
+def handle_DoF_request():
+    if (on_raspi):
+        accel = IMUsensor.get_accel_data()
+        gyro = IMUsensor.get_gyro_data()
+        mag = IMUsensor.get_mag_data()
+    else:
+        gyro = [1,2,3]
+        accel = [4,5,6]
+        mag = [7,8,9]
     '''
-    senses[0] = gyro[0] = x
-    senses[0] = gyro[1] = y
-    senses[0] = gyro[2] = z
-    senses[1] = accel[0] = x
-    senses[1] = accel[1] = y
-    senses[1] = accel[2] = z
-    senses[2] = mag[0] = x
-    senses[2] = mag[1] = y
-    senses[2] = mag[2] = z
+    senses[0]gyro[0] = x
+    senses[0]gyro[1] = y
+    senses[0]gyro[2] = z
+    senses[1]accel[0] = x
+    senses[1]accel[1] = y
+    senses[1]accel[2] = z
+    senses[2]mag[0] = x
+    senses[2]mag[1] = y
+    senses[2]mag[2] = z
     '''
     senses = [gyro, accel, mag]
-    print('9oF sensor data sent')
-    emit('sensor9oF-response', senses)
+    print('DoF sensor data sent')
+    emit('sensorDoF-response', senses)
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    # d.go(args[0], args[1])
+    if (on_raspi):
+        d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')
