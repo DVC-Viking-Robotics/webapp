@@ -21,7 +21,7 @@ socket.on('disconnect', function() {
     clearInterval(webcamRequestLock);
     console.log('connected?', socket.connected);
 });
-
+/*
 // Used to receive the live feed from the raspberry pi
 socket.on('webcam-response', function(img_data) {
     var dec = new TextDecoder("utf-8");
@@ -34,7 +34,7 @@ socket.on('webcam-response', function(img_data) {
 var webcamRequestLock = setInterval(function() {
     socket.emit('webcam')
 }, 250);
-
+*/
 // gather data from the controller object
 function getArgs(){
     let result = [];
