@@ -31,6 +31,8 @@ if on_raspi:
         camera = picamera.PiCamera()
         camera.resolution = (256, 144)
         camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
+    except picamera.exc.PiCameraError:
+        camera = None
     except ImportError:
         try:
             import cv2
