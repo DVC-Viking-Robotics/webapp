@@ -14,12 +14,15 @@ from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
 
+biPed = False
 DoF = 6
 on_raspi = True
 
 if on_raspi:
-    from outputs.BiPed import drivetrain # for R2D2 configuration
-    # from outputs.QuadPed import drivetrain # for race car configuration
+    if biPed:
+        from outputs.BiPed import drivetrain # for R2D2 configuration
+    else:
+        from outputs.QuadPed import drivetrain # for race car configuration
     if DoF == 6:
         from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
         IMUsensor = mpu6050(0x68)
