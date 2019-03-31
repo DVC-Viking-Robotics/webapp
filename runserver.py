@@ -24,10 +24,17 @@ if on_raspi:
     # from outputs.QuadPed import drivetrain # for race car configuration
     # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
-    import picamera
-    camera = picamera.PiCamera()
-    camera.resolution = (256, 144)
-    camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
+    try:
+        import picamera
+        camera = picamera.PiCamera()
+        camera.resolution = (256, 144)
+        camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
+    except ImportError:
+        try:
+            import cv2
+            camera = cv2.VideoCapture(0)
+        except ImportError:
+            camera = None
     #sleep(1)
     #camera.stop_preview()
     d = drivetrain(17, 18, 22, 13)
