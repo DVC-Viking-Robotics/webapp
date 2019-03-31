@@ -12,22 +12,33 @@ function printMarkers(){
     }
 }
 
+function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }
+}
+  
+function showPosition(position) {
+    uPos  = {lat:position.coords.latitude , lng:position.coords.longitude};
+    addMarker(uPos, false, "You");
+}
+  
 function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 2,
+        zoom: 8,
         center: ({lat: ground0.lat, lng: ground0.lng}),
         mapTypeId: 'terrain'
     });
-    console.log(ground0);
-
+    // console.log(ground0);
     // This event listener will call addMarker() when the map is clicked.
     map.addListener('click', function(event) {
         addMarker(event.latLng, true, null);
     });
-
+    
     // Adds a marker at the center of the map.
     addMarker(ground0, false, "Robot");
+    getLocation();
 }
 
 // Adds a marker to the map and push to the array.
@@ -68,18 +79,22 @@ function deleteMarkers() {
     markers = [];
 }
 function latPlus(){
-    var temp = {lat: markers[0].getPosition().lat() + 0.01, lng: markers[0].getPosition().lng()};
-    markers[0].setPosition(temp);
+    var tempLen = markers.length - 1;
+    var temp = {lat: markers[tempLen].getPosition().lat() + 0.01, lng: markers[tempLen].getPosition().lng()};
+    markers[tempLen].setPosition(temp);
 }
 function latMinus(){
-    var temp = {lat: markers[0].getPosition().lat() - 0.01, lng: markers[0].getPosition().lng()};
-    markers[0].setPosition(temp);
+    var tempLen = markers.length - 1;
+    var temp = {lat: markers[tempLen].getPosition().lat() - 0.01, lng: markers[tempLen].getPosition().lng()};
+    markers[tempLen].setPosition(temp);
 }
 function lngPlus(){
-    var temp = {lat: markers[0].getPosition().lat(), lng: markers[0].getPosition().lng() + 0.01};
-    markers[0].setPosition(temp);
+    var tempLen = markers.length - 1;
+    var temp = {lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() + 0.01};
+    markers[tempLen].setPosition(temp);
 }
 function lngMinus(){
-    var temp = {lat: markers[0].getPosition().lat(), lng: markers[0].getPosition().lng() - 0.01};
-    markers[0].setPosition(temp);
+    var tempLen = markers.length - 1;
+    var temp = {lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() - 0.01};
+    markers[tempLen].setPosition(temp);
 }
