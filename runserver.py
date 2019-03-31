@@ -26,26 +26,26 @@ if on_raspi:
     else:
         from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
         IMUsensor = LSM9DS1()
-    # try:
-    #     import picamera
-    #     camera = picamera.PiCamera()
-    #     camera.resolution = (256, 144)
-    #     camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
-    # except ImportError:
-    #     try:
-    #         import cv2
-    #         camera = cv2.VideoCapture(0)
-    #     except ImportError:
-    #         camera = None
+    try:
+        import picamera
+        camera = picamera.PiCamera()
+        camera.resolution = (256, 144)
+        camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
+    except ImportError:
+        try:
+            import cv2
+            camera = cv2.VideoCapture(0)
+        except ImportError:
+            camera = None
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(17, 18, 22, 13, True) # True = PMW + direction pins; False = 2 PWM pins
-# else:
-#     try:
-#         import cv2
-#         camera = cv2.VideoCapture(0)
-#     except ImportError:
-#         camera = None
+    d = drivetrain(17, 18, 22, 13, True) # True = PMW + direction pins; False (default) = 2 PWM pins
+else:
+    try:
+        import cv2
+        camera = cv2.VideoCapture(0)
+    except ImportError:
+        camera = None
 
 gps = GPS(on_raspi)
 
@@ -62,19 +62,25 @@ def handle_connect():
 def handle_disconnect():
     print('websocket Client disconnected')
 
-# @socketio.on('webcam')
-# def handle_webcam_request():
-#     if on_raspi:
-#         sio = io.BytesIO()
-#         camera.capture(sio, "jpeg", use_video_port=True)
-#         buffer = sio.getvalue()
-#     else:
-#         _, frame = camera.read()
-#         _, buffer = cv2.imencode('.jpg', frame)
+@socketio.on('webcam')
+def handle_webcam_request():
+    if on_raspi and camera != None:
+        sio = io.BytesIO()
+        camera.capture(sio, "jpeg", use_video_port=True)
+        buffer = sio.getvalue()
+        _, frame = camera.read()
+        _, buffer = cv2.imencode('.jpg', frame)
+        b64 = base64.b64encode(buffer)
+    else:
+        if camera == None
+            b64 = 0
+        else:
+            _, frame = camera.read()
+            _, buffer = cv2.imencode('.jpg', frame)
+            b64 = base64.b64encode(buffer)
 
-#     b64 = base64.b64encode(buffer)
-#     print(len(b64))
-#     emit('webcam-response', base64.b64encode(buffer))
+    print(len(b64))
+    emit('webcam-response', b64)
 
 @socketio.on('gps')
 def handle_gps_request():
