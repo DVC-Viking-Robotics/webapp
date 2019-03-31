@@ -22,11 +22,11 @@ class biMotor:
         self.init_speed = 0
         self.dest_speed = 0
         # save pin numbers as GPIO.PWM objects
-        self.dirPin = True
+        self.dirPin = dirPin
         self.pwmPin = GPIO.PWM(pwmPin, 15000)
         # start PWM signal
         self.pwmPin.start(0)
-        #self.dirPin.start(0)  not needed
+        self.dir = True
 
     #let x be the percentual target speed (in range of -100 to 100)
     def setSpeed(self, x):
@@ -35,22 +35,24 @@ class biMotor:
         # going forward
         if x > 0: 
             self.pwmPin.ChangeDutyCycle(x)
-            self.dirPin = True
+            self.dir = True
         # going backward
         elif x < 0: 
             self.pwmPin.ChangeDutyCycle(x *-1)
-            self.dirPin = False
+            self.dir = False
         # otherwise stop
         else: 
             self.pwmPin.ChangeDutyCycle(0)
-            self.dirPin = True
+            self.dir = True
+        GPIO.output(self.dirPin, self.dir)
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
         self.pwmPin.stop()
-        self.dirPin = False
+        GPIO.output(self.dirPin, False)
         del self.pwmPin
         del self.dirPin
+        GPIO.cleanup()
 
 #end motor object
 
