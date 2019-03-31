@@ -15,7 +15,7 @@ from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
 
 
-on_raspi = False
+on_raspi = True
 
 if on_raspi:
     from outputs.biMotor_bool import biMotor # using High Amperage driver
