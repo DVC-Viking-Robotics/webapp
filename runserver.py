@@ -24,9 +24,7 @@ if on_raspi:
     # from outputs.QuadPed import drivetrain # for race car configuration
     # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
-    import cv2
     import picamera
-    camera = cv2.VideoCapture(0)
     camera = picamera.PiCamera()
     camera.resolution = (256, 144)
     camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
