@@ -8,12 +8,12 @@ class GPS():
     '''
     def __init__(self, onRaspi = True):
         # open a "channel" (technically I think its called a "handle") to Serial port
-        # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
-        # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
         self.dummy = False
         if onRaspi:
+            # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
             self.ser = serial.Serial('/dev/ttyS0')
         else:
+            # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
             try:
                 self.ser = serial.Serial('COM3')
             except serial.SerialException:
