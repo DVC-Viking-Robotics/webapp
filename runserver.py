@@ -18,7 +18,6 @@ from inputs.GPSserial import GPS
 on_raspi = True
 
 if on_raspi:
-driver
     from outputs.BiPed import drivetrain # for R2D2 configuration
     # from outputs.QuadPed import drivetrain # for race car configuration
     # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
