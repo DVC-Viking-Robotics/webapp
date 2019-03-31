@@ -143,7 +143,7 @@ class GPS():
         del self.ser, self.north, self.west, self.line 
 '''
 if __name__ == "__main__":
-    gps = GPS(False)
+    gps = GPS()
     while (True):
         try:
             gps.getData()
