@@ -30,7 +30,7 @@ if on_raspi:
     camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(17, 27, 22, 23)
+    d = drivetrain(17, 18, 22, 13)
     IMUsensor = mpu6050(0x68)
 else:
     import cv2
