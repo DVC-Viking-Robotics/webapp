@@ -18,7 +18,9 @@ from inputs.GPSserial import GPS
 on_raspi = False
 
 if on_raspi:
-    from outputs.DC_2 import drivetrain
+    from outputs.biMotor_bool import biMotor # using High Amperage driver
+    # from outputs.biMotor import biMotor # using a L298 or similar driver
+    from outputs.BiPed import drivetrain 
     # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     import picamera
