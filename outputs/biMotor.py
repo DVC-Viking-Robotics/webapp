@@ -25,7 +25,7 @@ class biMotor:
 
     #pass the GPIO pin numbers connecting to L293D input pins
     #example varName = bimotor(pin1, pin2) in main script
-    def __init__(self, pinF, pinB):
+    def __init__(self, pinB, pinF):
         GPIO.setup(pinF, GPIO.OUT)
         GPIO.setup(pinB, GPIO.OUT)
         # variables used to track acceleration
