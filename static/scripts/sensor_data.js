@@ -20,8 +20,9 @@ socket.on('gps-response', function(gps) {
       if (i < gps.length - 1)
         output += ', ';
     }
+    markers[0].setPosition({lat: gps[0], lng: gps[1]});
     console.log('gps = ' + output);
-    el_gps.innerHTML = output;
+    // el_gps.innerHTML = output;
 });
 
 // Used to receive sensor9oF data from the raspberry pi

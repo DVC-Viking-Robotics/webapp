@@ -3,6 +3,7 @@
 // The markers are stored in an array.
 // The user can then click an option to hide, show or delete the markers.
 var map;
+var ground0 = {lat: 37.96713657090229, lng: -122.0712176165581};
 var markers = [];
 
 function printMarkers(){
@@ -12,10 +13,9 @@ function printMarkers(){
 }
 
 function initMap() {
-    var ground0 = {lat: 37.96713657090229, lng: -122.0712176165581};
 
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 10,
+        zoom: 2,
         center: ({lat: ground0.lat, lng: ground0.lng}),
         mapTypeId: 'terrain'
     });

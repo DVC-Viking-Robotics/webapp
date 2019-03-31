@@ -42,15 +42,25 @@ class GPS():
     def parseline(self, str):
         found = False
         if str.find('GLL') != -1:
-            N_start = str.find(',') + 1
-            N_end = str.find(',', N_start)
-            W_start = str.find('N,') + 3
-            W_end = str.find(',', W_start)
-            UTC_start = str.find(',', W_end + 1) + 1
+            NS_start = str.find(',') + 1
+            NS_end = str.find(',', NS_start)
+            NS_dir = str[NS_end + 1]
+            if (str[NS_end + 1] != 'N'):
+                NS_dir = -1.0
+            else:
+                NS_dir = 1.0
+            EW_start = str.find(',', NS_end + 1) + 1
+            EW_end = str.find(',', EW_start)
+            EW_dir = str[EW_end + 1]
+            if (str[EW_end + 1] != 'E'):
+                EW_dir = -1.0
+            else:
+                EW_dir = 1.0
+            UTC_start = str.find(',', EW_end + 1) + 1
             UTC_end = str.find(',', UTC_start) - 1
             self.UTC = str[UTC_start:UTC_end]
-            self.NS = float(str[N_start:N_end])
-            self.EW = float(str[W_start:W_end])
+            self.NS = float(str[NS_start:NS_end]) * NS_dir / 100.0
+            self.EW = float(str[EW_start:EW_end]) * EW_dir / 100.0
         elif (str.find('VTG') != -1):
             found = True
             C_T_start = str.find(',') + 1

@@ -13,7 +13,7 @@ import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
-from outputs.DC_2 import drivetrain
+# from outputs.DC_2 import drivetrain
 # from inputs.LSM9DS1 import LSM9DS1
 
 on_raspi = False
