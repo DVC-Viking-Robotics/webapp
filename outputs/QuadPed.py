@@ -13,7 +13,7 @@
 from outputs.biMotor import biMotor
 
 class drivetrain:
-    #using BCM pins 17, 27, 22, 23
+    #using BCM pins 17, 18, 22, 13
     def __init__(self, m1pos, m1neg,  m2pos, m2neg):
         self.motor1 = biMotor(m1pos, m1neg)
         self.motor2 = biMotor(m2pos, m2neg)
@@ -66,4 +66,4 @@ if __name__ == "__main__":
     time.sleep(2)
     d.stop()
 
-del d
+    del d
