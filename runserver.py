@@ -90,9 +90,10 @@ def handle_gps_request():
 @socketio.on('sensorDoF')
 def handle_DoF_request():
     if (on_raspi):
-        if doF >= 6:
+        if DoF >= 6:
             accel = IMUsensor.get_accel_data()
             gyro = IMUsensor.get_gyro_data()
+            mag = [7,8,9]
         if DoF == 6:
             mag = IMUsensor.get_mag_data()
     else:
