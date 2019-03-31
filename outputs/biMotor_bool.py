@@ -46,18 +46,6 @@ class biMotor:
             self.dir = True
         GPIO.output(self.dirPin, self.dir)
 
-    #destructor to disable GPIO.PWM operation
-    def __del__(self):
-        self.pwmPin.stop()
-        GPIO.output(self.dirPin, False)
-        del self.pwmPin
-        del self.dirPin
-        GPIO.cleanup()
-
-#end motor object
-
-
-
     #let finSpeed = target speed (-100 to 100)
     #let t = time to change(ramp) speed from initSpeed(current speed) to finSpeed
     def cellerate(self, finSpeed, t):
@@ -74,4 +62,13 @@ class biMotor:
         add code to ramp speed here
         requires multi-threading
         """
- 
+
+    #destructor to disable GPIO.PWM operation
+    def __del__(self):
+        self.pwmPin.stop()
+        GPIO.output(self.dirPin, False)
+        del self.pwmPin
+        del self.dirPin
+        GPIO.cleanup()
+
+#end motor object 
