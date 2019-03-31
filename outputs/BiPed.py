@@ -1,8 +1,10 @@
-# from outputs.biMotor import biMotor   
-class drivetrain:
-      
+class drivetrain():
     #using BCM pins 17, 18, 22, 13
-    def __init__(self, m1F, m1B,  m2F, m2B):
+    def __init__(self, m1F, m1B,  m2F, m2B, bool = False):
+        if bool:  
+            from outputs.biMotor_bool import biMotor # using High Amperage driver
+        else: 
+            from outputs.biMotor import biMotor # using a L298 or similar driver
         self.motor1 = biMotor(m1F, m1B)
         self.motor2 = biMotor(m2F, m2B)
         self.right = 0

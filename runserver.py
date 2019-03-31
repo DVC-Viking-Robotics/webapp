@@ -18,8 +18,7 @@ from inputs.GPSserial import GPS
 on_raspi = True
 
 if on_raspi:
-    from outputs.biMotor_bool import biMotor # using High Amperage driver
-    # from outputs.biMotor import biMotor # using a L298 or similar driver
+driver
     from outputs.BiPed import drivetrain # for R2D2 configuration
     # from outputs.QuadPed import drivetrain # for race car configuration
     # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
@@ -37,7 +36,7 @@ if on_raspi:
     #         camera = None
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(17, 18, 22, 13)
+    d = drivetrain(17, 18, 22, 13, True) # True = PMW + direction pins; False = 2 PWM pins
     IMUsensor = mpu6050(0x68)
 # else:
 #     try:
