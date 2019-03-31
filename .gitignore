@@ -3,3 +3,5 @@ venv/
 .vscode/settings.json
 outputs/__pycache__/*.pyc
 inputs/__pycache__/*.pyc
+.vscode/arduino.json
+.vscode/c_cpp_properties.json
