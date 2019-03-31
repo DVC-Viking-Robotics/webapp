@@ -14,14 +14,18 @@ from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
 
-
+D0F = 6
 on_raspi = True
 
 if on_raspi:
     from outputs.BiPed import drivetrain # for R2D2 configuration
     # from outputs.QuadPed import drivetrain # for race car configuration
-    # from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
-    from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
+    if DoF == 6:
+        from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
+        IMUsensor = mpu6050(0x68)
+    else:
+        from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
+        IMUsensor = LSM9DS1()
     # try:
     #     import picamera
     #     camera = picamera.PiCamera()
@@ -36,7 +40,6 @@ if on_raspi:
     #sleep(1)
     #camera.stop_preview()
     d = drivetrain(17, 18, 22, 13, True) # True = PMW + direction pins; False = 2 PWM pins
-    IMUsensor = mpu6050(0x68)
 # else:
 #     try:
 #         import cv2
@@ -87,9 +90,11 @@ def handle_gps_request():
 @socketio.on('sensorDoF')
 def handle_DoF_request():
     if (on_raspi):
-        accel = IMUsensor.get_accel_data()
-        gyro = IMUsensor.get_gyro_data()
-        mag = IMUsensor.get_mag_data()
+        if doF => 6:
+            accel = IMUsensor.get_accel_data()
+            gyro = IMUsensor.get_gyro_data()
+        if DoF == 6:
+            mag = IMUsensor.get_mag_data()
     else:
         gyro = [1,2,3]
         accel = [4,5,6]
