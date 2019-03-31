@@ -14,7 +14,7 @@ from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
 
-biPed = False
+biPed = True
 DoF = 6
 on_raspi = True
 
