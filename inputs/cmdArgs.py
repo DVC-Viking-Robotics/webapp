@@ -39,7 +39,13 @@ class args:
         if (len(temp) > 1):
             # print(repr(temp))
             for i in range(len(temp)):
-                self.DoF.append(int(temp[i], 16))
+                num = int(temp[i], 16)
+                if not i:
+                    num = int(temp[i])
+                elif num < 0x03 or num > 0x77:
+                    print(num, 'is not a valid i2c address')
+                    break
+                self.DoF.append(num)
         else:
             self.DoF = [int(self.dof[0])]
 
