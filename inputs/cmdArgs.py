@@ -21,7 +21,7 @@ class args:
             self.on_raspi = False
             # print(os.environ)
         elif os.name == 'posix':
-            print(os.unname())
+            print(os.system('grep Hardware /proc/cpuinfo'))
 
         if (len(self.dof) > 1):
             temp = self.dof.rsplit(',')
