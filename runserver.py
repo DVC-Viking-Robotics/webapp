@@ -26,17 +26,17 @@ if on_raspi:
         from outputs.BiPed import drivetrain # for R2D2 configuration
     else:
         from outputs.QuadPed import drivetrain # for race car configuration
-    if DoF[0] == 6:
-        from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
-        if len(DoF) > 1:
+    if len(DoF) > 1:
+        if DoF[0] == 6:
+            from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
             IMUsensor = mpu6050(DoF[1])
-        else:
-            IMUsensor = mpu6050()
-    else:
-        from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
-        if len(DoF) > 1:
+        elif DoF[0] == 9:
+            from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
             IMUsensor = LSM9DS1(DoF[1])
-        else:
+    else:
+        if DoF == 6:
+            IMUsensor = mpu6050()
+        elif DoF == 9:
             IMUsensor = LSM9DS1()
     try:
         import picamera
