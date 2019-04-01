@@ -1,7 +1,7 @@
 class drivetrain():
     #using BCM pins 18, 17, 13, 22
-    def __init__(self, m1F, m1B,  m2F, m2B, bool = False):
-        if bool:  
+    def __init__(self, m1F, m1B,  m2F, m2B, phased = False):
+        if phased:  
             from gpiozero import PhaseEnableMotor as biMotor
             # from outputs.biMotor_bool import biMotor # using High Amperage driver
             self.motor1 = biMotor(m1F, m1B)

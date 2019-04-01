@@ -1,0 +1,40 @@
+import os
+import argparse
+parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R')
+parser.add_argument('--d', choices=['1', '0'], default=1, help='select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup)')
+parser.add_argument('--m', choices=['1', '0'], default=1, help='select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
+parser.add_argument('--dof', default=[9], help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. any additionally comma separated numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
+
+biPed = True
+phasedM = True
+DoF = [6] # degree of freedom and i2cdetect address(s) as a tuple
+# use [9,0x6a,0x1c] for LSM9DS1
+# use [6,0x68] foy GY-521
+on_raspi = True
+
+class args:
+    def __init__(self):
+        parser.parse_args(namespace=self)
+        self.biPed = bool(int(self.d))
+        self.phasedM = bool(int(self.m))
+        if os.name == 'nt':
+            self.on_raspi = False
+            # print(os.environ)
+        elif os.name == 'posix':
+            print(os.unname())
+
+        if (len(self.dof) > 1):
+            temp = self.dof.rsplit(',')
+            # print(repr(temp))
+            for i in range(1,len(temp)):
+                self.DoF.append(int(temp[i]))
+        else:
+            self.DoF = [int(self.dof[0])]
+
+
+std = args()
+# print(std.dof, std.d, std.m)
+
+if __name__ == "__main__":
+    # parser.print_help()
+    print('on_raspi:', on_raspi,'DoF:', repr(DoF), 'biPed:', biPed, 'motor direction pin:', phasedM)

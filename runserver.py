@@ -13,31 +13,25 @@ import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
-
-
-biPed = True
-DoF = [6] # degree of freedom and i2cdetect address(s) as a tuple
-# use [9, (0x6a, 0x1c)] for LSM9DS1
-# use [6, (0x68)] foy GY-521
-on_raspi = True
-
-if on_raspi:
-    if biPed:
+from inputs.cmdArgs import args
+cmd = args()
+if cmd.on_raspi:
+    if cmd.biPed:
         from outputs.BiPed import drivetrain # for R2D2 configuration
     else:
         from outputs.QuadPed import drivetrain # for race car configuration
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
-    if len(DoF) > 1:
-        if DoF[0] == 6:
-            IMUsensor = mpu6050(DoF[1])
-        elif DoF[0] == 9:
-            IMUsensor = LSM9DS1(DoF[1])
+    if len(cmd.DoF) > 1:
+        if cmd.DoF[0] == 6:
+            IMUsensor = mpu6050(cmd.DoF[1])
+        elif cmd.DoF[0] == 9:
+            IMUsensor = LSM9DS1(cmd.DoF[1])
     else:
-        if DoF[0] == 6:
+        if cmd.DoF[0] == 6:
             IMUsensor = mpu6050()
-        elif DoF[0] == 9:
+        elif cmd.DoF[0] == 9:
             IMUsensor = LSM9DS1()
     try:
         import picamera
@@ -59,7 +53,7 @@ if on_raspi:
 
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(18, 17, 13, 22, True) # True = PMW + direction pins; False (default) = 2 PWM pins
+    d = drivetrain(18, 17, 13, 22, cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
 else: # running on a PC
     try:
         import cv2
@@ -68,7 +62,7 @@ else: # running on a PC
         print('opencv-python is not installed')
         camera = None
 
-gps = GPS(on_raspi)
+gps = GPS(cmd.on_raspi)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -85,7 +79,7 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
-    if on_raspi and camera != None:
+    if cmd.on_raspi and camera != None:
         sio = io.BytesIO()
         camera.capture(sio, "jpeg", use_video_port=True)
         buffer = sio.getvalue()
@@ -107,7 +101,7 @@ def handle_webcam_request():
 def handle_gps_request():
     print('gps data sent')
     NESW = (0,0)
-    if (on_raspi):
+    if (cmd.on_raspi):
         gps.getData()
         NESW = (gps.NS, gps.EW)
     else:
@@ -116,12 +110,12 @@ def handle_gps_request():
 
 @socketio.on('sensorDoF')
 def handle_DoF_request():
-    if (on_raspi):
-        if DoF[0] == 6:
+    if (cmd.on_raspi):
+        if cmd.DoF[0] == 6:
             accel = IMUsensor.get_accel_data()
             gyro = IMUsensor.get_gyro_data()
             mag = [0.0,0.0,0.0]
-        if DoF[0] == 9:
+        if cmd.DoF[0] == 9:
             mag = IMUsensor.get_mag_data()
     else:
         gyro = [1,2,3]
@@ -144,7 +138,7 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    if (on_raspi):
+    if (cmd.on_raspi):
         d.go(args[0], args[1])
     print('remote =', repr(args))
 

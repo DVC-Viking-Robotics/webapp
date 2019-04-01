@@ -11,13 +11,20 @@
 #class constructor: x = drive(in1, in2, in3, in4) -> BOARD PINS 
 
 # from outputs.biMotor import biMotor
-from gpiozero import Motor as biMotor
 
 class drivetrain:
     #using BCM pins 18, 17, 13, 22
-    def __init__(self, m1pos, m1neg,  m2pos, m2neg):
-        self.motor1 = biMotor(m1pos, m1neg)
-        self.motor2 = biMotor(m2pos, m2neg)
+    def __init__(self, m1F, m1B,  m2F, m2B, phased = False):
+        if phased:  
+            from gpiozero import PhaseEnableMotor as biMotor
+            # from outputs.biMotor_bool import biMotor # using High Amperage driver
+            self.motor1 = biMotor(m1F, m1B)
+            self.motor2 = biMotor(m2F, m2B)
+        else: 
+            from gpiozero import Motor as biMotor
+            # from outputs.biMotor import biMotor # using a L298 or similar driver
+            self.motor1 = biMotor(m1B, m1F)
+            self.motor2 = biMotor(m2B, m2F)
         self.fr = 0 # forward/reverse direction
         self.lr = 0 # left/right direction
     
