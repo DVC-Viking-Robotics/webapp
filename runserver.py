@@ -140,7 +140,7 @@ def handle_DoF_request():
 def handle_remoteOut(args):
     if (cmd.on_raspi):
         if cmd.biPed == 0:
-            d.go(args[0], args[2])
+            d.go(args[2], args[1])
         else:
             d.go(args[0], args[1])
     print('remote =', repr(args))
