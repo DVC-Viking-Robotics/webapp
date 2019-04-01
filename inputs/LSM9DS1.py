@@ -93,7 +93,7 @@ def axisTuple(buff):
 class LSM9DS1:
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
-    def __init__(self, bus = 1):
+    def __init__(self, address = (0x6a, 0x1C), bus = 1):
         # Class-level buffer for reading and writing data with the sensor.
         # This reduces memory allocations but means the code is not re-entrant or
         # thread safe!
@@ -101,8 +101,12 @@ class LSM9DS1:
         # instantiate I2C bus 1 for the raspberry pi
         self.bus = smbus.SMBus(bus)
         
-        # Check ID registers.
-        if self.bus.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["WHO_AM_I_XG"]) != const_9oF["XG_ID"] or self.bus.read_byte_data(const_9oF["ADDRESS_MAG"], const_9oF["WHO_AM_I_M"]) != const_9oF["MAG_ID"]:
+        try:
+            # Check ID registers.
+            if self.bus.read_byte_data(address[0], const_9oF["WHO_AM_I_XG"]) == const_9oF["XG_ID"] and self.bus.read_byte_data(address[1], const_9oF["WHO_AM_I_M"]) == const_9oF["MAG_ID"]:
+                const_9oF["ADDRESS_XLG"] = address[0]
+                const_9oF["ADDRESS_MAG"] = address[1]
+        except IOError:
             raise RuntimeError('Could not find LSM9DS1, check wiring!')
 
         # soft reset & reboot accel/gyro

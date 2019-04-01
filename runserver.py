@@ -14,8 +14,11 @@ from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
 
+
 biPed = True
-DoF = 6
+DoF = (6) # degree of freedom and i2cdetect address(s) as a tuple
+# use (9, (0x6a, 0x1c)) for LSM9DS1
+# use (6, (0x68)) foy GY-521
 on_raspi = True
 
 if on_raspi:
@@ -23,12 +26,18 @@ if on_raspi:
         from outputs.BiPed import drivetrain # for R2D2 configuration
     else:
         from outputs.QuadPed import drivetrain # for race car configuration
-    if DoF == 6:
+    if DoF[0] == 6:
         from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
-        IMUsensor = mpu6050(0x68)
+        if len(DoF) > 1:
+            IMUsensor = mpu6050(DoF[1])
+        else:
+            IMUsensor = mpu6050()
     else:
         from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
-        IMUsensor = LSM9DS1()
+        if len(DoF) > 1:
+            IMUsensor = LSM9DS1(DoF[1])
+        else:
+            IMUsensor = LSM9DS1()
     try:
         import picamera
         camera = picamera.PiCamera()
@@ -36,12 +45,17 @@ if on_raspi:
         camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
     except picamera.exc.PiCameraError:
         camera = None
+        print('picamera is not connected')
     except ImportError:
         try:
             import cv2
             camera = cv2.VideoCapture(0)
         except ImportError:
             camera = None
+            print('opencv-python is not installed')
+        finally:
+            print('picamera is not installed')
+
     #sleep(1)
     #camera.stop_preview()
     d = drivetrain(17, 18, 22, 13, True) # True = PMW + direction pins; False (default) = 2 PWM pins
@@ -50,6 +64,7 @@ else:
         import cv2
         camera = cv2.VideoCapture(0)
     except ImportError:
+        print('opencv-python is not installed')
         camera = None
 
 gps = GPS(on_raspi)
@@ -101,11 +116,11 @@ def handle_gps_request():
 @socketio.on('sensorDoF')
 def handle_DoF_request():
     if (on_raspi):
-        if DoF == 6:
+        if DoF[0] == 6:
             accel = IMUsensor.get_accel_data()
             gyro = IMUsensor.get_gyro_data()
-            mag = [7,8,9]
-        if DoF == 9:
+            mag = [0.0,0.0,0.0]
+        if DoF[0] == 9:
             mag = IMUsensor.get_mag_data()
     else:
         gyro = [1,2,3]

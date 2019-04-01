@@ -18,6 +18,7 @@ class GPS():
                 self.ser = serial.Serial('COM3')
             except serial.SerialException:
                 self.dummy = True
+                print('Serial GPS not connected')
         self.NS = 0.0
         self.EW = 0.0
         self.UTC = ""
