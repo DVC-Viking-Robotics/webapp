@@ -4,13 +4,11 @@ class drivetrain():
         if bool:  
             from gpiozero import PhaseEnableMotor as biMotor
             # from outputs.biMotor_bool import biMotor # using High Amperage driver
-            self.motor1 = biMotor(m1F, m1B)
-            self.motor2 = biMotor(m2F, m2B)
         else: 
             from gpiozero import Motor as biMotor
             # from outputs.biMotor import biMotor # using a L298 or similar driver
-            self.motor1 = biMotor(m1B, m1F)
-            self.motor2 = biMotor(m2B, m2F)
+        self.motor1 = biMotor(m1F, m1B)
+        self.motor2 = biMotor(m2F, m2B)
         self.right = 0
         self.left = 0
     
@@ -43,16 +41,16 @@ class drivetrain():
         # self.motor1.setSpeed(int(round(self.right)))
         # self.motor2.setSpeed(int(round(self.left)))
         if self.right > 0:
-            self.motor1.forward(self.right/ 100.0)
+            self.motor1.backward(self.right/ 100.0)
         elif self.right < 0:
-            self.motor1.backward(self.right * -0.01)
+            self.motor1.forward(self.right * -0.01)
         else:
             self.motor1.stop()
         
         if self.left > 0:
-            self.motor2.forward(self.left / 100.0)
+            self.motor2.backward(self.left / 100.0)
         elif self.left < 0:
-            self.motor2.backward(self.left * -0.01)
+            self.motor2.forward(self.left * -0.01)
         else:
             self.motor2.stop()
         
