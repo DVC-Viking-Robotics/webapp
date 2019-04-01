@@ -1,19 +1,29 @@
 import os
 import argparse
+#add description to program's help screen
 parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R')
-parser.add_argument('--d', choices=['1', '0'], default=1, help='select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup)')
-parser.add_argument('--m', choices=['1', '0'], default=1, help='select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
-parser.add_argument('--dof', default='9', help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. any additionally comma separated numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
 
+# default variables used to do stuff
 biPed = True
 phasedM = True
-DoF = [6] # degree of freedom and i2cdetect address(s) as a tuple
-# use [9,0x6a,0x1c] for LSM9DS1
-# use [6,0x68] foy GY-521
+DoF = '6' # degree of freedom and i2cdetect address(s)
+# use '9,0x6a,0x1c' for LSM9DS1
+# use '6,0x68' foy GY-521
 on_raspi = True
-# Hardware        : BCM2835
-# 0
 
+# add option '--d' for drivetrain
+parser.add_argument('--d', choices=['1', '0'], default=int(biPed), help='select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup)')
+
+# add option '--m' for motor driver
+parser.add_argument('--m', choices=['1', '0'], default=int(phasedM), help='select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
+
+# add option '--dof' for Degrees of Freedom and I2C addresses
+parser.add_argument('--dof', default=DoF, help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. any additionally comma separated numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
+
+# thinking of making a '--dev' option to escape the exception hunting
+# also options specific to picam and/or opencv2
+
+#use a class to store cmd args 'arg.<option name> = string <value>'
 class args:
     def __init__(self):
         parser.parse_args(namespace=self)
@@ -27,7 +37,6 @@ class args:
             # temp = os.system('grep Hardware /proc/cpuinfo')
             import subprocess
             res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
-            # print('type=', type(res))
             res = res.decode('utf-8')
             for line in res.splitlines():
                 if (line.find('BCM') > 1):
@@ -50,5 +59,9 @@ class args:
             self.DoF = [int(self.dof[0])]
 
 if __name__ == "__main__":
+    # instatiate this object to invoke the __init__() that translates the strings to usable data
     std = args()
-    print('on_raspi:', std.on_raspi,'DoF:', repr(std.DoF), 'biPed:', std.biPed, 'motor direction pin:', std.phasedM)
+    print('on_raspi:', std.on_raspi)
+    print('DoF:', repr(std.DoF))
+    print('biPed:', std.biPed)
+    print('motor direction pin:', std.phasedM)
