@@ -10,10 +10,11 @@
 
 #class constructor: x = drive(in1, in2, in3, in4) -> BOARD PINS 
 
-from outputs.biMotor import biMotor
+# from outputs.biMotor import biMotor
+from gpiozero import Motor as biMotor
 
 class drivetrain:
-    #using BCM pins 17, 18, 22, 13
+    #using BCM pins 18, 17, 13, 22
     def __init__(self, m1pos, m1neg,  m2pos, m2neg):
         self.motor1 = biMotor(m1pos, m1neg)
         self.motor2 = biMotor(m2pos, m2neg)
@@ -34,8 +35,21 @@ class drivetrain:
         # set the axis directly to their corresponding motors
         self.fr = y
         self.lr = x
-        self.motor1.setSpeed(self.fr)
-        self.motor2.setSpeed(self.lr)
+        # self.motor1.setSpeed(self.fr)
+        # self.motor2.setSpeed(self.lr)
+        if self.fr > 0:
+            self.motor1.forward(self.fr / 100.0)
+        elif self.fr < 0:
+            self.motor1.backward(self.fr * -0.01)
+        else:
+            self.motor1.stop()
+
+        if self.lr > 0:
+            self.motor2.forward(self.lr / 100.0)
+        elif self.lr < 0:
+            self.motor2.backward(self.lr * -0.01)
+        else:
+            self.motor2.stop()
     
     # for debugging purposes
     def print(self):
