@@ -32,9 +32,6 @@ class args:
             self.DoF = [int(self.dof[0])]
 
 
-std = args()
-# print(std.dof, std.d, std.m)
-
 if __name__ == "__main__":
-    # parser.print_help()
-    print('on_raspi:', on_raspi,'DoF:', repr(DoF), 'biPed:', biPed, 'motor direction pin:', phasedM)
+    std = args()
+    print('on_raspi:', std.on_raspi,'DoF:', repr(std.DoF), 'biPed:', std.biPed, 'motor direction pin:', std.phasedM)
