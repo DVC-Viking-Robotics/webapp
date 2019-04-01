@@ -24,6 +24,7 @@ class args:
             # print(os.environ)
         elif os.name == 'posix':
             temp = os.system('grep Hardware /proc/cpuinfo')
+            print(temp)
             if (temp.find('BCM') > 1):
                 self.on_raspi = True
             else:
