@@ -88,7 +88,7 @@ def handle_webcam_request():
         b64 = base64.b64encode(buffer)
     else:
         if camera == None:
-            b64 = 0
+            b64 = '0'
         else:
             _, frame = camera.read()
             _, buffer = cv2.imencode('.jpg', frame)
