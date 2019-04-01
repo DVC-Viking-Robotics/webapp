@@ -39,7 +39,7 @@ class args:
         if (len(temp) > 1):
             # print(repr(temp))
             for i in range(len(temp)):
-                self.DoF.append(int(temp[i]))
+                self.DoF.append(int(temp[i], 16))
         else:
             self.DoF = [int(self.dof[0])]
 
