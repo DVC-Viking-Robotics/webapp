@@ -16,7 +16,7 @@ from inputs.GPSserial import GPS
 
 
 biPed = True
-DoF = [9] # degree of freedom and i2cdetect address(s) as a tuple
+DoF = [6] # degree of freedom and i2cdetect address(s) as a tuple
 # use [9, (0x6a, 0x1c)] for LSM9DS1
 # use [6, (0x68)] foy GY-521
 on_raspi = True
@@ -26,6 +26,7 @@ if on_raspi:
         from outputs.BiPed import drivetrain # for R2D2 configuration
     else:
         from outputs.QuadPed import drivetrain # for race car configuration
+    # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
     if len(DoF) > 1:
@@ -58,7 +59,7 @@ if on_raspi:
 
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(17, 18, 22, 13, True) # True = PMW + direction pins; False (default) = 2 PWM pins
+    d = drivetrain(18, 17, 13, 22, True) # True = PMW + direction pins; False (default) = 2 PWM pins
 else:
     try:
         import cv2
