@@ -35,7 +35,6 @@ class args:
                 else:
                     self.on_raspi = False
                 break
-        # print(type(self.dof))
         temp = self.dof.rsplit(',')
         if (len(temp) > 1):
             # print(repr(temp))
