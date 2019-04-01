@@ -107,7 +107,7 @@ class LSM9DS1:
                 const_9oF["ADDRESS_XLG"] = address[0]
                 const_9oF["ADDRESS_MAG"] = address[1]
         except IOError:
-            raise RuntimeError('Could not find LSM9DS1, check wiring!')
+            raise RuntimeError('Could not find LSM9DS1 @ address', repr(address),', check wiring!')
 
         # soft reset & reboot accel/gyro
         self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG8"], 0x05)
