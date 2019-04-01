@@ -16,7 +16,7 @@ from inputs.GPSserial import GPS
 
 
 biPed = True
-DoF = (6) # degree of freedom and i2cdetect address(s) as a tuple
+DoF = (9) # degree of freedom and i2cdetect address(s) as a tuple
 # use (9, (0x6a, 0x1c)) for LSM9DS1
 # use (6, (0x68)) foy GY-521
 on_raspi = True
