@@ -26,6 +26,8 @@ class args:
             # temp = os.system('grep Hardware /proc/cpuinfo')
             import subprocess
             res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
+            print('type=', type(res))
+            res = res.decode('utf-8')
             for line in res.splitlines():
                 if (line.find('BCM') > 1):
                     self.on_raspi = True
