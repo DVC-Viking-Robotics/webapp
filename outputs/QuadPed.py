@@ -23,8 +23,8 @@ class drivetrain:
         else: 
             from gpiozero import Motor as biMotor
             # from outputs.biMotor import biMotor # using a L298 or similar driver
-            self.motor1 = biMotor(m1B, m1F)
-            self.motor2 = biMotor(m2B, m2F)
+            self.motor1 = biMotor(m1F, m1B)
+            self.motor2 = biMotor(m2F, m2B)
         self.fr = 0 # forward/reverse direction
         self.lr = 0 # left/right direction
     
