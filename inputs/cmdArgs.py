@@ -23,12 +23,15 @@ class args:
             self.on_raspi = False
             # print(os.environ)
         elif os.name == 'posix':
-            temp = os.system('grep Hardware /proc/cpuinfo')
-            print(temp)
-            if (temp.find('BCM') > 1):
-                self.on_raspi = True
-            else:
-                self.on_raspi = False
+            # temp = os.system('grep Hardware /proc/cpuinfo')
+            import subprocess
+            res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
+            for line in res.splitlines():
+                if (temp.find('BCM') > 1):
+                    self.on_raspi = True
+                else:
+                    self.on_raspi = False
+                break
         if (len(self.dof) > 1):
             temp = self.dof.rsplit(',')
             # print(repr(temp))
