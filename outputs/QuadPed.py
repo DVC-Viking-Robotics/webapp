@@ -22,8 +22,11 @@ class drivetrain:
         self.lr = 0 # left/right direction
     
     def stop(self):
-        self.motor1.setSpeed(0)
-        self.motor2.setSpeed(0)
+        # from old biMotor class
+        # self.motor1.setSpeed(0)
+        # self.motor2.setSpeed(0)
+        self.motor1.stop()
+        self.motor2.stop()
         
     # pass backwards/forward (-100 to 100) as variable x
     # pass left/right (-100 to 100) as variable y
@@ -35,8 +38,11 @@ class drivetrain:
         # set the axis directly to their corresponding motors
         self.fr = y
         self.lr = x
+        
+        # from old biMotor class
         # self.motor1.setSpeed(self.fr)
         # self.motor2.setSpeed(self.lr)
+        
         if self.fr > 0:
             self.motor1.forward(self.fr / 100.0)
         elif self.fr < 0:

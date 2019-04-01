@@ -15,7 +15,7 @@ from flask_socketio import SocketIO, emit
 from inputs.GPSserial import GPS
 
 
-biPed = False
+biPed = True
 DoF = [6] # degree of freedom and i2cdetect address(s) as a tuple
 # use [9, (0x6a, 0x1c)] for LSM9DS1
 # use [6, (0x68)] foy GY-521
@@ -59,8 +59,8 @@ if on_raspi:
 
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(18, 17, 13, 22) # True = PMW + direction pins; False (default) = 2 PWM pins
-else:
+    d = drivetrain(18, 17, 13, 22, True) # True = PMW + direction pins; False (default) = 2 PWM pins
+else: # running on a PC
     try:
         import cv2
         camera = cv2.VideoCapture(0)

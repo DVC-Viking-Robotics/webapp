@@ -15,6 +15,7 @@ class drivetrain():
         self.left = 0
     
     def stop(self):
+        # from old biMotor class
         # self.motor1.setSpeed(0)
         # self.motor2.setSpeed(0)
         self.motor1.stop()
@@ -40,6 +41,7 @@ class drivetrain():
             elif x < 0:
                 self.left = y * ((-100 - x) / 100.0) * -1
         # make sure speeds are an integer (not decimal/float) and send to motors
+        # from old biMotor class(s)
         # self.motor1.setSpeed(int(round(self.right)))
         # self.motor2.setSpeed(int(round(self.left)))
         if self.right > 0:
