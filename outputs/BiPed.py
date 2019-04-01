@@ -4,11 +4,13 @@ class drivetrain():
         if bool:  
             from gpiozero import PhaseEnableMotor as biMotor
             # from outputs.biMotor_bool import biMotor # using High Amperage driver
+            self.motor1 = biMotor(m1F, m1B)
+            self.motor2 = biMotor(m2F, m2B)
         else: 
             from gpiozero import Motor as biMotor
             # from outputs.biMotor import biMotor # using a L298 or similar driver
-        self.motor1 = biMotor(m1F, m1B)
-        self.motor2 = biMotor(m2F, m2B)
+            self.motor1 = biMotor(m1B, m1F)
+            self.motor2 = biMotor(m2B, m2F)
         self.right = 0
         self.left = 0
     
