@@ -27,7 +27,7 @@ class args:
             import subprocess
             res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
             for line in res.splitlines():
-                if (temp.find('BCM') > 1):
+                if (line.find('BCM') > 1):
                     self.on_raspi = True
                 else:
                     self.on_raspi = False
