@@ -16,9 +16,9 @@ from inputs.GPSserial import GPS
 
 
 biPed = True
-DoF = (9) # degree of freedom and i2cdetect address(s) as a tuple
-# use (9, (0x6a, 0x1c)) for LSM9DS1
-# use (6, (0x68)) foy GY-521
+DoF = [9] # degree of freedom and i2cdetect address(s) as a tuple
+# use [9, (0x6a, 0x1c)] for LSM9DS1
+# use [6, (0x68)] foy GY-521
 on_raspi = True
 
 if on_raspi:
@@ -34,9 +34,9 @@ if on_raspi:
             from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
             IMUsensor = LSM9DS1(DoF[1])
     else:
-        if DoF == 6:
+        if DoF[0] == 6:
             IMUsensor = mpu6050()
-        elif DoF == 9:
+        elif DoF[0] == 9:
             IMUsensor = LSM9DS1()
     try:
         import picamera
