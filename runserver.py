@@ -139,7 +139,10 @@ def handle_DoF_request():
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
     if (cmd.on_raspi):
-        d.go(args[0], args[1])
+        if cmd.biPed == 0:
+            d.go(args[0], args[2])
+        else:
+            d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')
