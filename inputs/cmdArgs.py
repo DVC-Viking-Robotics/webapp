@@ -3,7 +3,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R')
 parser.add_argument('--d', choices=['1', '0'], default=1, help='select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup)')
 parser.add_argument('--m', choices=['1', '0'], default=1, help='select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
-parser.add_argument('--dof', default=[9], help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. any additionally comma separated numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
+parser.add_argument('--dof', default='9', help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. any additionally comma separated numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
 
 biPed = True
 phasedM = True
@@ -19,6 +19,7 @@ class args:
         parser.parse_args(namespace=self)
         self.biPed = bool(int(self.d))
         self.phasedM = bool(int(self.m))
+        self.DoF = []
         if os.name == 'nt':
             self.on_raspi = False
             # print(os.environ)
@@ -26,7 +27,7 @@ class args:
             # temp = os.system('grep Hardware /proc/cpuinfo')
             import subprocess
             res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
-            print('type=', type(res))
+            # print('type=', type(res))
             res = res.decode('utf-8')
             for line in res.splitlines():
                 if (line.find('BCM') > 1):
@@ -34,14 +35,14 @@ class args:
                 else:
                     self.on_raspi = False
                 break
-        if (len(self.dof) > 1):
-            temp = self.dof.rsplit(',')
+        # print(type(self.dof))
+        temp = self.dof.rsplit(',')
+        if (len(temp) > 1):
             # print(repr(temp))
-            for i in range(1,len(temp)):
+            for i in range(len(temp)):
                 self.DoF.append(int(temp[i]))
         else:
             self.DoF = [int(self.dof[0])]
-
 
 if __name__ == "__main__":
     std = args()
