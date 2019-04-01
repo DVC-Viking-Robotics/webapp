@@ -59,7 +59,7 @@ if on_raspi:
 
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(18, 17, 13, 22, True) # True = PMW + direction pins; False (default) = 2 PWM pins
+    d = drivetrain(18, 17, 13, 22) # True = PMW + direction pins; False (default) = 2 PWM pins
 else:
     try:
         import cv2
