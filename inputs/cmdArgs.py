@@ -11,9 +11,9 @@ DoF = [6] # degree of freedom and i2cdetect address(s) as a tuple
 # use [9,0x6a,0x1c] for LSM9DS1
 # use [6,0x68] foy GY-521
 on_raspi = True
+# Hardware        : BCM2835
+# 0
 
-Hardware        : BCM2835
-0
 class args:
     def __init__(self):
         parser.parse_args(namespace=self)
@@ -24,7 +24,7 @@ class args:
             # print(os.environ)
         elif os.name == 'posix':
             temp = os.system('grep Hardware /proc/cpuinfo')
-            if temp.find(': BCM%d+') > 1:
+            if (temp.find(': BCM%d+') > 1):
                 self.on_raspi = True
             else:
                 self.on_raspi = False
