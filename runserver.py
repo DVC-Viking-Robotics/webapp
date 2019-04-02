@@ -12,7 +12,7 @@ import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
-from inputs.GPSserial import GPS
+from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
 cmd = args()
 if cmd.on_raspi:
@@ -62,7 +62,8 @@ else: # running on a PC
         print('opencv-python is not installed')
         camera = None
 
-gps = GPS(cmd.on_raspi)
+if cmd.gps_conf[0] == 'serial':
+    gps = GPSserial(cmd.gps_conf[1])
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -101,11 +102,9 @@ def handle_webcam_request():
 def handle_gps_request():
     print('gps data sent')
     NESW = (0,0)
-    if (cmd.on_raspi):
-        gps.getData()
-        NESW = (gps.NS, gps.EW)
-    else:
-        NESW = (37.967135, -122.071210)
+    gps.getData()
+    NESW = (gps.NS, gps.EW)
+    # NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
 
 @socketio.on('sensorDoF')

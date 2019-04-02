@@ -1,24 +1,22 @@
 import serial
 import time
 
-class GPS():
+class GPSserial():
     '''
     GPS serial Output conforms to NMEA format
     See the datasheet in this repo
     '''
-    def __init__(self, onRaspi = True):
+    def __init__(self, addy):
         # open a "channel" (technically I think its called a "handle") to Serial port
         self.dummy = False
-        if onRaspi:
-            # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
-            self.ser = serial.Serial('/dev/ttyS0')
-        else:
-            # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
-            try:
-                self.ser = serial.Serial('COM3')
-            except serial.SerialException:
-                self.dummy = True
-                print('Serial GPS not connected')
+        # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
+        # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
+        # addy passed from cmd line args
+        try:
+            self.ser = serial.Serial(addy)
+        except serial.SerialException:
+            self.dummy = True
+            print('unable to open', addy)
         self.NS = 0.0
         self.EW = 0.0
         self.UTC = ""
