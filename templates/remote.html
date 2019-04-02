@@ -5,10 +5,7 @@
 {% block content %}
 <script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
 <script src="/static/scripts/controller.js"></script>
-<script type='text/javascript' src="../static/scripts/MapsAPI.js"></script>
-<script type='text/javascript' src="../static/scripts/sensor_data.js"></script>
 <img id="video"></img>
-<div id="map"></div>
 
 <h2>{{ title }}</h2>
 
@@ -23,5 +20,4 @@
 -->
 
 <script>initRemote();</script>
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBEPoV-pgwZC36LaGzOuimUNFk5pWVBr-Y &callback=initMap" async defer></script>
 {% endblock %}
