@@ -1,6 +1,8 @@
 import serial
 import time
 
+DEFAULT_LOC = {'lat': 37.96713657090229, 'lng': -122.0712176165581}
+
 class GPSserial():
     '''
     GPS serial Output conforms to NMEA format
@@ -8,17 +10,17 @@ class GPSserial():
     '''
     def __init__(self, addy):
         # open a "channel" (technically I think its called a "handle") to Serial port
-        self.dummy = False
         # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
         # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
-        # addy passed from cmd line args
+        # addy passed from inputs/cmdArgs.py
+        self.dummy = False
         try:
             self.ser = serial.Serial(addy)
         except serial.SerialException:
             self.dummy = True
             print('unable to open', addy)
-        self.NS = 0.0
-        self.EW = 0.0
+        self.NS = DEFAULT_LOC['lat']
+        self.EW = DEFAULT_LOC['lng']
         self.UTC = ""
         self.line = ""
         self.speed = {"knots": 0.0, "kmph": 0.0}
@@ -142,7 +144,7 @@ class GPSserial():
         del self.ser, self.north, self.west, self.line 
 '''
 if __name__ == "__main__":
-    gps = GPS()
+    gps = GPSserial('comm3')
     while (True):
         try:
             gps.getData()

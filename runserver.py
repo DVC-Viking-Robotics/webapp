@@ -25,9 +25,9 @@ if cmd.on_raspi:
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
     if len(cmd.DoF) > 1:
         if cmd.DoF[0] == 6:
-            IMUsensor = mpu6050(cmd.DoF[1])
+            IMUsensor = mpu6050((cmd.DoF[1:]))
         elif cmd.DoF[0] == 9:
-            IMUsensor = LSM9DS1(cmd.DoF[1])
+            IMUsensor = LSM9DS1((cmd.DoF[1:]))
     else:
         if cmd.DoF[0] == 6:
             IMUsensor = mpu6050()
