@@ -33,6 +33,7 @@ if cmd.on_raspi:
             IMUsensor = mpu6050()
         elif cmd.DoF[0] == 9:
             IMUsensor = LSM9DS1()
+    #camera dependencies
     try:
         import picamera
         camera = picamera.PiCamera()
@@ -81,25 +82,18 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
-    if cmd.on_raspi and camera != None:
-        sio = io.BytesIO()
-        camera.capture(sio, "jpeg", use_video_port=True)
-        buffer = sio.getvalue()
-        _, frame = camera.read()
-        _, buffer = cv2.imencode('.jpg', frame)
-        b64 = base64.b64encode(buffer)
-    else:
-        if camera == None:
-            b64 = ''
-        else:
+    if camera != None:
+        if cmd.on_raspi:
             sio = io.BytesIO()
+            camera.capture(sio, "jpeg", use_video_port=True)
             buffer = sio.getvalue()
+        else:
             _, frame = camera.read()
             _, buffer = cv2.imencode('.jpg', frame)
-            b64 = base64.b64encode(buffer)
 
-    print(type(b64))
-    emit('webcam-response', b64)
+        b64 = base64.b64encode(buffer)
+        print(len(b64))
+        emit('webcam-response', base64.b64encode(buffer))
 
 @socketio.on('gps')
 def handle_gps_request():
@@ -190,7 +184,7 @@ def about():
 
 if __name__ == '__main__':
     try:
-        socketio.run(app, host='0.0.0.0', port=5555, debug=False)
+        socketio.run(app, host=cmd.host, port=cmd.port, debug=False)
     except KeyboardInterrupt:
         pass
 

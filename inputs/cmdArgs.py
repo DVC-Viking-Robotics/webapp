@@ -11,19 +11,30 @@ DoF = '6' # degree of freedom and i2cdetect address(s)
 # use '6,0x68' foy GY-521
 on_raspi = True
 gps_defaults = 'serial,/dev/ttyS0'
-gps_defaulti = 'i2c,DDC'
+cam_default = '1'
+host = '0.0.0.0'
+port = '5555'
+
+# add option '--host' for domain name address
+parser.add_argument('--host', default=host, help='Type IP address (domain). "0.0.0.0" is for localhost domain.')
+
+# add option '--port' for domain name address
+parser.add_argument('--port', default=port, help='Type port number for the server. "5555" is default.')
 
 # add option '--d' for drivetrain and pin #s
-parser.add_argument('--d', default=biPed, help='select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup). Any numbers that follow will be taken as pairs for the GPIO pins to each motor. 1,18,17,13,22 is the default.')
+parser.add_argument('--d', default=biPed, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup). Any numbers that follow will be taken as pairs for the GPIO pins to each motor. 1,18,17,13,22 is the default.')
 
 # add option '--m' for motor driver
-parser.add_argument('--m', choices=['1', '0'], default=int(phasedM), help='select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
+parser.add_argument('--m', choices=['1', '0'], default=int(phasedM), help='Select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
 
 # add option '--dof' for Degrees of Freedom and I2C addresses
-parser.add_argument('--dof', default=DoF, help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
+parser.add_argument('--dof', default=DoF, help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
 
 # add option '--gps' for Degrees of Freedom and I2C addresses
-parser.add_argument('--gps', default=gps_defaults, help='select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow will be used as i2c addresses or serial address. ie "i2c,0x6a,0x1c" or "serial,comm3". The "spi: flag ignores additional arguments.')
+parser.add_argument('--gps', default=gps_defaults, help='Select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow will be used as i2c addresses or serial address. ie "i2c,0x6a,0x1c" or "serial,comm3". The "spi: flag ignores additional arguments.')
+
+# add option '--d' for drivetrain and pin #s
+parser.add_argument('--cam', default=cam_default, choices=['1', '0'], help='Toggle camera. "1" = on (default); "0" = off.')
 
 # thinking of making a '--dev' option to escape the exception hunting
 # also options specific to picam and/or opencv2
@@ -41,8 +52,13 @@ class args:
         self.get_onRaspi()
         self.get_dof()
         self.get_biPed()
-        self.getPhased()
+        self.get_Phased()
+        self.get_cam()
         self.get_gps()
+        self.get_port()
+
+    def get_port(self):
+        self.port = int(self.port)
 
     def get_gps(self):
         #set gps variable
@@ -68,8 +84,11 @@ class args:
             while len(self.gps_conf) < len(temp):
                 self.gps_conf.append(temp[len(self.gps_conf)])
 
-    def getPhased(self):
+    def get_Phased(self):
         self.phasedM = bool(int(self.m))
+ 
+    def get_cam(self):
+        self.cam = bool(int(self.cam))
 
     def get_onRaspi(self):
         #set on_raspi variable
@@ -131,8 +150,11 @@ class args:
 if __name__ == "__main__":
     # instatiate this object to invoke the __init__() that translates the strings to usable data
     std = args()
+    print('Domain:', std.host)
+    print('port #:', std.port)
     print('on_raspi:', std.on_raspi)
     print('Degrees of Freedom:', repr(std.DoF))
     print('drivetrain:', std.biPed)
     print('motor direction pin:', std.phasedM)
     print('GPS config:', repr(std.gps_conf))
+    print('camera:',std.cam)
