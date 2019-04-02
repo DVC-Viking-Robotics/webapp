@@ -21,9 +21,9 @@ socket.on('gps-response', function(gps) {
       if (i < gps.length - 1)
         output += ', ';
     }
+    console.log('gps = ' + output);
     markers[0].setPosition({lat: gps[0], lng: gps[1]});
     map.setCenter({lat: gps[0], lng: gps[1]});
-    console.log('gps = ' + output);
     // el_gps.innerHTML = output;
 });
 

@@ -116,25 +116,29 @@ def handle_DoF_request():
         if cmd.DoF[0] == 6:
             accel = IMUsensor.get_accel_data()
             gyro = IMUsensor.get_gyro_data()
-            mag = [0.0,0.0,0.0]
         if cmd.DoF[0] == 9:
             mag = IMUsensor.get_mag_data()
     else:
-        gyro = [1,2,3]
-        accel = [4,5,6]
-        mag = [7,8,9]
+        accel = [0,0,0]
+        gyro = [0,0,0]
+        mag = [0,0,0]
     '''
-    senses[0]gyro[0] = x
-    senses[0]gyro[1] = y
-    senses[0]gyro[2] = z
-    senses[1]accel[0] = x
-    senses[1]accel[1] = y
-    senses[1]accel[2] = z
+    senses[0]accel[0] = x
+    senses[0]accel[1] = y
+    senses[0]accel[2] = z
+    senses[1]gyro[0] = x
+    senses[1]gyro[1] = y
+    senses[1]gyro[2] = z
     senses[2]mag[0] = x
     senses[2]mag[1] = y
     senses[2]mag[2] = z
     '''
-    senses = [gyro, accel, mag]
+    if cmd.DoF[0] == 3:
+        senses=[accel]
+    elif cmd.DoF[0] == 6:
+        senses = [accel, gyro]
+    else:
+        senses = [accel, gyro, mag]
     print('DoF sensor data sent')
     emit('sensorDoF-response', senses)
 
