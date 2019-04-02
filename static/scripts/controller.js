@@ -6,6 +6,8 @@ var controller;
 var moving = [ false, false ];
 var gamepads = {};
 var socket = io.connect({transports: ['websocket']});
+var video = document.getElementById("video");
+var map = document.getElementById("map");
 
 
 socket.on('connect', function() {
@@ -24,10 +26,15 @@ socket.on('disconnect', function() {
 
 // Used to receive the live feed from the raspberry pi
 socket.on('webcam-response', function(img_data) {
-    var dec = new TextDecoder("utf-8");
-    var video = document.getElementById("video");
-    // console.log(img_data)
-    video.src = "data:image/jpeg;base64," + dec.decode(img_data);
+    // if (img_data == 0){
+    //     //turn cam feed into maps
+    //     video.src = "avatar.png";
+    // }
+    // else{
+        var dec = new TextDecoder("utf-8");
+        // console.log(img_data)
+        video.src = "data:image/jpeg;base64," + dec.decode(img_data);
+    // }
 });
 
 // Webcam request loop
@@ -82,7 +89,7 @@ function resize(){
     controller.draw();
 }
 
-function init() {
+function initRemote() {
     canvas = document.getElementById("canvas");
     canvas.addEventListener('touchstart', touchStart, false);
     canvas.addEventListener('touchmove', touchMove, false);

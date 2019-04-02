@@ -79,6 +79,7 @@ function deleteMarkers() {
     clearMarkers();
     markers = [];
 }
+
 function latPlus(){
     var tempLen = markers.length - 1;
     var temp = {lat: markers[tempLen].getPosition().lat() + 0.01, lng: markers[tempLen].getPosition().lng()};

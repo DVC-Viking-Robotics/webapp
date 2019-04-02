@@ -90,13 +90,15 @@ def handle_webcam_request():
         b64 = base64.b64encode(buffer)
     else:
         if camera == None:
-            b64 = '0'
+            b64 = ''
         else:
+            sio = io.BytesIO()
+            buffer = sio.getvalue()
             _, frame = camera.read()
             _, buffer = cv2.imencode('.jpg', frame)
             b64 = base64.b64encode(buffer)
 
-    print(len(b64))
+    print(type(b64))
     emit('webcam-response', b64)
 
 @socketio.on('gps')
