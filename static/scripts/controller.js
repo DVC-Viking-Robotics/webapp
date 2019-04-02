@@ -26,15 +26,9 @@ socket.on('disconnect', function() {
 
 // Used to receive the live feed from the raspberry pi
 socket.on('webcam-response', function(img_data) {
-    // if (img_data == 0){
-    //     //turn cam feed into maps
-    //     video.src = "avatar.png";
-    // }
-    // else{
-        var dec = new TextDecoder("utf-8");
-        // console.log(img_data)
-        video.src = "data:image/jpeg;base64," + dec.decode(img_data);
-    // }
+    var dec = new TextDecoder("utf-8");
+    // console.log(img_data)
+    video.src = "data:image/jpeg;base64," + dec.decode(img_data);
 });
 
 // Webcam request loop
