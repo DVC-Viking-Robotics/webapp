@@ -12,6 +12,13 @@ import base64
 import os
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
+# Allow secure connections
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+
+socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
+
 from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
 cmd = args()
@@ -67,11 +74,6 @@ if cmd.gps_conf[0] == 'serial':
     gps = GPSserial(cmd.gps_conf[1])
 else: gps = None
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-
-socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
-
 @socketio.on('connect')
 def handle_connect():
     print('websocket Client connected!')
@@ -119,15 +121,9 @@ def handle_DoF_request():
         gyro = [0,0,0]
         mag = [0,0,0]
     '''
-    senses[0]accel[0] = x
-    senses[0]accel[1] = y
-    senses[0]accel[2] = z
-    senses[1]gyro[0] = x
-    senses[1]gyro[1] = y
-    senses[1]gyro[2] = z
-    senses[2]mag[0] = x
-    senses[2]mag[1] = y
-    senses[2]mag[2] = z
+    senses[0] = accel[x,y,z]
+    senses[1] = gyro[x,y,z]
+    senses[2] = mag[x,y,z]
     '''
     if cmd.DoF[0] == 3:
         senses=[accel]
