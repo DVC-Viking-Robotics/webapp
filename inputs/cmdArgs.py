@@ -22,7 +22,7 @@ parser.add_argument('--m', choices=['1', '0'], default=int(phasedM), help='selec
 parser.add_argument('--dof', default=DoF, help='select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. any additionally comma separated numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
 
 # add option '--gps' for Degrees of Freedom and I2C addresses
-parser.add_argument('--gps', default=gps_defaults, help='select type of cennection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow will be used as i2c addresses or serial address. ie "i2c,0x6a,0x1c" or "serial,comm3". The "spi: flag ignores additional arguments.')
+parser.add_argument('--gps', default=gps_defaults, help='select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow will be used as i2c addresses or serial address. ie "i2c,0x6a,0x1c" or "serial,comm3". The "spi: flag ignores additional arguments.')
 
 # thinking of making a '--dev' option to escape the exception hunting
 # also options specific to picam and/or opencv2

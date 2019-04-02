@@ -53,7 +53,7 @@ if cmd.on_raspi:
 
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(18, 17, 13, 22, cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
+    d = drivetrain(cmd.biPed[1], cmd.biPed[2], cmd.biPed[3], cmd.biPed[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
 else: # running on a PC
     try:
         import cv2
@@ -64,6 +64,7 @@ else: # running on a PC
 
 if cmd.gps_conf[0] == 'serial':
     gps = GPSserial(cmd.gps_conf[1])
+else: gps = None
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -102,9 +103,11 @@ def handle_webcam_request():
 def handle_gps_request():
     print('gps data sent')
     NESW = (0,0)
-    gps.getData()
-    NESW = (gps.NS, gps.EW)
-    # NESW = (37.967135, -122.071210)
+    if gps != None:
+        gps.getData()
+        NESW = (gps.NS, gps.EW)
+    else:
+        NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
 
 @socketio.on('sensorDoF')
