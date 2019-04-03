@@ -159,7 +159,7 @@ class GPSserial():
         del self.ser, self.north, self.west, self.line 
 '''
 if __name__ == "__main__":
-    gps = GPSserial('/dev/ttyACM0')
+    gps = GPSserial('/dev/ttyS0')
     while (True):
         try:
             gps.getData(True)
