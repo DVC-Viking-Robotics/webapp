@@ -140,7 +140,7 @@ class GPSserial():
             # self.line = self.ser.readline()
             # self.line = self.ser.readline()
             pass
-            
+
         while(not found and not self.dummy):
             self.line = self.ser.readline()
             if (raw):
@@ -154,7 +154,7 @@ class GPSserial():
         del self.ser, self.north, self.west, self.line 
 '''
 if __name__ == "__main__":
-    gps = GPSserial('comm3')
+    gps = GPSserial('/dev/ttyACM0')
     while (True):
         try:
             gps.getData(True)
