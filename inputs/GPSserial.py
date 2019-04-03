@@ -49,23 +49,23 @@ class GPSserial():
         if str.find('GLL') != -1:
             NS_start = str.find(',') + 1
             NS_end = str.find(',', NS_start)
-            NS_dir = str[NS_end + 1]
+            self.NS_dir = str[NS_end + 1]
             if (str[NS_end + 1] != 'N'):
-                NS_dir = -1.0
+                self.NS_dir = -1.0
             else:
-                NS_dir = 1.0
+                self.NS_dir = 1.0
             EW_start = str.find(',', NS_end + 1) + 1
             EW_end = str.find(',', EW_start)
-            EW_dir = str[EW_end + 1]
+            self.EW_dir = str[EW_end + 1]
             if (str[EW_end + 1] != 'E'):
-                EW_dir = -1.0
+                self.EW_dir = -1.0
             else:
-                EW_dir = 1.0
+                self.EW_dir = 1.0
             UTC_start = str.find(',', EW_end + 1) + 1
             UTC_end = str.find(',', UTC_start) - 1
             self.UTC = str[UTC_start:UTC_end]
-            self.NS = float(str[NS_start:NS_end]) * NS_dir / 100.0
-            self.EW = float(str[EW_start:EW_end]) * EW_dir / 100.0
+            self.NS = float(str[NS_start:NS_end])
+            self.EW = float(str[EW_start:EW_end])
         elif (str.find('VTG') != -1):
             found = True
             C_T_start = str.find(',') + 1
@@ -124,6 +124,14 @@ class GPSserial():
 
         return found
 
+    def convertGPS(self):
+        temp = self.NS / 100
+        frac = (temp - int(temp)) / 60
+        self.NS = temp = int(temp) + frac * self.NS_dir
+        temp = self.EW / 100
+        frac = (temp - int(temp)) / 60
+        self.EW = temp = int(temp) + frac * self.EW_dir
+    
     def getData(self, raw = False):
         found = False
         # discard 1st two lines
@@ -139,6 +147,7 @@ class GPSserial():
             # self.line[0] = 0x26
             self.line = self.line.decode('utf-8')
             found = self.parseline(self.line)
+        convertGPS()
 '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
