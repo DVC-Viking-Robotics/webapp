@@ -126,7 +126,9 @@ class GPSserial():
             self.status = status[str[Stat_start:Stat_end]]
 
         return found
-
+    
+    '''VERY IMPORTANT'''
+    # needed to go from format 'DDHH.SS' into decimal degrees
     def convertGPS(self):
         lat_DD = int(self.NS/100)
         lat_SS = self.NS - (lat_DD*100)
@@ -140,12 +142,6 @@ class GPSserial():
     
     def getData(self, raw = False):
         found = False
-        # discard 1st two lines
-        if not self.dummy:
-            # self.line = self.ser.readline()
-            # self.line = self.ser.readline()
-            pass
-
         while(not found and not self.dummy):
             self.line = self.ser.readline()
             if (raw):
@@ -153,7 +149,8 @@ class GPSserial():
             # self.line = list(self.line)
             # self.line[0] = 0x26
             self.line = self.line.decode('utf-8')
-            found = self.parseline(self.line)
+            # found = true if gps coordinates are captured
+            found = self.parseline(self.line) 
 '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
