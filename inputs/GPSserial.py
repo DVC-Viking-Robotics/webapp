@@ -66,6 +66,7 @@ class GPSserial():
             self.UTC = str[UTC_start:UTC_end]
             self.NS = float(str[NS_start:NS_end])
             self.EW = float(str[EW_start:EW_end])
+            self.convertGPS()
         elif (str.find('VTG') != -1):
             found = True
             C_T_start = str.find(',') + 1
@@ -147,7 +148,6 @@ class GPSserial():
             # self.line[0] = 0x26
             self.line = self.line.decode('utf-8')
             found = self.parseline(self.line)
-        self.convertGPS()
 '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
