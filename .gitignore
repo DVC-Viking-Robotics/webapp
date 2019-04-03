@@ -5,3 +5,5 @@ outputs/__pycache__/*.pyc
 inputs/__pycache__/*.pyc
 .vscode/arduino.json
 .vscode/c_cpp_properties.json
+.vscode/ipch/a5f7ca2d7f218e08/ARDUINO_I2C_2.ipch
+.vscode/ipch/a5f7ca2d7f218e08/mmap_address.bin

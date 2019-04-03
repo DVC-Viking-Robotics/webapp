@@ -1,4 +1,6 @@
 # ported from "https://github.com/adafruit/Adafruit_CircuitPythonconst_9oF.git"
+# list of all functions in SMBus library can be found at 
+# http://wiki.erazor-zone.de/wiki:linux:python:smbus:doc
 
 import smbus
 import time

@@ -49,6 +49,8 @@ class args:
         self.phasedM = 0
         self.DoF = []
         self.gps_conf = []
+        
+        # parse algo
         self.get_onRaspi()
         self.get_dof()
         self.get_biPed()

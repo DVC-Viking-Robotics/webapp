@@ -85,7 +85,7 @@ class GPSserial():
         elif (str.find('GGA') != -1):
             typeStat = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
             Qual_start = str.find(',') + 1
-            for i in range(2,6):
+            for i in range(1,6):
                 Qual_start = str.find(',', Qual_start) + 1
             Qual_end = str.find(',', Qual_start)
             Sat_end = str.find(',', Qual_end + 1)
@@ -114,7 +114,7 @@ class GPSserial():
             Fix_start = str.find(',', Fix_start) + 1
             Fix_end = str.find(',', Fix_start)
             # print('typeFix:', int(str[Fix_start:Fix_end]))
-            self.fix =typeFix[int(str[Fix_start:Fix_end])]
+            self.fix =typeFix[int(str[Fix_start:Fix_end]) - 1]
         elif (str.find('RMC') != -1):
             status = {"V":"Warning","A": "Valid"}
             Stat_start = str.find(',') + 1
