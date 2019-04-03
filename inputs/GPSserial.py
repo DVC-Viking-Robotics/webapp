@@ -50,6 +50,7 @@ class GPSserial():
             NS_start = str.find(',') + 1
             NS_end = str.find(',', NS_start)
             self.NS_dir = str[NS_end + 1]
+            print('NS =', self.NS_dir)
             if (str[NS_end + 1] != 'N'):
                 self.NS_dir = -1.0
             else:
@@ -57,6 +58,7 @@ class GPSserial():
             EW_start = str.find(',', NS_end + 1) + 1
             EW_end = str.find(',', EW_start)
             self.EW_dir = str[EW_end + 1]
+            print('EW =', self.EW_dir)
             if (str[EW_end + 1] != 'E'):
                 self.EW_dir = -1.0
             else:
@@ -126,12 +128,15 @@ class GPSserial():
         return found
 
     def convertGPS(self):
-        temp = self.NS / 100
-        frac = (temp - int(temp)) / 60
-        self.NS = temp = int(temp) + frac * self.NS_dir
-        temp = self.EW / 100
-        frac = (temp - int(temp)) / 60
-        self.EW = temp = int(temp) + frac * self.EW_dir
+        lat_DD = int(self.NS/100)
+        lat_SS = self.NS - (lat_DD*100)
+        latDec = lat_DD + lat_SS/60
+
+        lng_DD = int(self.EW/100)
+        lng_SS = self.EW - (lng_DD*100)
+        lngDec = lng_DD + lng_SS/60
+        self.NS = latDec * self.NS_dir
+        self.EW = lngDec * self.EW_dir
     
     def getData(self, raw = False):
         found = False
