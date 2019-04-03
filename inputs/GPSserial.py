@@ -137,9 +137,10 @@ class GPSserial():
         found = False
         # discard 1st two lines
         if not self.dummy:
-            self.line = self.ser.readline()
-            self.line = self.ser.readline()
-
+            # self.line = self.ser.readline()
+            # self.line = self.ser.readline()
+            pass
+            
         while(not found and not self.dummy):
             self.line = self.ser.readline()
             if (raw):
@@ -156,7 +157,7 @@ if __name__ == "__main__":
     gps = GPSserial('comm3')
     while (True):
         try:
-            gps.getData()
+            gps.getData(True)
             print('RxStatus:', gps.status)
             print('FixType:', gps.fix)
             print('sat["quality"]:', gps.sat["quality"], 'sat["connected"]:', gps.sat["connected"], 'Altitude:', gps.alt)
