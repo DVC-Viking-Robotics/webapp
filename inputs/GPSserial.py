@@ -147,7 +147,7 @@ class GPSserial():
             # self.line[0] = 0x26
             self.line = self.line.decode('utf-8')
             found = self.parseline(self.line)
-        convertGPS()
+        self.convertGPS()
 '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
