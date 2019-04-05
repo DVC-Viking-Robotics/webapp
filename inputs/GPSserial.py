@@ -6,9 +6,11 @@ DEFAULT_LOC = {'lat': 37.96713657090229, 'lng': -122.0712176165581}
 class GPSserial():
     '''
     GPS serial Output conforms to NMEA format
+    addy port address
+    t = seconds till timeout
     See the datasheet in this repo
     '''
-    def __init__(self, addy):
+    def __init__(self, addy, t = 1):
         # open a "channel" (technically I think its called a "handle") to Serial port
         # on rasbian the Tx/Rx pins register as '/dev/ttyS0'
         # on Windows my arduino (connected to GPS6MV2) registers as "COM3"
@@ -16,6 +18,7 @@ class GPSserial():
         self.dummy = False
         try:
             self.ser = serial.Serial(addy)
+            self.timeOut = t
         except serial.SerialException:
             self.dummy = True
             print('unable to open', addy)
@@ -82,19 +85,11 @@ class GPSserial():
         elif (str.find('GGA') != -1):
             typeState = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
             arr = str.rsplit(',')
-            print(repr(arr))
+            # print(repr(arr))
             self.sat["quality"] = typeState[int(arr[6])]
             self.sat["connected"] = int(arr[7])
             if (len(arr[9]) > 1):
                 self.alt = float(arr[9])
-            '''elif (str.find('GSV') != -1):
-            arr = str.rsplit(',')
-            print(repr(arr))
-            self.sat["view"] = int(arr[3])
-            self.elev = int(arr[5])
-            self.azi = int(arr[6])
-            print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
-            '''
         elif (str.find('GSA') != -1):
             typeFix = ["No Fix","2D", "3D"]
             arr = str.rsplit(',')
@@ -106,6 +101,14 @@ class GPSserial():
             arr = str.rsplit(',')
             # print(repr(arr))
             self.rx_status = status[arr[2]]
+        '''elif (str.find('GSV') != -1):
+            arr = str.rsplit(',')
+            print(repr(arr))
+            self.sat["view"] = int(arr[3])
+            self.elev = int(arr[5])
+            self.azi = int(arr[6])
+            print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
+            '''
 
         return found
     
@@ -124,15 +127,19 @@ class GPSserial():
     
     def getData(self, raw = False):
         found = False
-        while(not found and not self.dummy):
-            self.line = self.ser.readline()
-            if (raw):
-                print(self.line)
-            self.line = list(self.line)
-            del self.line[0]
-            self.line = bytes(self.line).decode('utf-8')
-            # found = true if gps coordinates are captured
-            found = self.parseline(self.line) 
+        if not self.dummy:
+            p = time.time()
+            endTime = p + self.timeOut
+            while(not found and p < endTime):
+                self.line = self.ser.readline()
+                if (raw):
+                    print(self.line)
+                self.line = list(self.line)
+                del self.line[0]
+                self.line = bytes(self.line).decode('utf-8')
+                # found = true if gps coordinates are captured
+                found = self.parseline(self.line)
+                p = time.time()
 '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
