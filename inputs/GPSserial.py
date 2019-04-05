@@ -49,24 +49,26 @@ class GPSserial():
         if str.find('GLL') != -1:
             arr = str.rsplit(',')
             # print(repr(arr))
-            self.NS = float(arr[1])
-            self.NS_dir = arr[2]
-            self.EW = float(arr[3])
-            self.EW_dir = arr[4]
-            if (self.NS_dir != 'N'):
-                self.NS_dir = -1.0
-            else:
-                self.NS_dir = 1.0
-            if (self.EW_dir != 'E'):
-                self.EW_dir = -1.0
-            else:
-                self.EW_dir = 1.0
-            self.UTC = arr[5]
+            if (len(arr[1]) > 1):
+                self.NS = float(arr[1])
+                self.NS_dir = arr[2]
+                self.EW = float(arr[3])
+                self.EW_dir = arr[4]
+                if (self.NS_dir != 'N'):
+                    self.NS_dir = -1.0
+                else:
+                    self.NS_dir = 1.0
+                if (self.EW_dir != 'E'):
+                    self.EW_dir = -1.0
+                else:
+                    self.EW_dir = 1.0
+                    found = True
+                self.convertGPS()
+            if (len(arr[5]) > 1):
+                self.UTC = arr[5]
             typeState = {'A': 'data valid', 'V': 'Data not valid'}
             self.data_status = typeState[arr[6]]
-            self.convertGPS()
         elif (str.find('VTG') != -1):
-            found = True
             arr = str.rsplit(',')
             # print(repr(arr))
             if (len(arr[1]) > 1):
@@ -80,7 +82,7 @@ class GPSserial():
         elif (str.find('GGA') != -1):
             typeState = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
             arr = str.rsplit(',')
-            # print(repr(arr))
+            print(repr(arr))
             self.sat["quality"] = typeState[int(arr[6])]
             self.sat["connected"] = int(arr[7])
             self.alt = float(arr[9])
