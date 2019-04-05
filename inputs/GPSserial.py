@@ -85,14 +85,15 @@ class GPSserial():
             print(repr(arr))
             self.sat["quality"] = typeState[int(arr[6])]
             self.sat["connected"] = int(arr[7])
-            self.alt = float(arr[9])
+            if (len(arr[9]) > 1):
+                self.alt = float(arr[9])
             '''elif (str.find('GSV') != -1):
-                arr = str.rsplit(',')
-                print(repr(arr))
-                self.sat["view"] = int(arr[3])
-                self.elev = int(arr[5])
-                self.azi = int(arr[6])
-                print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
+            arr = str.rsplit(',')
+            print(repr(arr))
+            self.sat["view"] = int(arr[3])
+            self.elev = int(arr[5])
+            self.azi = int(arr[6])
+            print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
             '''
         elif (str.find('GSA') != -1):
             typeFix = ["No Fix","2D", "3D"]
