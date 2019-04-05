@@ -17,7 +17,7 @@ from flask_socketio import SocketIO, emit
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
-socketio = SocketIO(app, logger=True, engineio_logger=True, async_mode='eventlet')
+socketio = SocketIO(app, logger=False, engineio_logger=False, async_mode='eventlet')
 
 from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
@@ -31,9 +31,7 @@ if cmd.on_raspi:
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
     if len(cmd.DoF) > 1:
-        if cmd.DoF[0] == 6:
-            IMUsensor = mpu6050((cmd.DoF[1:]))
-        elif cmd.DoF[0] == 9:
+        if cmd.DoF[0] == 9:
             IMUsensor = LSM9DS1((cmd.DoF[1:]))
     else:
         if cmd.DoF[0] == 6:
