@@ -30,7 +30,7 @@ class GPSserial():
         self.azi = 0.0
         self.elev = 0.0
         self.fix = "no Fix"
-        self.status = "unknown"
+        self.rx_status = "unknown"
         
     def getCoords(self):
         pass
@@ -47,83 +47,62 @@ class GPSserial():
     def parseline(self, str):
         found = False
         if str.find('GLL') != -1:
-            NS_start = str.find(',') + 1
-            NS_end = str.find(',', NS_start)
-            self.NS_dir = str[NS_end + 1]
-            print('NS =', self.NS_dir)
-            if (str[NS_end + 1] != 'N'):
+            arr = str.rsplit(',')
+            # print(repr(arr))
+            self.NS = float(arr[1])
+            self.NS_dir = arr[2]
+            self.EW = float(arr[3])
+            self.EW_dir = arr[4]
+            if (self.NS_dir != 'N'):
                 self.NS_dir = -1.0
             else:
                 self.NS_dir = 1.0
-            EW_start = str.find(',', NS_end + 1) + 1
-            EW_end = str.find(',', EW_start)
-            self.EW_dir = str[EW_end + 1]
-            print('EW =', self.EW_dir)
-            if (str[EW_end + 1] != 'E'):
+            if (self.EW_dir != 'E'):
                 self.EW_dir = -1.0
             else:
                 self.EW_dir = 1.0
-            UTC_start = str.find(',', EW_end + 1) + 1
-            UTC_end = str.find(',', UTC_start) - 1
-            self.UTC = str[UTC_start:UTC_end]
-            self.NS = float(str[NS_start:NS_end])
-            self.EW = float(str[EW_start:EW_end])
+            self.UTC = arr[5]
+            typeState = {'A': 'data valid', 'V': 'Data not valid'}
+            self.data_status = typeState[arr[6]]
             self.convertGPS()
         elif (str.find('VTG') != -1):
             found = True
-            C_T_start = str.find(',') + 1
-            C_T_end = str.find(',', C_T_start)
-            C_M_start = str.find(',', C_T_end + 1) + 1
-            C_M_end = str.find(',', C_M_start)
-            S_N_start = str.find(',', C_M_end + 1) + 1
-            S_N_end = str.find(',', S_N_start)
-            S_G_start = str.find(',', S_N_end + 1) + 1
-            S_G_end = str.find(',', S_G_start)
-            if (C_T_end - C_T_start > 1):
-                self.course["true"] = str[C_T_start:C_T_end]
-            if (C_M_end - C_M_start > 1):
-                self.course["mag"] = str[C_M_start:C_M_end]
-            self.speed["knots"] = float(str[S_N_start:S_N_end])
-            self.speed["kmph"] = str[S_G_start:S_G_end]
+            arr = str.rsplit(',')
+            # print(repr(arr))
+            if (len(arr[1]) > 1):
+                self.course["true"] = float(arr[1])
+            if (len(arr[2]) > 1):
+                self.course["mag"] = float(arr[2])
+            if (len(arr[3]) > 1):
+                self.speed["knots"] = float(arr[3])
+            if (len(arr[4]) > 1):
+                self.speed["kmph"] = float(arr[4])
         elif (str.find('GGA') != -1):
-            typeStat = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
-            Qual_start = str.find(',') + 1
-            for i in range(1,6):
-                Qual_start = str.find(',', Qual_start) + 1
-            Qual_end = str.find(',', Qual_start)
-            Sat_end = str.find(',', Qual_end + 1)
-            Alt_start = str.find(',', Sat_end + 1) + 1
-            Alt_end = str.find(',', Alt_start)
-            self.sat["quality"] = typeStat[int(str[Qual_start:Qual_end])]
-            self.sat["connected"] = int(str[Qual_end + 1:Sat_end])
-            self.alt = float(str[Alt_start:Alt_end])
-        elif (str.find('GSV') != -1):
-            '''View_start = str.find(',') + 1
-            View_start = str.find(',', View_start) + 1
-            View_start = str.find(',', View_start) + 1
-            View_end = str.find(',', View_start)
-            Elev_start = str.find(',', View_end + 1) + 1
-            Elev_start = str.find(',', Elev_start) + 1
-            Elev_end = str.find(',', Elev_start)
-            Azi_end = str.find(',', Elev_end + 1)
-            self.sat["view"] = int(str[View_start:View_end])
-            self.elev = int(str[Elev_start:Elev_end])
-            self.azi = int(str[Elev_end + 1:Azi_end])
-            print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)'''
-            pass
+            typeState = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
+            arr = str.rsplit(',')
+            # print(repr(arr))
+            self.sat["quality"] = typeState[int(arr[6])]
+            self.sat["connected"] = int(arr[7])
+            self.alt = float(arr[9])
+            '''elif (str.find('GSV') != -1):
+                arr = str.rsplit(',')
+                print(repr(arr))
+                self.sat["view"] = int(arr[3])
+                self.elev = int(arr[5])
+                self.azi = int(arr[6])
+                print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
+            '''
         elif (str.find('GSA') != -1):
             typeFix = ["No Fix","2D", "3D"]
-            Fix_start = str.find(',') + 1
-            Fix_start = str.find(',', Fix_start) + 1
-            Fix_end = str.find(',', Fix_start)
-            # print('typeFix:', int(str[Fix_start:Fix_end]))
-            self.fix =typeFix[int(str[Fix_start:Fix_end]) - 1]
+            arr = str.rsplit(',')
+            # print(repr(arr))
+            # print('typeFix:', int(arr[2]))
+            self.fix =typeFix[int(arr[2]) - 1]
         elif (str.find('RMC') != -1):
             status = {"V":"Warning","A": "Valid"}
-            Stat_start = str.find(',') + 1
-            Stat_start = str.find(',', Stat_start) + 1
-            Stat_end = str.find(',', Stat_start)
-            self.status = status[str[Stat_start:Stat_end]]
+            arr = str.rsplit(',')
+            # print(repr(arr))
+            self.rx_status = status[arr[2]]
 
         return found
     
@@ -146,9 +125,9 @@ class GPSserial():
             self.line = self.ser.readline()
             if (raw):
                 print(self.line)
-            # self.line = list(self.line)
-            # self.line[0] = 0x26
-            self.line = self.line.decode('utf-8')
+            self.line = list(self.line)
+            del self.line[0]
+            self.line = bytes(self.line).decode('utf-8')
             # found = true if gps coordinates are captured
             found = self.parseline(self.line) 
 '''
@@ -156,11 +135,25 @@ class GPSserial():
         del self.ser, self.north, self.west, self.line 
 '''
 if __name__ == "__main__":
-    gps = GPSserial('/dev/ttyS0')
+    #handle cmd line args
+    import os
+    import argparse
+    #add description to program's help screen
+    parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "COM5" or "/dev/ttyS0"')
+    gps_defaults = '/dev/ttyS0'
+    parser.add_argument('--p', default=gps_defaults, help='Select serial port address. ie "COM3" or "/dev/ttyS0"')
+    class args():
+        def __init__(self):
+            parser.parse_args(namespace=self)
+    cmd = args()
+    #finish get cmd line args
+    
+    gps = GPSserial(cmd.p)
+    # gps = GPSserial('/dev/ttyS0')
     while (True):
         try:
             gps.getData(True)
-            print('RxStatus:', gps.status)
+            print('RxStatus:', gps.rx_status)
             print('FixType:', gps.fix)
             print('sat["quality"]:', gps.sat["quality"], 'sat["connected"]:', gps.sat["connected"], 'Altitude:', gps.alt)
             print('Course True North:', gps.course["true"], 'Course Magnetic North:', gps.course["mag"], 'speed["knots"]:', gps.speed["knots"], 'speed["kmph"]:', gps.speed["kmph"])
