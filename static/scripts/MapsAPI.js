@@ -26,9 +26,9 @@ function showPosition(position) {
 function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 8,
+        zoom: 20,
         center: ({lat: ground0.lat, lng: ground0.lng}),
-        mapTypeId: 'terrain'
+        mapTypeId: 'satellite'
     });
     // console.log(ground0);
     // This event listener will call addMarker() when the map is clicked.

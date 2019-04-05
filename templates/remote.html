@@ -4,14 +4,16 @@
 
 {% block content %}
 <script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
-<script src="/static/scripts/controller.js"></script>
-<img id="video"></img>
+<script type="text/javascript">
+var socket = io.connect({transports: ['websocket']});
+</script>
 
 <h2>{{ title }}</h2>
 
 <div id="canvasContainer">
     <canvas id="canvas" width="200"></canvas>
 </div>
+<script src="/static/scripts/controller.js"></script>
 
 <!-- 
 <div id="printresults">

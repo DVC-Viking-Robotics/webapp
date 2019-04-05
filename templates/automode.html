@@ -13,6 +13,9 @@
   </div>
   <div id="map"></div>
   <script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
+  <script type="text/javascript">
+  var socket = io.connect({transports: ['websocket']});
+  </script>
   <script type='text/javascript' src="../static/scripts/MapsAPI.js"></script>
   <p>Click on the map to add markers.</p>
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBEPoV-pgwZC36LaGzOuimUNFk5pWVBr-Y &callback=initMap" async defer></script>

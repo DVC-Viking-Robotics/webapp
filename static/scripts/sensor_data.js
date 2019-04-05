@@ -1,4 +1,4 @@
-var socket = io.connect({transports: ['websocket']});
+
 // this tactic won't work on table elements?
 var el_compass = document.getElementById('compass');
 var el_gyro = document.getElementById('gyro');

@@ -94,7 +94,7 @@ def handle_webcam_request():
             _, buffer = cv2.imencode('.jpg', frame)
 
         b64 = base64.b64encode(buffer)
-        print(len(b64))
+        print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', base64.b64encode(buffer))
 
 @socketio.on('gps')
@@ -158,6 +158,15 @@ def extras():
         'extras.html',
         title='Extra Features',
         message='Try our more advanced features!'
+    )
+
+@app.route('/vidFeed')
+def vidFeed():
+    """Renders the camera page."""
+    return render_template(
+        'vidFeed.html',
+        title='Live Camera feed',
+        message='straight from the Robot!'
     )
 
 @app.route('/automode')
