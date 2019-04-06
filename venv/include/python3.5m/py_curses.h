@@ -1,1 +1,0 @@
-/usr/include/python3.5m/py_curses.h

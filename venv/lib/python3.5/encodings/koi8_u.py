@@ -1,1 +1,0 @@
-/usr/lib/python3.5/encodings/koi8_u.py
