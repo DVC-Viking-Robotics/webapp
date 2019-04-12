@@ -5,35 +5,11 @@ var H;
 var controller;
 var moving = [ false, false ];
 var gamepads = {};
-var socket = io.connect({transports: ['websocket']});
 
 
-socket.on('connect', function() {
-    console.log('connected?', socket.connected)
-});
-
-socket.on('error', (error) => {
-    console.log('Error:', error)
-});
-
-socket.on('disconnect', function() {
-    // stop requesting for the feed
-    clearInterval(webcampRequestLock);
-    console.log('connected?', socket.connected);
-});
-
-// Used to receive the live feed from the raspberry pi
-socket.on('webcam-response', function(img_data) {
-    var dec = new TextDecoder("utf-8");
-    var video = document.getElementById("video");
-    console.log(img_data)
-    video.src = "data:image/jpeg;base64," + dec.decode(img_data);
-})
-
-// Webcam request loop
-var webcampRequestLock = setInterval(function() {
-    socket.emit('webcam')
-}, 250);
+// socket.on('connect', function() {
+//     console.log('socket connected', socket.connected)
+// });
 
 // gather data from the controller object
 function getArgs(){
@@ -82,7 +58,7 @@ function resize(){
     controller.draw();
 }
 
-function init() {
+function initRemote() {
     canvas = document.getElementById("canvas");
     canvas.addEventListener('touchstart', touchStart, false);
     canvas.addEventListener('touchmove', touchMove, false);

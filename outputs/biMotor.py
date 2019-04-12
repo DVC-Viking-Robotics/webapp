@@ -22,11 +22,10 @@ class biMotor:
     see this post for GPIO pin number scheme:
     https://raspberrypi.stackexchange.com/questions/12966/what-is-the-difference-between-board-and-bcm-for-gpio-pin-numbering
     """
-     
 
     #pass the GPIO pin numbers connecting to L293D input pins
     #example varName = bimotor(pin1, pin2) in main script
-    def __init__(self, pinF, pinB):
+    def __init__(self, pinB, pinF):
         GPIO.setup(pinF, GPIO.OUT)
         GPIO.setup(pinB, GPIO.OUT)
         # variables used to track acceleration
