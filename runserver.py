@@ -47,6 +47,8 @@ if cmd.on_raspi:
         camera = picamera.PiCamera()
         camera.resolution = (256, 144)
         camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
+        #sleep(1)
+        #camera.stop_preview()
     except picamera.exc.PiCameraError:
         camera = None
         print('picamera is not connected')
@@ -60,8 +62,6 @@ if cmd.on_raspi:
         finally:
             print('picamera is not installed')
 
-    #sleep(1)
-    #camera.stop_preview()
 else: # running on a PC
     try:
         import cv2
@@ -137,10 +137,7 @@ def handle_DoF_request():
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
     if (cmd.on_raspi):
-        if cmd.biPed == 0:
-            d.go(args[2], args[1])
-        else:
-            d.go(args[0], args[1])
+        d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')
