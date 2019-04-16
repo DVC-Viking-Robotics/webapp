@@ -24,9 +24,12 @@ from inputs.cmdArgs import args
 cmd = args()
 if cmd.on_raspi:
     if cmd.biPed:
-        from outputs.BiPed import drivetrain # for R2D2 configuration
+        # for R2D2 configuration
+        from outputs.Drivetrain import BiPed as drivetrain
     else:
-        from outputs.QuadPed import drivetrain # for race car configuration
+        # for race car configuration
+        from outputs.Drivetrain import QuadPed as drivetrain
+    d = drivetrain(cmd.biPed[1], cmd.biPed[2], cmd.biPed[3], cmd.biPed[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
@@ -59,7 +62,6 @@ if cmd.on_raspi:
 
     #sleep(1)
     #camera.stop_preview()
-    d = drivetrain(cmd.biPed[1], cmd.biPed[2], cmd.biPed[3], cmd.biPed[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
 else: # running on a PC
     try:
         import cv2
