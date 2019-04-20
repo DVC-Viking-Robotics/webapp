@@ -148,7 +148,7 @@ def handle_remoteOut(args):
         command = 'Driv ' + repr(args[0]) + ' ' + repr(args[1])
         command = bytes(command.encode('utf-8'))
         d.write(command)
-    elif cmd.on_raspi and cmd.driveT[0] != 3:
+    elif cmd.on_raspi and cmd.driveT[0] < 3:
         d.go(args[0], args[1])
     print('remote =', repr(args))
 
