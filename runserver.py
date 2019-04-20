@@ -141,7 +141,7 @@ def handle_DoF_request():
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
     if cmd.driveT[0] == 3:
-        command = 'Driv ' + args[0] + ' ' + args[1]
+        command = 'Driv ' + repr(args[0]) + ' ' + repr(args[1])
         command = command.decode()
         d.write(command)
     elif (cmd.on_raspi):
