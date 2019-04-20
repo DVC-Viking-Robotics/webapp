@@ -26,10 +26,11 @@ if cmd.on_raspi:
     if cmd.driveT[0] == 1:
         # for R2D2 configuration
         from outputs.Drivetrain import BiPed as drivetrain
+        d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
     elif cmd.driveT[0] == 0:
         # for race car configuration
         from outputs.Drivetrain import QuadPed as drivetrain
-    d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
+        d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
