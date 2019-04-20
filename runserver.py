@@ -124,6 +124,26 @@ def handle_DoF_request():
             gyro = IMUsensor.get_gyro_data()
         if cmd.DoF[0] == 9:
             mag = IMUsensor.get_mag_data()
+        elif cmd.DoF[0] < 0:
+            command = 'IMU '
+            command = bytes(command.encode('utf-8'))
+            # send coomand to poll data
+            d.write(command)
+            # save response to temp
+            temp = d.readline()
+            # turn temp into iterable list of strings
+            temp = temp.rsplit(',')
+            # iterate over list and convert to floats
+            for i in range(len(temp)):
+                temp[i] = float(temp[i])
+            # allocate response into appropiate data list
+            if cmd.DoF[0] == -6:
+                accel = [temp[0], temp[1], temp[2]]
+                gyro = [temp[3], temp[4], temp[5]]
+            elif cmd.DoF[0] == -9:
+                accel = [temp[0], temp[1], temp[2]]
+                gyro = [temp[3], temp[4], temp[5]]
+                mag = [temp[6], temp[7], temp[8]]
     else:
         accel = [0,0,0]
         gyro = [0,0,0]
@@ -133,11 +153,11 @@ def handle_DoF_request():
     senses[1] = gyro[x,y,z]
     senses[2] = mag[x,y,z]
     '''
-    if cmd.DoF[0] == 3:
+    if abs(cmd.DoF[0]) == 3:
         senses=[accel]
-    elif cmd.DoF[0] == 6:
+    elif abs(cmd.DoF[0]) == 6:
         senses = [accel, gyro]
-    else:
+    elif abs(cmd.DoF[0]) == 9:
         senses = [accel, gyro, mag]
     print('DoF sensor data sent')
     emit('sensorDoF-response', senses)
