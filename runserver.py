@@ -23,13 +23,13 @@ from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
 cmd = args()
 if cmd.on_raspi:
-    if cmd.biPed:
+    if cmd.driveT == 1:
         # for R2D2 configuration
         from outputs.Drivetrain import BiPed as drivetrain
-    else:
+    elif cmd.driveT == 0:
         # for race car configuration
         from outputs.Drivetrain import QuadPed as drivetrain
-    d = drivetrain(cmd.biPed[1], cmd.biPed[2], cmd.biPed[3], cmd.biPed[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
+    d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
     from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
@@ -69,6 +69,9 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
+    if cmd.driveT == 2:
+        import serial
+        d = serial.Serial('/dev/ttyUSB0', 115200)
 
 if cmd.gps_conf[0] == 'serial':
     gps = GPSserial(cmd.gps_conf[1])
@@ -138,6 +141,10 @@ def handle_DoF_request():
 def handle_remoteOut(args):
     if (cmd.on_raspi):
         d.go(args[0], args[1])
+    elif cmd.driveT == 3:
+        command = 'Driv ' + args[0] + ' ' + args[1]
+        command = command.decode()
+        d.write(command)
     print('remote =', repr(args))
 
 @app.route('/')

@@ -4,7 +4,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R. Please try using quotes to encompass values. ie "9,0x6a,0x1e"')
 
 # default variables used to do stuff
-biPed = '1,18,17,13,22'
+driveT = '1,18,17,13,22'
 phasedM = '1'
 DoF = '6' # degree of freedom and i2cdetect address(s)
 # use '9,0x6a,0x1c' for LSM9DS1
@@ -22,7 +22,7 @@ parser.add_argument('--host', default=host, help='Type IP address (domain). "0.0
 parser.add_argument('--port', default=port, help='Type port number for the server. "5555" is default.')
 
 # add option '--d' for drivetrain and pin #s
-parser.add_argument('--d', default=biPed, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup). Any numbers that follow will be taken as pairs for the GPIO pins to each motor. 1,18,17,13,22 is the default.')
+parser.add_argument('--d', default=driveT, help='Select drivetrain type. "2" = usb+arduino. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup). Any numbers that follow will be taken as pairs for the GPIO pins to each motor. ie "1,18,17,13,22".')
 
 # add option '--m' for motor driver
 parser.add_argument('--m', choices=['1', '0'], default=int(phasedM), help='Select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
@@ -45,7 +45,7 @@ class args:
         # parse arguments using self as storage
         # each parser.add_argument() can be accessed using self.<option flag>
         parser.parse_args(namespace=self)
-        self.biPed = []
+        self.driveT = []
         self.phasedM = 0
         self.DoF = []
         self.gps_conf = []
@@ -53,7 +53,7 @@ class args:
         # parse algo
         self.get_onRaspi()
         self.get_dof()
-        self.get_biPed()
+        self.get_driveT()
         self.get_Phased()
         self.get_cam()
         self.get_gps()
@@ -122,18 +122,19 @@ class args:
                 pass
             else: self.DoF.append(num)
 
-    def get_biPed(self):
-        #set biPed variable
+    def get_driveT(self):
+        #set driveT variable
         temp = self.d.rsplit(',')
         # print(repr(temp))
         for i in range(len(temp)):
             num = int(temp[i])
-            if not self.is_valid_BCM(num):
+            if not i and not self.is_valid_BCM(num):
                 pass
-            else: self.biPed.append(num)
-        temp = biPed.rsplit(',')
-        while len(self.biPed) < len(temp):
-            self.biPed.append(int(temp[len(self.biPed)]))
+            else: self.driveT.append(num)
+        temp = driveT.rsplit(',')
+        # fill in rest of the args with the defaults
+        while len(self.driveT) < len(temp):
+            self.driveT.append(int(temp[len(self.driveT)]))
 
     def is_valid_BCM(self, n):
         if n < 0 or n > 27:
@@ -156,7 +157,7 @@ if __name__ == "__main__":
     print('port #:', std.port)
     print('on_raspi:', std.on_raspi)
     print('Degrees of Freedom:', repr(std.DoF))
-    print('drivetrain:', std.biPed)
+    print('drivetrain:', std.driveT)
     print('motor direction pin:', std.phasedM)
     print('GPS config:', repr(std.gps_conf))
     print('camera:',std.cam)
