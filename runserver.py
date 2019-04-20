@@ -142,7 +142,7 @@ def handle_DoF_request():
 def handle_remoteOut(args):
     if cmd.driveT[0] == 3:
         command = 'Driv ' + repr(args[0]) + ' ' + repr(args[1])
-        command = command.decode()
+        command = bytes(command)
         d.write(command)
     elif (cmd.on_raspi):
         d.go(args[0], args[1])
