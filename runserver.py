@@ -132,7 +132,7 @@ def handle_DoF_request():
             # save response to temp
             temp = d.readline()
             # turn temp into iterable list of strings
-            temp = temp.rsplit(',')
+            temp = temp.decode().rsplit(',')
             # iterate over list and convert to floats
             for i in range(len(temp)):
                 temp[i] = float(temp[i])
