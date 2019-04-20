@@ -23,10 +23,10 @@ from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
 cmd = args()
 if cmd.on_raspi:
-    if cmd.driveT == 1:
+    if cmd.driveT[0] == 1:
         # for R2D2 configuration
         from outputs.Drivetrain import BiPed as drivetrain
-    elif cmd.driveT == 0:
+    elif cmd.driveT[0] == 0:
         # for race car configuration
         from outputs.Drivetrain import QuadPed as drivetrain
     d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
@@ -69,7 +69,7 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
-    if cmd.driveT == 2:
+    if cmd.driveT[0] == 2:
         import serial
         d = serial.Serial('/dev/ttyUSB0', 115200)
 
@@ -141,7 +141,7 @@ def handle_DoF_request():
 def handle_remoteOut(args):
     if (cmd.on_raspi):
         d.go(args[0], args[1])
-    elif cmd.driveT == 3:
+    elif cmd.driveT[0] == 3:
         command = 'Driv ' + args[0] + ' ' + args[1]
         command = command.decode()
         d.write(command)
