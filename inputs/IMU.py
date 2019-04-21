@@ -82,10 +82,10 @@ const_MPU6050 = {
     "ACCEL_SCALE_MODIFIER_4G"    : 8192.0,
     "ACCEL_SCALE_MODIFIER_8G"    : 4096.0,
     "ACCEL_SCALE_MODIFIER_16G"   : 2048.0,
-    "GYRO_SCALE_MODIFIER_250DEG" : 131.0,
-    "GYRO_SCALE_MODIFIER_500DEG" : 65.5,
-    "GYRO_SCALE_MODIFIER_1000DEG": 32.8,
-    "GYRO_SCALE_MODIFIER_2000DEG": 16.4,
+    "GYRO_SCALE_MODIFIER_250DEG" : (131.0 / 32766),
+    "GYRO_SCALE_MODIFIER_500DEG" : (65.5 / 32766),
+    "GYRO_SCALE_MODIFIER_1000DEG": (32.8 / 32766),
+    "GYRO_SCALE_MODIFIER_2000DEG": (16.4 / 32766),
     # Pre-defined ranges
     "ACCEL_RANGE_2G"       : 0x00,
     "ACCEL_RANGE_4G"       : 0x08,
@@ -424,7 +424,7 @@ class MPU6050(IMU):
         """Gets and returns the X, Y and Z values from the gyroscope"""
         self.get_gyro_range()
         gyro = self.read_gyro_raw()
-        gryo = (gyro[0] / 32766.0 * self.gyro_scale_modifier, gyro[1] / 32766.0 * self.gyro_scale_modifier, gyro[2] / 32766.0 * self.gyro_scale_modifier)
+        gryo = (gyro[0] * self.gyro_scale_modifier, gyro[1] * self.gyro_scale_modifier, gyro[2] * self.gyro_scale_modifier)
         return gyro
 
     def get_all_data(self):
