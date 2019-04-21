@@ -486,6 +486,11 @@ if __name__ == "__main__":
             parser.parse_args(namespace=self)
             self.DoF = []
             self.getDoF()
+        def is_valid_i2c(self, n):
+            if n < 0x03 or n > 0x77:
+                print(n, 'is not a valid i2c address')
+                return False
+            else: return True
 
         def getDoF(self):
             #set DoF variable
