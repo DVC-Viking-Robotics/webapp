@@ -325,7 +325,7 @@ class LSM9DS1(IMU):
         z = (buff[5] << 8) | buff[4]
         return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
 
-    def calcHeading(self):
+    def calcHeading(self, declination = 0):
         self.heading = 0
         if self.mag[0] == 0 and self.mag[1] < 0:
             self.heading = math.pi / 2
@@ -333,7 +333,7 @@ class LSM9DS1(IMU):
 
         # Convert everything from radians to degrees:
         self.heading = math.degrees(self.heading)
-        self.heading -= DECLINATION
+        self.heading -= declination
 
         # ensure proper range of [0, 360]
         if (self.heading > 360): self.heading -= 360
