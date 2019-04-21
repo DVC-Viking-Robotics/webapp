@@ -148,7 +148,7 @@ class LSM9DS1(IMU):
                 const_LSM9DS1["ADDRESS_XLG"] = address[0]
                 const_LSM9DS1["ADDRESS_MAG"] = address[1]
         except IOError:
-            raise RuntimeError('Could not find LSM9DS1 @ address', repr(bytes(address)),', check wiring!')
+            raise RuntimeError('Could not find LSM9DS1 @ address', repr(address),', check wiring!')
 
         # soft reset & reboot accel/gyro
         self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG8"], 0x05)
