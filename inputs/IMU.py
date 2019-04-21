@@ -157,7 +157,7 @@ class LSM9DS1(IMU):
         self.get_gyro_range()
         self.get_accel_range()
         self.get_mag_gain()
-        
+
     def get_accel_range(self):
         reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"])
         val = reg & 0b00011000
@@ -472,6 +472,7 @@ if __name__ == "__main__":
         IMUsensor = MPU6050()
     elif cmd.DoF[0] == 9:
         IMUsensor = LSM9DS1()
+    IMUsensor.set_gyro_range(500)
     while True:
         try:
             print('temp =', IMUsensor.get_temp())
