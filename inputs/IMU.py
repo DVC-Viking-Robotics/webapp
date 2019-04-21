@@ -449,6 +449,7 @@ if __name__ == "__main__":
     class args():
         def __init__(self):
             parser.parse_args(namespace=self)
+            self.DoF = []
             self.getDoF()
 
         def getDoF(self):
