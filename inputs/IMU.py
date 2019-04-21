@@ -451,7 +451,7 @@ if __name__ == "__main__":
             parser.parse_args(namespace=self)
             self.getDoF()
 
-        def get_dof(self):
+        def getDoF(self):
             #set DoF variable
             temp = self.dof.rsplit(',')
             # print(repr(temp))
