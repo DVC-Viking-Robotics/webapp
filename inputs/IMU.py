@@ -393,7 +393,7 @@ class MPU6050(IMU):
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_250DEG"]
             val =  const_MPU6050.get('GYRO_RANGE_250DEG')
         # Write the new range to the ACCEL_CONFIG register
-        self.bus.write_byte_data(self.address, self.const_MPU6050["GYRO_CONFIG"], val)
+        self.bus.write_byte_data(self.address, const_MPU6050["GYRO_CONFIG"], val)
 
     def read_accel_raw(self):
         """Read the raw accelerometer sensor values and return it as a
