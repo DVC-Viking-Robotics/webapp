@@ -474,7 +474,7 @@ if __name__ == "__main__":
     while True:
         try:
             print('temp =', IMUsensor.get_temp())
-            senses = IMU.get_all_data()
+            senses = IMUsensor.get_all_data()
             print('accel =', repr(senses[0]))
             print('gyro =', repr(senses[1]))
             if cmd.DoF[0] == 9:
