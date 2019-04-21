@@ -317,7 +317,7 @@ class LSM9DS1(IMU):
         self.accel = self.get_accel_data()
         self.gyro = self.get_gyro_data()
         self.mag = self.get_mag_data()
-        return [accel, gyro, mag]
+        return [self.accel, self.gyro, self.mag]
 
     def axisTuple(self, buff):
         x = (buff[1] << 8) | buff[0]
