@@ -473,7 +473,7 @@ if __name__ == "__main__":
         IMUsensor = LSM9DS1()
     while True:
         try:
-            print('temp =', mpu.get_temp())
+            print('temp =', IMUsensor.get_temp())
             senses = IMU.get_all_data()
             print('accel =', repr(senses[0]))
             print('gyro =', repr(senses[1]))
