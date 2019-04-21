@@ -129,7 +129,7 @@ class IMU(object):
             return val - (1 << bits)
         return val
 
-    def calcYawPitchRoll():
+    def calcYawPitchRoll(self):
         # calculate the orientation of the accelerometer and convert the output of atan2 from radians to degrees
         # this data is used to correct any cumulative errors in the orientation that the gyroscope develops.
         self.roll = math.degrees(math.atan2(self.accel[1],self.accel[2]))
@@ -325,7 +325,7 @@ class LSM9DS1(IMU):
         z = (buff[5] << 8) | buff[4]
         return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
 
-    def calcHeading():
+    def calcHeading(self):
         self.heading = 0
         if self.mag[0] == 0 and self.mag[1] < 0:
             self.heading = math.pi / 2
