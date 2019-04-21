@@ -510,7 +510,11 @@ if __name__ == "__main__":
     if cmd.DoF[0] == 6:
         IMUsensor = MPU6050()
     elif cmd.DoF[0] == 9:
-        IMUsensor = LSM9DS1()
+        if len(cmd.DoF) > 1:
+            IMUsensor = LSM9DS1(address=(cmd.DoF[1], cmd.DoF[2]))
+        else:
+            IMUsensor = LSM9DS1()
+
     # IMUsensor.set_gyro_range('500')
     while True:
         try:
