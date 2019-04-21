@@ -128,12 +128,6 @@ class IMU(object):
             return val - (1 << bits)
         return val
 
-    def axisTuple(self, buff):
-        x = (buff[1] << 8) | buff[0]
-        y = (buff[3] << 8) | buff[2]
-        z = (buff[5] << 8) | buff[4]
-        return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
-
 class LSM9DS1(IMU):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
@@ -159,13 +153,9 @@ class LSM9DS1(IMU):
         self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], 0xC0)
         # enable mag continuous
         self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG3_M"], 0x00)
-        # using default ranges for the various sensors
-        self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_2G"]
-        self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_4GAUSS"]
-        self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_245DPS"]
-        self.accel_range = const_LSM9DS1["XL_RANGE_2G"]
-        self.mag_gain = const_LSM9DS1["M_GAIN_4GAUSS"]
-        self.gyro_scale = const_LSM9DS1["G_SCALE_245DPS"]
+        # read biases and store ranges accordingly
+        self.get_gyro_range()
+        self.get_accel_range()
 
     def get_accel_range(self):
         reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"])
@@ -317,23 +307,28 @@ class LSM9DS1(IMU):
         accel = self.get_accel_data()
         gyro = self.get_gyro_data()
         mag = self.get_mag_data()
-
         return [accel, gyro, mag]
 
-class mpu6050(IMU):
+    def axisTuple(self, buff):
+        x = (buff[1] << 8) | buff[0]
+        y = (buff[3] << 8) | buff[2]
+        z = (buff[5] << 8) | buff[4]
+        return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
+
+class MPU6050(IMU):
     def __init__(self, address = (0x68), bus=1):
-        super(mpu6050, self).__init__(bus)
+        super(MPU6050, self).__init__(bus)
         self.address = address
         # Wake up the MPU-6050 since it starts in sleep mode
         try:
             self.bus.write_byte_data(self.address, const_MPU6050["PWR_MGMT_1"], 0x00)
         except IOError:
             raise RuntimeError('Could not find the GY-521 @ address', repr(address),', check your wiring')
-        self.read_accel_range()
-        self.read_gyro_range()
+        self.get_accel_range()
+        self.get_gyro_range()
             
     def read_temp_raw(self):
-        return (self._twos_comp(self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"]) | (self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"] + 1) << 8 ), 16))
+        return self._twos_comp(self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"] + 1) | (self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"]) << 8 ), 16)
 
     def get_temp(self):
         """Reads the temperature from the onboard temperature sensor of the MPU-6050.
@@ -347,7 +342,7 @@ class mpu6050(IMU):
         """
         return self.read_temp_raw() / 340.0 + 36.53
 
-    def read_accel_range(self):
+    def get_accel_range(self):
         """Reads the range the accelerometer is set to"""
         raw = self.bus.read_byte_data(self.address, const_MPU6050["ACCEL_CONFIG"]) & 0x18
         if raw == const_MPU6050["ACCEL_RANGE_2G"]:
@@ -371,9 +366,9 @@ class mpu6050(IMU):
             self.gyro_scale_modifier = const_MPU6050["ACCEL_SCALE_MODIFIER_2G"]
             val =  const_MPU6050.get('ACCEL_RANGE_2G')
         # Write the new range to the ACCEL_CONFIG register
-        self.bus.write_byte_data(self.address, const_MPU6050["ACCEL_CONFIG"], accel_range)
+        self.bus.write_byte_data(self.address, const_MPU6050["ACCEL_CONFIG"], val)
 
-    def read_gyro_range(self):
+    def get_gyro_range(self):
         """Reads the range the gyroscope is set to"""
         raw = self.bus.read_byte_data(self.address, const_MPU6050["GYRO_CONFIG"]) & 0x18
         if raw == const_MPU6050["GYRO_RANGE_250DEG"]:
@@ -410,11 +405,11 @@ class mpu6050(IMU):
         If g is True, it will return the data in g
         If g is False, it will return the data in m/s^2
         """
-        self.read_accel_range()
+        self.get_accel_range()
         accel = self.read_accel_raw()
         accel = (accel[0] / self.accel_scale_modifier, accel[1] / self.accel_scale_modifier, accel[2] / self.accel_scale_modifier)
 
-        if g is False:
+        if not g:
             accel = (accel[0] * Gravity, accel[1] * Gravity, accel[2] * Gravity)
         return accel
 
@@ -426,7 +421,7 @@ class mpu6050(IMU):
 
     def get_gyro_data(self):
         """Gets and returns the X, Y and Z values from the gyroscope"""
-        self.read_gyro_range()
+        self.get_gyro_range()
         gyro = self.read_gyro_raw()
         gryo = (gyro[0] / self.gyro_scale_modifier, gyro[1] / self.gyro_scale_modifier, gyro[2] / self.gyro_scale_modifier)
         return gyro
@@ -438,3 +433,52 @@ class mpu6050(IMU):
         gyro = self.get_gyro_data()
 
         return [accel, gyro]
+
+    def axisTuple(self, buff):
+        x = (buff[0] << 8) | buff[1]
+        y = (buff[2] << 8) | buff[3]
+        z = (buff[4] << 8) | buff[5]
+        return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
+
+if __name__ == "__main__":
+    import os
+    import argparse
+    #add description to program's help screen
+    parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "COM5" or "/dev/ttyS0"')
+    parser.add_argument('--dof', default='6', help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6b,0x1e"')
+    class args():
+        def __init__(self):
+            parser.parse_args(namespace=self)
+            self.getDoF()
+
+        def get_dof(self):
+            #set DoF variable
+            temp = self.dof.rsplit(',')
+            # print(repr(temp))
+            for i in range(len(temp)):
+                num = int(temp[i], 16)
+                if not i:
+                    num = int(temp[i])
+                    self.DoF.append(num)
+                elif not self.is_valid_i2c(num):
+                    pass
+                else: self.DoF.append(num)
+
+    cmd = args()
+    #finish get cmd line args
+    if cmd.DoF[0] == 6:
+        IMUsensor = MPU6050()
+    elif cmd.DoF[0] == 9:
+        IMUsensor = LSM9DS1()
+    while True:
+        try:
+            print('temp =', mpu.get_temp())
+            senses = IMU.get_all_data()
+            print('accel =', repr(senses[0]))
+            print('gyro =', repr(senses[1]))
+            if cmd.DoF[0] == 9:
+                print('mag =', repr(senses[2]))
+            time.sleep(2)
+        except KeyboardInterrupt:
+            del IMUsensor
+            break

@@ -28,7 +28,7 @@ parser.add_argument('--d', default=driveT, help='Select drivetrain type. "2" = u
 parser.add_argument('--m', choices=['1', '0'], default=int(phasedM), help='Select Motor Driver IC type. "1" = PWM + direction signals per motor. "0" = 2 PWM signals per motor')
 
 # add option '--dof' for Degrees of Freedom and I2C addresses
-parser.add_argument('--dof', default=DoF, help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6a,0x1c"')
+parser.add_argument('--dof', default=DoF, help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6b,0x1e"')
 
 # add option '--gps' for Degrees of Freedom and I2C addresses
 parser.add_argument('--gps', default=gps_defaults, help='Select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow will be used as i2c addresses or serial address. ie "i2c,0x6a,0x1c" or "serial,comm3". The "spi: flag ignores additional arguments.')
