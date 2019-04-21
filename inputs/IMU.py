@@ -472,7 +472,7 @@ if __name__ == "__main__":
         IMUsensor = MPU6050()
     elif cmd.DoF[0] == 9:
         IMUsensor = LSM9DS1()
-    IMUsensor.set_gyro_range(500)
+    IMUsensor.set_gyro_range('500')
     while True:
         try:
             print('temp =', IMUsensor.get_temp())
