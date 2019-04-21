@@ -1,5 +1,6 @@
 import smbus
 import time
+import math
 
 Gravity = 9.80665
 
@@ -128,6 +129,14 @@ class IMU(object):
             return val - (1 << bits)
         return val
 
+    def calcYawPitchRoll():
+        # calculate the orientation of the accelerometer and convert the output of atan2 from radians to degrees
+        # this data is used to correct any cumulative errors in the orientation that the gyroscope develops.
+        self.roll = math.degrees(math.atan2(self.accel[1],self.accel[2]))
+        self.pitch = math.degrees(math.atan2(self.accel[0],sqrt(self.accel[1]*self.accel[1]+self.accel[2]*self.accel[2])))
+        self.yaw = self.gyro[2]
+        return (self.yaw, self.pitch, self.roll)
+
 class LSM9DS1(IMU):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
@@ -253,9 +262,9 @@ class LSM9DS1(IMU):
         """The accelerometer X, Y, Z axis values as a 3-tuple of
         m/s^2 values.
         """
-        accel = self.read_accel_raw()
-        accel = (accel[0] * self._accel_mg_lsb / 1000.0 * Gravity, accel[1] * self._accel_mg_lsb / 1000.0 * Gravity, accel[2] * self._accel_mg_lsb / 1000.0 * Gravity)
-        return accel
+        self.accel = self.read_accel_raw()
+        self.accel = (self.accel[0] * self._accel_mg_lsb / 1000.0 * Gravity, self.accel[1] * self._accel_mg_lsb / 1000.0 * Gravity, self.accel[2] * self._accel_mg_lsb / 1000.0 * Gravity)
+        return self.accel
 
     def read_mag_raw(self):
         """Read the raw magnetometer sensor values and return it as a
@@ -268,9 +277,9 @@ class LSM9DS1(IMU):
         """The magnetometer X, Y, Z axis values as a 3-tuple of
         gauss values.
         """
-        mag = self.read_mag_raw()
-        mag = (mag[0] * self._mag_mgauss_lsb / 1000.0, mag[1] * self._mag_mgauss_lsb / 1000.0, mag[2] * self._mag_mgauss_lsb / 1000.0)
-        return mag
+        self.mag = self.read_mag_raw()
+        self.mag = (self.mag[0] * self._mag_mgauss_lsb / 1000.0, self.mag[1] * self._mag_mgauss_lsb / 1000.0, self.mag[2] * self._mag_mgauss_lsb / 1000.0)
+        return self.mag
 
     def read_gyro_raw(self):
         """Read the raw gyroscope sensor values and return it as a
@@ -283,9 +292,9 @@ class LSM9DS1(IMU):
         """The gyroscope X, Y, Z axis values as a 3-tuple of
         degrees/second values.
         """
-        gyro = self.read_gyro_raw()
-        gyro = (gyro[0] * self._gyro_dps_digit, gyro[1] * self._gyro_dps_digit, gyro[2] * self._gyro_dps_digit)
-        return gyro
+        self.gyro = self.read_gyro_raw()
+        self.gyro = (gyro[0] * self._gyro_dps_digit, self.gyro[1] * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
+        return self.gyro
 
     def read_temp_raw(self):
         """Read the raw temperature sensor value and return it as a 12-bit
@@ -304,10 +313,10 @@ class LSM9DS1(IMU):
  
     def get_all_data(self):
         """Reads and returns all the available data."""
-        temp = self.get_temp()
-        accel = self.get_accel_data()
-        gyro = self.get_gyro_data()
-        mag = self.get_mag_data()
+        self.temp = self.get_temp()
+        self.accel = self.get_accel_data()
+        self.gyro = self.get_gyro_data()
+        self.mag = self.get_mag_data()
         return [accel, gyro, mag]
 
     def axisTuple(self, buff):
@@ -315,6 +324,31 @@ class LSM9DS1(IMU):
         y = (buff[3] << 8) | buff[2]
         z = (buff[5] << 8) | buff[4]
         return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
+
+    def calcHeading():
+        self.heading = 0
+        if self.mag[0] == 0 and self.mag[1] < 0:
+            self.heading = math.pi / 2
+        else: self.heading = math.atan2(self.mag[1], self.mag[0])
+
+        # Convert everything from radians to degrees:
+        self.heading = math.degrees(self.heading)
+        self.heading -= DECLINATION
+
+        # ensure proper range of [0, 360]
+        if (self.heading > 360): self.heading -= 360
+        elif (self.heading < 0): self.heading += 360
+        return self.heading
+        """ 
+        if 337.25 < heading < 22.5 == North
+        if 292.5 < heading < 337.25 == North-West
+        if 247.5 < heading < 292.5 == West
+        if 202.5 < heading < 247.5 == South-West
+        if 157.5 < heading < 202.5 == South
+        if 112.5 < heading < 157.5 == South-East
+        if 67.5 < heading < 112.5 == East
+        if 22.5 < heading < 67.5 == North-East
+        """
 
 class MPU6050(IMU):
     def __init__(self, address = (0x68), bus=1):
@@ -407,12 +441,12 @@ class MPU6050(IMU):
         If g is False, it will return the data in m/s^2
         """
         self.get_accel_range()
-        accel = self.read_accel_raw()
-        accel = (accel[0] / self.accel_scale_modifier, accel[1] / self.accel_scale_modifier, accel[2] / self.accel_scale_modifier)
+        self.accel = self.read_accel_raw()
+        self.accel = (self.accel[0] / self.accel_scale_modifier, self.accel[1] / self.accel_scale_modifier, self.accel[2] / self.accel_scale_modifier)
 
         if not g:
-            accel = (accel[0] * Gravity, accel[1] * Gravity, accel[2] * Gravity)
-        return accel
+            self.accel = (self.accel[0] * Gravity, self.accel[1] * Gravity, self.accel[2] * Gravity)
+        return self.accel
 
     def read_gyro_raw(self):
         """Read the raw gyroscope sensor values and return it as a
@@ -423,17 +457,17 @@ class MPU6050(IMU):
     def get_gyro_data(self):
         """Gets and returns the X, Y and Z values from the gyroscope"""
         self.get_gyro_range()
-        gyro = self.read_gyro_raw()
-        gyro = (gyro[0] / self.gyro_scale_modifier, gyro[1] / self.gyro_scale_modifier, gyro[2] / self.gyro_scale_modifier)
-        return gyro
+        self.gyro = self.read_gyro_raw()
+        self.gyro = (self.gyro[0] / self.gyro_scale_modifier, self.gyro[1] / self.gyro_scale_modifier, self.gyro[2] / self.gyro_scale_modifier)
+        return self.gyro
 
     def get_all_data(self):
         """Reads and returns all the available data."""
-        temp = self.get_temp()
-        accel = self.get_accel_data()
-        gyro = self.get_gyro_data()
+        self.temp = self.get_temp()
+        self.accel = self.get_accel_data()
+        self.gyro = self.get_gyro_data()
 
-        return [accel, gyro]
+        return [self.accel, self.gyro]
 
     def axisTuple(self, buff):
         x = (buff[0] << 8) | buff[1]
@@ -479,8 +513,10 @@ if __name__ == "__main__":
             senses = IMUsensor.get_all_data()
             print('accel =', repr(senses[0]))
             print('gyro =', repr(senses[1]))
+            print('Yaw,Pitch,Roll =', repr(IMUsensor.calcYawPitchRoll()))
             if cmd.DoF[0] == 9:
                 print('mag =', repr(senses[2]))
+                print('Heading =', IMUsensor.calcHeading())
             time.sleep(2)
         except KeyboardInterrupt:
             del IMUsensor
