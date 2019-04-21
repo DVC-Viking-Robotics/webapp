@@ -133,7 +133,7 @@ class IMU(object):
         # calculate the orientation of the accelerometer and convert the output of atan2 from radians to degrees
         # this data is used to correct any cumulative errors in the orientation that the gyroscope develops.
         self.roll = math.degrees(math.atan2(self.accel[1],self.accel[2]))
-        self.pitch = math.degrees(math.atan2(self.accel[0],sqrt(self.accel[1]*self.accel[1]+self.accel[2]*self.accel[2])))
+        self.pitch = math.degrees(math.atan2(self.accel[0],math.sqrt(self.accel[1]*self.accel[1]+self.accel[2]*self.accel[2])))
         self.yaw = self.gyro[2]
         return (self.yaw, self.pitch, self.roll)
 
