@@ -116,8 +116,53 @@ def handle_gps_request():
         NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
 
-@socketio.on('sensorDoF')
-def handle_DoF_request():
+@socketio.on('senseHYPR')# get Heading, Yaw, Pitch, Roll
+def getHYPR():
+    getIMU()
+    heading = 0
+    PI = 3.1415926535897932384626433832795
+    if (mag[0] == 0):
+        if mag[1] < 0: 
+            heading = PI / 2
+        else: heading = 0
+    else: heading = atan2(mag[1], mag[0])
+
+    # Convert everything from radians to degrees:
+    heading *= 180 / PI
+    heading -= DECLINATION
+
+    # ensure proper range of [0, 360]
+    if (heading > 360): heading -= 360
+    elif (heading < 0): heading += 360
+
+    """ 
+    If heading is greater than 337.25 degrees or less than 22.5 degrees – North
+    If heading is between 292.5 degrees and 337.25 degrees – North-West
+    If heading is between 247.5 degrees and 292.5 degrees – West
+    If heading is between 202.5 degrees and 247.5 degrees – South-West
+    If heading is between 157.5 degrees and 202.5 degrees – South
+    If heading is between 112.5 degrees and 157.5 degrees – South-East
+    If heading is between 67.5 degrees and 112.5 degrees – East
+    If heading is between 0 degrees and 67.5 degrees – North-East
+    """ 
+    # calculate the orientation of the accelerometer and convert the output of atan2 from radians to degrees
+    # this data is used to correct any cumulative errors in the orientation that the gyroscope develops.
+    rollangle = atan2(accel[1],accel[2]) * 180 / PI
+    pitchangle = atan2(accelx,sqrt(accel[1] * accel[1]+accel[2] * accel[2])) * 180 / PI
+
+    # THE COMPLEMENTARY FILTER
+    # This filter calculates the angle based MOSTLY on integrating the angular velocity to an angular displacement.
+    # dt is the time between loop() iterations. 
+    # We'll pretend that the angular velocity has remained constant over the time dt, and multiply angular velocity by time to get displacement.
+    # The filter then adds a small correcting factor from the accelerometer ("roll" or "pitch"), so the gyroscope knows which way is down.
+    # Calculate the angle using a Complimentary filter
+    roll = 0.99 * (rollangle + gyrox * (dt / 1000000.0)) + 0.01 * rollangle
+    pitch = 0.99 * (pitchangle + gyroy * (dt / 1000000.0)) + 0.01 * pitchangle
+    yaw=gyroz
+    
+    print('heading:', heading, 'yaw:', yaw, 'pitch:', pitch, 'roll:', roll)
+
+def getIMU():
     if (cmd.on_raspi):
         if cmd.DoF[0] == 6:
             accel = IMUsensor.get_accel_data()
@@ -159,6 +204,11 @@ def handle_DoF_request():
         senses = [accel, gyro]
     elif abs(cmd.DoF[0]) == 9:
         senses = [accel, gyro, mag]
+
+
+@socketio.on('sensorDoF')
+def handle_DoF_request():
+    getIMU()
     print('DoF sensor data sent')
     emit('sensorDoF-response', senses)
 

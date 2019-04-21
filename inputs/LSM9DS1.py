@@ -1,12 +1,13 @@
-# ported from "https://github.com/adafruit/Adafruit_CircuitPythonconst_9oF.git"
+# ported from "https://github.com/adafruit/Adafruit_CircuitPythonconst_LSM9DS1.git"
 # list of all functions in SMBus library can be found at 
 # http://wiki.erazor-zone.de/wiki:linux:python:smbus:doc
-
 import smbus
 import time
 
+Gravity = 9.80665
+
 # Internal constants and register values:
-const_9oF = {
+const_LSM9DS1 = {
     "ADDRESS_XLG"            : 0x6a,
     "ADDRESS_MAG"            : 0x1c,
     "XG_ID"                  : 0b01101000,
@@ -64,7 +65,7 @@ const_9oF = {
     "OUT_Z_H_M"     : 0x2D,
     "CFG_M"         : 0x30,
     "INT_SRC_M"     : 0x31,
-    "SENSORS_GRAVITY_STANDARD"  : 9.80665,
+    # "SENSORS_GRAVITY_STANDARD"  : 9.80665,
     # User facing constants/module globals.
     "XL_RANGE_2G"   : (0b00 << 3),
     "XL_RANGE_16G"  : (0b01 << 3),
@@ -79,18 +80,6 @@ const_9oF = {
     "G_SCALE_2000DPS": (0b11 << 3)  # +/- 2000 degrees/s rotation
 }
 
-def _twos_comp(val, bits):
-    # Convert an unsigned integer in 2's compliment form of the specified bit
-    # length to its signed integer value and return it.
-    if val & (1 << (bits - 1)) != 0:
-        return val - (1 << bits)
-    return val
-
-def axisTuple(buff):
-    x = (buff[1] << 8) | buff[0]
-    y = (buff[3] << 8) | buff[2]
-    z = (buff[5] << 8) | buff[4]
-    return (_twos_comp(x, 16), _twos_comp(y, 16), _twos_comp(z, 16))
 
 class LSM9DS1:
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
@@ -105,34 +94,34 @@ class LSM9DS1:
         
         try:
             # Check ID registers.
-            if self.bus.read_byte_data(address[0], const_9oF["WHO_AM_I_XG"]) == const_9oF["XG_ID"] and self.bus.read_byte_data(address[1], const_9oF["WHO_AM_I_M"]) == const_9oF["MAG_ID"]:
-                const_9oF["ADDRESS_XLG"] = address[0]
-                const_9oF["ADDRESS_MAG"] = address[1]
+            if self.bus.read_byte_data(address[0], const_LSM9DS1["WHO_AM_I_XG"]) == const_LSM9DS1["XG_ID"] and self.bus.read_byte_data(address[1], const_LSM9DS1["WHO_AM_I_M"]) == const_LSM9DS1["MAG_ID"]:
+                const_LSM9DS1["ADDRESS_XLG"] = address[0]
+                const_LSM9DS1["ADDRESS_MAG"] = address[1]
         except IOError:
             raise RuntimeError('Could not find LSM9DS1 @ address', repr(bytes(address)),', check wiring!')
 
         # soft reset & reboot accel/gyro
-        self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG8"], 0x05)
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG8"], 0x05)
         # soft reset & reboot magnetometer
-        self.bus.write_byte_data(const_9oF["ADDRESS_MAG"], const_9oF["CTRL_REG2_M"], 0x0C)
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], 0x0C)
         time.sleep(0.01)
         # enable gyro continuous
-        self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG1_G"], 0xC0) # on XYZ
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"], 0xC0) # on XYZ
         # Enable the accelerometer continous
-        self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG5_XL"], 0x38)
-        self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG6_XL"], 0xC0)
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG5_XL"], 0x38)
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], 0xC0)
         # enable mag continuous
-        self.bus.write_byte_data(const_9oF["ADDRESS_MAG"], const_9oF["CTRL_REG3_M"], 0x00)
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG3_M"], 0x00)
         # Set default ranges for the various sensors
-        self._accel_mg_lsb = const_9oF["ACCEL_MG_LSB_2G"]
-        self._mag_mgauss_lsb = const_9oF["MAG_MGAUSS_4GAUSS"]
-        self._gyro_dps_digit = const_9oF["GYRO_DPS_DIGIT_245DPS"]
-        self.accel_range = const_9oF["XL_RANGE_2G"]
-        self.mag_gain = const_9oF["M_GAIN_4GAUSS"]
-        self.gyro_scale = const_9oF["G_SCALE_245DPS"]
+        self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_2G"]
+        self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_4GAUSS"]
+        self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_245DPS"]
+        self.accel_range = const_LSM9DS1["XL_RANGE_2G"]
+        self.mag_gain = const_LSM9DS1["M_GAIN_4GAUSS"]
+        self.gyro_scale = const_LSM9DS1["G_SCALE_245DPS"]
 
     def get_accel_range(self):
-        reg = self.bus.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG6_XL"])
+        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"])
         return (reg & 0b00011000) & 0xFF
 
     def set_accel_range(self, val):
@@ -142,25 +131,25 @@ class LSM9DS1:
           - XL_RANGE_8G
           - XL_RANGE_16G
         """
-        if const_9oF.get(val) != None:
-            val = const_9oF.get(val)
+        if const_LSM9DS1.get(val) != None:
+            val = const_LSM9DS1.get(val)
         else: 
             print('"', val, '" is not defined', sep = '')
             return
         reg = self.get_accel_range()
         reg |= val
-        self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG6_XL"], reg)
-        if val == const_9oF["XL_RANGE_2G"]:
-            self._accel_mg_lsb = const_9oF["ACCEL_MG_LSB_2G"]
-        elif val == const_9oF["XL_RANGE_4G"]:
-            self._accel_mg_lsb = const_9oF["ACCEL_MG_LSB_4G"]
-        elif val == const_9oF["XL_RANGE_8G"]:
-            self._accel_mg_lsb = const_9oF["ACCEL_MG_LSB_8G"]
-        elif val == const_9oF["XL_RANGE_16G"]:
-            self._accel_mg_lsb = const_9oF["ACCEL_MG_LSB_16G"]
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], reg)
+        if val == const_LSM9DS1["XL_RANGE_2G"]:
+            self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_2G"]
+        elif val == const_LSM9DS1["XL_RANGE_4G"]:
+            self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_4G"]
+        elif val == const_LSM9DS1["XL_RANGE_8G"]:
+            self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_8G"]
+        elif val == const_LSM9DS1["XL_RANGE_16G"]:
+            self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_16G"]
 
     def get_mag_gain(self):
-        reg = self.bus.read_byte_data(const_9oF["ADDRESS_MAG"], const_9oF["CTRL_REG2_M"])
+        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"])
         return (reg & 0b01100000) & 0xFF
 
     def set_mag_gain(self, val):
@@ -170,26 +159,26 @@ class LSM9DS1:
           - M_GAIN_12GAUSS
           - M_GAIN_16GAUSS
         """
-        if const_9oF.get(val) != None:
-            val = const_9oF.get(val)
+        if const_LSM9DS1.get(val) != None:
+            val = const_LSM9DS1.get(val)
         else: 
             print('"', val, '" is not defined', sep = '')
             return
-        reg = self.bus.read_byte_data(const_9oF["ADDRESS_MAG"], const_9oF["CTRL_REG2_M"])
+        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"])
         reg = (reg & ~(0b01100000)) & 0xFF
         reg |= val
-        self.bus.write_byte_data(const_9oF["ADDRESS_MAG"], const_9oF["CTRL_REG2_M"], reg)
-        if val == const_9oF["M_GAIN_4GAUSS"]:
-            self._mag_mgauss_lsb = const_9oF["MAG_MGAUSS_4GAUSS"]
-        elif val == const_9oF["M_GAIN_8GAUSS"]:
-            self._mag_mgauss_lsb = const_9oF["MAG_MGAUSS_8GAUSS"]
-        elif val == const_9oF["M_GAIN_12GAUSS"]:
-            self._mag_mgauss_lsb = const_9oF["MAG_MGAUSS_12GAUSS"]
-        elif val == const_9oF["M_GAIN_16GAUSS"]:
-            self._mag_mgauss_lsb = const_9oF["MAG_MGAUSS_16GAUSS"]
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], reg)
+        if val == const_LSM9DS1["M_GAIN_4GAUSS"]:
+            self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_4GAUSS"]
+        elif val == const_LSM9DS1["M_GAIN_8GAUSS"]:
+            self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_8GAUSS"]
+        elif val == const_LSM9DS1["M_GAIN_12GAUSS"]:
+            self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_12GAUSS"]
+        elif val == const_LSM9DS1["M_GAIN_16GAUSS"]:
+            self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_16GAUSS"]
 
     def get_gyro_range(self):
-        reg = self.bus.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG1_G"])
+        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"])
         return (reg & 0b00011000) & 0xFF
 
     def set_gyro_range(self, val):
@@ -198,21 +187,21 @@ class LSM9DS1:
           - G_SCALE_500DPS
           - G_SCALE_2000DPS
         """
-        if const_9oF.get(val) != None:
-            val = const_9oF.get(val)
+        if const_LSM9DS1.get(val) != None:
+            val = const_LSM9DS1.get(val)
         else: 
             print('"', val, '" is not defined', sep = '')
             return
-        reg = self.bus.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG1_G"])
+        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"])
         reg = (reg & ~(0b00011000)) & 0xFF
         reg |= val
-        self.bus.write_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["CTRL_REG1_G"], reg)
-        if val == const_9oF["G_SCALE_245DPS"]:
-            self._gyro_dps_digit = const_9oF["GYRO_DPS_DIGIT_245DPS"]
-        elif val == const_9oF["G_SCALE_500DPS"]:
-            self._gyro_dps_digit = const_9oF["GYRO_DPS_DIGIT_500DPS"]
-        elif val == const_9oF["G_SCALE_2000DPS"]:
-            self._gyro_dps_digit = const_9oF["GYRO_DPS_DIGIT_2000DPS"]
+        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"], reg)
+        if val == const_LSM9DS1["G_SCALE_245DPS"]:
+            self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_245DPS"]
+        elif val == const_LSM9DS1["G_SCALE_500DPS"]:
+            self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_500DPS"]
+        elif val == const_LSM9DS1["G_SCALE_2000DPS"]:
+            self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_2000DPS"]
 
     def read_accel_raw(self):
         """Read the raw accelerometer sensor values and return it as a
@@ -221,8 +210,8 @@ class LSM9DS1:
         accelerometer property!
         """
         # Read the accelerometer
-        self.buf = self.bus.read_i2c_block_data(const_9oF["ADDRESS_XLG"], const_9oF["OUT_X_L_XL"])
-        raw = axisTuple(self.buf[0:6])
+        self.buf = self.bus.read_i2c_block_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["OUT_X_L_XL"])
+        raw = self.axisTuple(self.buf[0:6])
         return raw
 
     def get_accel_data(self):
@@ -230,9 +219,9 @@ class LSM9DS1:
         m/s^2 values.
         """
         raw = self.read_accel_raw()
-        x = raw[0]* self._accel_mg_lsb / 1000.0 * const_9oF["SENSORS_GRAVITY_STANDARD"]
-        y = raw[1]* self._accel_mg_lsb / 1000.0 * const_9oF["SENSORS_GRAVITY_STANDARD"]    
-        z = raw[2]* self._accel_mg_lsb / 1000.0 * const_9oF["SENSORS_GRAVITY_STANDARD"]
+        x = raw[0]* self._accel_mg_lsb / 1000.0 * Gravity
+        y = raw[1]* self._accel_mg_lsb / 1000.0 * Gravity    
+        z = raw[2]* self._accel_mg_lsb / 1000.0 * Gravity
         return (x, y, z)
 
     def read_mag_raw(self):
@@ -242,8 +231,8 @@ class LSM9DS1:
         magnetometer property!
         """
         # Read the magnetometer
-        self.buf = self.bus.read_i2c_block_data(const_9oF["ADDRESS_MAG"], const_9oF["OUT_X_L_M"])
-        raw = axisTuple(self.buf[0:6])
+        self.buf = self.bus.read_i2c_block_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["OUT_X_L_M"])
+        raw = self.axisTuple(self.buf[0:6])
         return raw
 
     def get_mag_data(self):
@@ -260,8 +249,8 @@ class LSM9DS1:
         """Read the raw gyroscope sensor values and return it as a
         3-tuple of X, Y, Z axis values that are 16-bit unsigned values"""
         # Read the gyroscope
-        self.buf = self.bus.read_i2c_block_data(const_9oF["ADDRESS_XLG"], const_9oF["OUT_X_L_G"])
-        raw = axisTuple(self.buf[0:6])
+        self.buf = self.bus.read_i2c_block_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["OUT_X_L_G"])
+        raw = self.axisTuple(self.buf[0:6])
         return raw
 
     def get_gyro_data(self):
@@ -280,7 +269,7 @@ class LSM9DS1:
         want to use the temperature property!
         """
         # Read temp sensor
-        return _twos_comp(self.bus.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["TEMP_OUT_L"]) | ( (self.bus.read_byte_data(const_9oF["ADDRESS_XLG"], const_9oF["TEMP_OUT_H"]) & 0x0F) << 8 ), 12)
+        return self._twos_comp(self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["TEMP_OUT_L"]) | ( (self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["TEMP_OUT_H"]) & 0x0F) << 8 ), 12)
 
     def get_temp(self):
         """The temperature of the sensor in degrees Celsius."""
@@ -291,18 +280,31 @@ class LSM9DS1:
         temp = 27.5 + temp/16
         return temp
 
+    def _twos_comp(self, val, bits):
+        # Convert an unsigned integer in 2's compliment form of the specified bit
+        # length to its signed integer value and return it.
+        if val & (1 << (bits - 1)) != 0:
+            return val - (1 << bits)
+        return val
+
+    def axisTuple(self, buff):
+        x = (buff[1] << 8) | buff[0]
+        y = (buff[3] << 8) | buff[2]
+        z = (buff[5] << 8) | buff[4]
+        return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
+
 if __name__ == "__main__":
-    sense = LSM9DS1()
+    IMUsensor = LSM9DS1()
     while True:
         try:
             print('temp =', mpu.get_temp())
-            accel_data = sense.get_accel_data()
-            gyro_data = sense.get_gyro_data()
-            mag_data = sense.get_mag_data()
+            accel_data = IMUsensor.get_accel_data()
+            gyro_data = IMUsensor.get_gyro_data()
+            mag_data = IMUsensor.get_mag_data()
             print('gyro =', repr(gyro_data))
             print('accel =', repr(accel_data))
             print('mag =', repr(mag_data))
             time.sleep(2)
         except KeyboardInterrupt:
-            del sense
+            del IMUsensor
             break
