@@ -424,7 +424,7 @@ class MPU6050(IMU):
         """Gets and returns the X, Y and Z values from the gyroscope"""
         self.get_gyro_range()
         gyro = self.read_gyro_raw()
-        gryo = (gyro[0] / self.gyro_scale_modifier, gyro[1] / self.gyro_scale_modifier, gyro[2] / self.gyro_scale_modifier)
+        gryo = (gyro[0] / self.gyro_scale_modifier / 16384.0, gyro[1] / self.gyro_scale_modifier / 16384.0, gyro[2] / self.gyro_scale_modifier / 16384.0)
         return gyro
 
     def get_all_data(self):
