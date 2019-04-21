@@ -156,7 +156,8 @@ class LSM9DS1(IMU):
         # read biases and store ranges accordingly
         self.get_gyro_range()
         self.get_accel_range()
-
+        self.get_mag_gain()
+        
     def get_accel_range(self):
         reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"])
         val = reg & 0b00011000
