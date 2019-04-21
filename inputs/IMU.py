@@ -293,7 +293,7 @@ class LSM9DS1(IMU):
         degrees/second values.
         """
         self.gyro = self.read_gyro_raw()
-        self.gyro = (gyro[0] * self._gyro_dps_digit, self.gyro[1] * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
+        self.gyro = (self.gyro[0] * self._gyro_dps_digit, self.gyro[1] * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
         return self.gyro
 
     def read_temp_raw(self):
