@@ -2,6 +2,11 @@ import os
 import argparse
 #add description to program's help screen
 parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R. Please try using quotes to encompass values. ie "9,0x6a,0x1e"')
+import configparser
+Config = configparser.ConfigParser()
+Config.read("./inputs/defaults.ini")
+# Config
+print(Config.sections())
 
 # default variables used to do stuff
 driveT = '1,18,17,13,22'
