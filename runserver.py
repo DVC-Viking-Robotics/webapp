@@ -22,30 +22,24 @@ socketio = SocketIO(app, logger=False, engineio_logger=False, async_mode='eventl
 from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
 cmd = args()
-if cmd.on_raspi:
-    if cmd.driveT[0] == 1:
-        # for R2D2 configuration
-        from outputs.Drivetrain import BiPed as drivetrain
-        d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
-    elif cmd.driveT[0] == 0:
-        # for race car configuration
-        from outputs.Drivetrain import QuadPed as drivetrain
-        d = drivetrain(cmd.driveT[1], cmd.driveT[2], cmd.driveT[3], cmd.driveT[4], cmd.phasedM) # True = PMW + direction pins; False (default) = 2 PWM pins
-    elif cmd.driveT[0] == 2:
-        import serial
-        d = serial.Serial('/dev/ttyUSB0', 115200)
+if cmd.getboolean('WhoAmI', 'onRaspi'):
+    if cmd['Drivetrain']['interface'] == 'gpio':
+        if int(cmd['Drivetrain']['motorConfig']) == 1:
+            # for R2D2 configuration
+            from outputs.Drivetrain import BiPed as drivetrain
+        elif int(cmd['Drivetrain']['motorConfig']) == 0:
+            # for race car configuration
+            from outputs.Drivetrain import QuadPed as drivetrain
+        pins = cmd['Drivetrain']['address'].rsplit(',')
+        d = drivetrain(int(pins[0]), int(pins[1]), int(pins[2]), int(pins[3]), cmd.getboolean('Drivetrain', 'phasedM'))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
-    from inputs.mpu6050 import mpu6050 # for 6oF (GY-521)
-    from inputs.LSM9DS1 import LSM9DS1 # for 9oF (LSM9DS1)
-    if len(cmd.DoF) > 1:
-        if cmd.DoF[0] == 9:
-            IMUsensor = LSM9DS1((cmd.DoF[1:]))
-    else:
-        if cmd.DoF[0] == 6:
-            IMUsensor = mpu6050()
-        elif cmd.DoF[0] == 9:
-            IMUsensor = LSM9DS1()
+    if int(cmd['IMU']['dof']) == 6:
+        from inputs.mpu6050 import mpu6050 as imu # for 6oF (GY-521)
+    elif int(cmd['IMU']['dof']) == 9:
+        from inputs.LSM9DS1 import LSM9DS1 as imu # for 9oF (LSM9DS1)
+    # IMUsensor = imu()
+    IMUsensor = imu(address = cmd['IMU']['address'].rsplit(','))
     #camera dependencies
     try:
         import picamera
@@ -74,9 +68,10 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
-    if cmd.driveT[0] == 2:
-        import serial
-        d = serial.Serial('/dev/ttyUSB0', 115200)
+    
+if cmd['Drivetrain']['interface'] == 'serial':
+    import serial
+    d = serial.Serial('/dev/ttyUSB0', 115200)
 
 if cmd.gps_conf[0] == 'serial':
     gps = GPSserial(cmd.gps_conf[1])
@@ -93,7 +88,7 @@ def handle_disconnect():
 @socketio.on('webcam')
 def handle_webcam_request():
     if camera != None:
-        if cmd.on_raspi:
+        if cmd.getboolean('WhoAmI', 'onRaspi'):
             sio = io.BytesIO()
             camera.capture(sio, "jpeg", use_video_port=True)
             buffer = sio.getvalue()
@@ -122,14 +117,13 @@ def getHYPR():
     print('heading:', heading, 'yaw:', YPR[0], 'pitch:', YPR[1], 'roll:', YPR[2])
     return [heading, YPR[0], YPR[1], YPR[2]]
 
-
 def getIMU():
     '''
     senses[0] = accel[x,y,z]
     senses[1] = gyro[x,y,z]
     senses[2] = mag[x,y,z]
     '''
-    if (cmd.on_raspi):
+    if (cmd.getboolean('WhoAmI', 'onRaspi')):
         return IMUsensor.get_all_data()
     else:
         accel = [0,0,0]
@@ -141,7 +135,7 @@ def getIMU():
 @socketio.on('sensorDoF')
 def handle_DoF_request():
     senses = getIMU()
-    if cmd.on_raspi and cmd.DoF[0] == 9:
+    if cmd.getboolean('WhoAmI', 'onRaspi') and int(cmd['IMU']['dof']) == 9:
         emit('sensorDoF-response', [senses, getHYPR()])
     else:
         emit('sensorDoF-response', senses)
@@ -149,11 +143,11 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    if cmd.driveT[0] == 2:
+    if int(cmd['Drivetrain']['motorConfig']) == 2:
         command = 'Driv ' + repr(args[0]) + ' ' + repr(args[1])
         command = bytes(command.encode('utf-8'))
         d.write(command)
-    elif cmd.on_raspi:
+    elif cmd.getboolean('WhoAmI', 'onRaspi'):
         d.go(args[0], args[1])
     print('remote =', repr(args))
 
@@ -203,7 +197,7 @@ def about():
 
 if __name__ == '__main__':
     try:
-        socketio.run(app, host=cmd.host, port=cmd.port, debug=False)
+        socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
         pass
 

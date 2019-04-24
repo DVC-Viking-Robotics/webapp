@@ -140,15 +140,15 @@ class IMU(object):
 class LSM9DS1(IMU):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
-    def __init__(self, address = (0x6a, 0x1C), bus = 1):
+    def __init__(self, address = ['0x6a', '0x1C'], bus = 1):
         super(LSM9DS1, self).__init__()
         try:
             # Check ID registers.
-            if self.bus.read_byte_data(address[0], const_LSM9DS1["WHO_AM_I_XG"]) == const_LSM9DS1["XG_ID"] and self.bus.read_byte_data(address[1], const_LSM9DS1["WHO_AM_I_M"]) == const_LSM9DS1["MAG_ID"]:
-                const_LSM9DS1["ADDRESS_XLG"] = address[0]
-                const_LSM9DS1["ADDRESS_MAG"] = address[1]
+            if self.bus.read_byte_data(int(address[0], 16), const_LSM9DS1["WHO_AM_I_XG"]) == const_LSM9DS1["XG_ID"] and self.bus.read_byte_data(int(address[1], 16), const_LSM9DS1["WHO_AM_I_M"]) == const_LSM9DS1["MAG_ID"]:
+                const_LSM9DS1["ADDRESS_XLG"] = int(address[0], 16)
+                const_LSM9DS1["ADDRESS_MAG"] = int(address[1], 16)
         except IOError:
-            raise RuntimeError('Could not find LSM9DS1 @ address', repr(address),', check wiring!')
+            raise RuntimeError('Could not find LSM9DS1 @ address', ','.join(address),', check wiring!')
 
         # soft reset & reboot accel/gyro
         self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG8"], 0x05)
@@ -351,14 +351,14 @@ class LSM9DS1(IMU):
         """
 
 class MPU6050(IMU):
-    def __init__(self, address = (0x68), bus=1):
+    def __init__(self, address = ['0x68'], bus=1):
         super(MPU6050, self).__init__(bus)
-        self.address = address
+        self.address = int(address[0], 16)
         # Wake up the MPU-6050 since it starts in sleep mode
         try:
             self.bus.write_byte_data(self.address, const_MPU6050["PWR_MGMT_1"], 0x00)
         except IOError:
-            raise RuntimeError('Could not find the GY-521 @ address', repr(address),', check your wiring')
+            raise RuntimeError('Could not find the GY-521 @ address', address[0], ', check your wiring')
         self.get_accel_range()
         self.get_gyro_range()
             
