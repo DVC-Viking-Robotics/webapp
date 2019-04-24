@@ -102,10 +102,15 @@ class args:
         if self.dof != None:
             temp = self.dof.rsplit(',')
             # print(repr(temp))
-            Config['IMU']['interface'] = temp[0]
-            if len(temp) > 1:
+            if len(temp) >= 2:
+                Config['IMU']['dof'] = temp[0]
+                del temp[0]
+                Config['IMU']['interface'] = temp[0]
                 del temp[0]
                 Config['IMU']['address'] = ','.join(temp)
+            else: 
+                Config['IMU']['dof'] = temp[0]
+                Config['IMU']['address'] = ''
 
     def get_drivetrain(self):
         # set drivetrain section
@@ -145,7 +150,8 @@ if __name__ == "__main__":
     print('Domain:', cmd["WhoAmI"]["host"])
     print('port #:', cmd["WhoAmI"]["port"])
     print('on_raspi:', cmd["WhoAmI"]["onRaspi"])
-    print('Degrees of Freedom:', cmd["IMU"]["dof"], cmd["IMU"]["address"])
+    print('Degrees of Freedom:', cmd["IMU"]["dof"])
+    print('\t',cmd['IMU']['interface'], cmd["IMU"]["address"])
     print('drivetrain type:', cmd['Drivetrain']['motorConfig'])
     print('\t', cmd["Drivetrain"]["interface"], cmd["Drivetrain"]["address"])
     print('motor direction pin:', cmd.getboolean("Drivetrain", "phasedM"))
