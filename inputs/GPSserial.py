@@ -131,7 +131,7 @@ class GPSserial():
             p = time.time()
             endTime = p + self.timeOut
             while(not found and p < endTime):
-                self.line = self.ser.readline(timeout = self.timeOut)
+                self.line = self.ser.readline()
                 if (raw):
                     print(self.line)
                 self.line = list(self.line)
