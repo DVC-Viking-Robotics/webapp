@@ -36,12 +36,13 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         d = drivetrain(pins, cmd.getboolean('Drivetrain', 'phasedM'))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
-    if int(cmd['IMU']['dof']) == 6:
-        from inputs.IMU import mpu6050 as imu # for 6oF (GY-521)
-    elif int(cmd['IMU']['dof']) == 9:
-        from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
-    # IMUsensor = imu()
-    IMUsensor = imu(address = cmd['IMU']['address'].rsplit(','))
+    if cmd['IMU']['interface'] == 'i2c':
+        if int(cmd['IMU']['dof']) == 6:
+            from inputs.IMU import MPU6050 as imu # for 6oF (GY-521)
+        elif int(cmd['IMU']['dof']) == 9:
+            from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
+        # IMUsensor = imu()
+        IMUsensor = imu(address = cmd['IMU']['address'].rsplit(','))
     #camera dependencies
     try:
         import picamera
