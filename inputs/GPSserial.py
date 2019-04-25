@@ -140,10 +140,11 @@ class GPSserial():
                 # found = true if gps coordinates are captured
                 found = self.parseline(self.line)
                 p = time.time()
-'''
+    '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
-'''
+    '''
+    
 if __name__ == "__main__":
     #handle cmd line args
     import os

@@ -70,6 +70,7 @@ class args:
             if len(temp) > 1:
                 del temp[0]
                 Config['GPS']['address'] = ','.join(temp)
+            else: Config['GPS']['address'] = None
 
     def get_cam(self):
         if self.cam != None:
@@ -110,7 +111,7 @@ class args:
                 Config['IMU']['address'] = ','.join(temp)
             else: 
                 Config['IMU']['dof'] = temp[0]
-                Config['IMU']['address'] = ''
+                Config['IMU']['address'] = None
 
     def get_drivetrain(self):
         # set drivetrain section
@@ -124,6 +125,7 @@ class args:
                 del temp[0]
                 if len(temp) > 0:
                     Config['Drivetrain']['address'] = ','.join(temp)
+                else: Config['Drivetrain']['address'] = None
 
 
         # save boolean for using phased motors
