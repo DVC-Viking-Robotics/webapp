@@ -75,8 +75,8 @@ if cmd['Drivetrain']['interface'] == 'serial':
     import serial
     d = serial.Serial('/dev/ttyUSB0', 115200)
 
-if cmd.gps_conf[0] == 'serial':
-    gps = GPSserial(cmd.gps_conf[1])
+if cmd['GPS']['interface'] == 'serial':
+    gps = GPSserial(cmd['GPS']['address'])
 else: gps = None
 
 @socketio.on('connect')
