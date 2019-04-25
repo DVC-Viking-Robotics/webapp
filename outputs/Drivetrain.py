@@ -1,20 +1,19 @@
 class Drivetrain(object):
-    #using BCM pins 18, 17, 13, 22
-    def __init__(self, m1F, m1B,  m2F, m2B, phased = False):
+    #using BCM pins = '18, 17, 13, 22'
+    def __init__(self, pins, phased = False):
         if phased:  
             from gpiozero import PhaseEnableMotor as biMotor
-            # from outputs.biMotor_bool import biMotor # using High Amperage driver
         else: 
             from gpiozero import Motor as biMotor
-            # from outputs.biMotor import biMotor # using a L298 or similar driver
-        self.motor1 = biMotor(m1F, m1B)
-        self.motor2 = biMotor(m2F, m2B)
+        # convert string to list of int(s)
+        pins = pins.rsplit(',')
+        for i in pins:
+            pins[i] = int(pins[i]) # base 10 input
+        self.motor1 = biMotor(pins[0], pins[1])
+        self.motor2 = biMotor(pins[2], pins[3])
 
     
     def stop(self):
-        # from old biMotor class
-        # self.motor1.setSpeed(0)
-        # self.motor2.setSpeed(0)
         self.motor1.stop()
         self.motor2.stop()
         
@@ -24,9 +23,8 @@ class Drivetrain(object):
 #end Drivetrain class
 
 class BiPed(Drivetrain):
-    #using BCM pins 18, 17, 13, 22
-    def __init__(self, m1F, m1B,  m2F, m2B, phased = False):
-        super(BiPed, self).__init__(m1F, m1B,  m2F, m2B, phased)
+    def __init__(self, pins, phased = False):
+        super(BiPed, self).__init__(pins, phased)
         self.right = 0
         self.left = 0
 
@@ -50,9 +48,6 @@ class BiPed(Drivetrain):
             elif x < 0:
                 self.left = y * ((-100 - x) / 100.0) * -1
         # make sure speeds are an integer (not decimal/float) and send to motors
-        # from old biMotor class(s)
-        # self.motor1.setSpeed(int(round(self.right)))
-        # self.motor2.setSpeed(int(round(self.left)))
         if self.right > 0:
             self.motor1.backward(self.right/ 100.0)
         elif self.right < 0:
@@ -74,9 +69,8 @@ class BiPed(Drivetrain):
 #end BiPed class
 
 class QuadPed(Drivetrain):
-    #using BCM pins 18, 17, 13, 22
-    def __init__(self, m1F, m1B,  m2F, m2B, phased = False):
-        super(QuadPed, self).__init__(m1F, m1B, m2F, m2B, phased)
+    def __init__(self, pins, phased = False):
+        super(QuadPed, self).__init__(pins, phased)
         self.fr = 0 # forward/reverse direction
         self.lr = 0 # left/right direction
 
@@ -90,10 +84,6 @@ class QuadPed(Drivetrain):
         # set the axis directly to their corresponding motors
         self.fr = y
         self.lr = x
-        
-        # from old biMotor class
-        # self.motor1.setSpeed(self.fr)
-        # self.motor2.setSpeed(self.lr)
         
         if self.fr > 0:
             self.motor1.forward(self.fr / 100.0)
