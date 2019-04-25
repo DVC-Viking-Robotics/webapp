@@ -37,9 +37,9 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     if int(cmd['IMU']['dof']) == 6:
-        from inputs.mpu6050 import mpu6050 as imu # for 6oF (GY-521)
+        from inputs.IMU import mpu6050 as imu # for 6oF (GY-521)
     elif int(cmd['IMU']['dof']) == 9:
-        from inputs.LSM9DS1 import LSM9DS1 as imu # for 9oF (LSM9DS1)
+        from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
     # IMUsensor = imu()
     IMUsensor = imu(address = cmd['IMU']['address'].rsplit(','))
     #camera dependencies
