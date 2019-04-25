@@ -39,22 +39,24 @@ class BiPed(Drivetrain):
             self.left = x
         else: 
             # if forward/backward axis is not null and left/right axis is not null
+            offset = (100 - abs(x)) / 100.0
             if x > 0:
-                self.right = y * ((100 - x) / 100.0)
+                self.right = y * offset
             elif x < 0:
-                self.left = y * ((-100 - x) / 100.0) * -1
+                self.left = y * offset
+        
         # make sure speeds are an integer (not decimal/float) and send to motors
         if self.right > 0:
-            self.motor1.backward(self.right/ 100.0)
+            self.motor1.backward(self.right / 100.0)
         elif self.right < 0:
-            self.motor1.forward(self.right * -0.01)
+            self.motor1.forward(self.right / -100.0)
         else:
             self.motor1.stop()
         
         if self.left > 0:
             self.motor2.backward(self.left / 100.0)
         elif self.left < 0:
-            self.motor2.forward(self.left * -0.01)
+            self.motor2.forward(self.left / -100.0)
         else:
             self.motor2.stop()
         
