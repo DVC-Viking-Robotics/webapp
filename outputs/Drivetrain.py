@@ -1,14 +1,10 @@
 class Drivetrain(object):
-    #using BCM pins = '18, 17, 13, 22'
+    # using BCM pins = [18, 17, 13, 22]
     def __init__(self, pins, phased = False):
         if phased:  
             from gpiozero import PhaseEnableMotor as biMotor
         else: 
             from gpiozero import Motor as biMotor
-        # convert string to list of int(s)
-        pins = pins.rsplit(',')
-        for i in pins:
-            pins[i] = int(pins[i]) # base 10 input
         self.motor1 = biMotor(pins[0], pins[1])
         self.motor2 = biMotor(pins[2], pins[3])
 
@@ -20,7 +16,7 @@ class Drivetrain(object):
     def __del__(self):
         del self.motor1
         del self.motor2
-#end Drivetrain class
+# end Drivetrain class
 
 class BiPed(Drivetrain):
     def __init__(self, pins, phased = False):
@@ -66,7 +62,7 @@ class BiPed(Drivetrain):
     def print(self):
         print("left =", self.left)
         print("right =", self.right)
-#end BiPed class
+# end BiPed class
 
 class QuadPed(Drivetrain):
     def __init__(self, pins, phased = False):
@@ -103,17 +99,17 @@ class QuadPed(Drivetrain):
     def print(self):
         print("forward/reverse =", self.fr)
         print("left/right =", self.lr)
-#end QuadPed class
+# end QuadPed class
 
 
 
 
 if __name__ == "__main__":
     import time
-        #handle cmd line args
+    # handle cmd line args
     import os
     import argparse
-    #add description to program's help screen
+    # add description to program's help screen
     parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "0" or "1"')
     gps_defaults = '0'
     parser.add_argument('--d', default=gps_defaults, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
@@ -122,7 +118,7 @@ if __name__ == "__main__":
             parser.parse_args(namespace=self)
             self.d = int(self.d)
     cmd = args()
-    #finish get cmd line args
+    # finish get cmd line args
     
     if(cmd.d == 1):
         d = BiPed(17, 27, 22, 23)
