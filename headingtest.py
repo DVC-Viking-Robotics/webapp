@@ -1,3 +1,4 @@
+import time
 from inputs.cmdArgs import args
 cmd = args()
 
@@ -11,16 +12,16 @@ d = drivetrain([18,17,13,22],0)
 desiredHeading = 0
 IMUsensor.get_all_data()
 heading = IMUsensor.calcHeading()   
-
+while (1):
 #turn the robot until the desired compas position is reached
-while (heading != desiredHeading):
-    
-    IMUsensor.get_all_data()
-    heading = IMUsensor.calcHeading()   
-    print(heading)
+    while (heading != desiredHeading):
+        
+        IMUsensor.get_all_data()
+        heading = IMUsensor.calcHeading()   
+        print(heading)
 
-    d.go(100,0)
+        d.go(100,0)
 
-#stop the motors once it exits the loop (the desired heading has been reached)
-d.go(0,0)
-
+    #stop the motors once it exits the loop (the desired heading has been reached)
+    d.go(0,0)
+    time.sleep(5)
