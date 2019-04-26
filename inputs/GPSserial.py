@@ -46,7 +46,7 @@ class GPSserial():
             min = int(self.UTC[3:4])
             sec = float(self.UTC[5:])
             return self.UTC
-
+            
     def parseline(self, str):
         found = False
         if str.find('GLL') != -1:
@@ -109,7 +109,6 @@ class GPSserial():
             self.azi = int(arr[6])
             print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
             '''
-
         return found
     
     '''VERY IMPORTANT'''
@@ -128,9 +127,7 @@ class GPSserial():
     def getData(self, raw = False):
         found = False
         if not self.dummy:
-            p = time.time()
-            endTime = p + self.timeOut
-            while(not found and p < endTime):
+            while(not found):
                 self.line = self.ser.readline()
                 if (raw):
                     print(self.line)
@@ -139,7 +136,8 @@ class GPSserial():
                 self.line = bytes(self.line).decode('utf-8')
                 # found = true if gps coordinates are captured
                 found = self.parseline(self.line)
-                p = time.time()
+        return {"lat": self.NS, "lng": self.EW}
+                
     '''
     def __del__(self):
         del self.ser, self.north, self.west, self.line 
