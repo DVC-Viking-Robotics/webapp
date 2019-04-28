@@ -40,14 +40,18 @@ class GPSnav:
 
     def alignHeading(self, heading):
         if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
+            print("Left turn")
             #turn left
             self.d.go(0, -5)
         else: #turn right
+            print("Right turn")
             self.d.go(0, 5)
         while abs(self.imu.heading - heading) < 5.5:
+            print("Turning")
             # hold steady until new heading is acheived w/in 2 degrees
             self.imu.get_all_data()
         self.d.go(0,0) #stop after alignment completes
+        print("Coord reached")
 # end GPSnav class
 
 # self executable loop
