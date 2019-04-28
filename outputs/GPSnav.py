@@ -49,7 +49,7 @@ class GPSnav:
         while abs(self.imu.heading - heading) < 5.5:
             print("Turning")
             # hold steady until new heading is acheived w/in 2 degrees
-            self.imu.get_all_data()
+            self.imu.heading = self.imu.get_all_data()
         self.d.go(0,0) #stop after alignment completes
         print("Coord reached")
 # end GPSnav class
