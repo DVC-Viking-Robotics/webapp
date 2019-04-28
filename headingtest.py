@@ -3,7 +3,7 @@ import time
 import serial
 
 ser = serial.Serial(
-  port = 'COM11',
+  port = 'dev/tty/USB0',
   baudrate = 9600,
   parity=serial.PARITY_NONE,
   stopbits=serial.STOPBITS_ONE,
@@ -11,18 +11,13 @@ ser = serial.Serial(
   timeout=1
 )
 
-#from inputs.IMU import LSM9DS1 as imu 
-#IMUsensor = imu(address = cmd['IMU']['address'].rsplit(','))
-
-
 #import drivetrain libraries to drive motors
-#from outputs.Drivetrain import BiPed as drivetrain
-#d = drivetrain([18,17,13,22],0)
+from outputs.Drivetrain import BiPed as drivetrain
+d = drivetrain([18,17,13,22],0)
 
-#set desired heading value
+#set desired heading value here
+desiredHeading = 0.0 #always north
 
-
-desiredHeading = 340.0
 heading = 0.0
 time.sleep(0.1) 
 ser.readline()
@@ -55,10 +50,10 @@ def turnToHeading(desiredHeading):
             dTccw +=360
 
         if (dTcw < dTccw):
-            #d.go(50,0)
+            d.go(50,0)
             print("turning clockwise")
         else:
-            #d.go(-50,0)
+            d.go(-50,0)
             print("turning counterclockwise")
 
         heading = float(ser.readline().decode('utf-8'))
@@ -76,8 +71,8 @@ while (1):
     ser.flush()
     heading = float(ser.readline().decode('utf-8'))
     
-    
-    #d.go(0,0)
+    #I DONT KNOW HOW TO GIVE KEITH A BREAK BECAUSE SERIAL BUFFER WONT CLEAR. *cry*
+    d.go(0,0)
    
 
     
