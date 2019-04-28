@@ -42,14 +42,33 @@ class GPSnav:
         
         self.imu.heading = self.imu.get_all_data()
         print(self.imu.heading)
-        if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
+
+        dTcw = heading - self.imu.heading
+        dTccw = self.imu.heading - heading
+        if (dTcw < 0):
+            dTcw +=360
+
+        if (dTccw < 0):
+            dTccw +=360
+
+        if (dTcw < dTccw):
+            self.d.go(8,0)
+            print("turning clockwise")
+        else:
+            self.d.go(-8,0)
+            print("turning counterclockwise")
+
+
+
+       """  if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
             print("Left turn")
             #turn left
             self.d.go(-5, 0)
         else: #turn right
             print("Right turn")
-            self.d.go(5, 0)
-        while abs(self.imu.heading - heading) > 5.5:
+            self.d.go(5, 0) """
+
+        while abs(self.imu.heading - heading) > 6.5:
             print("Turning")
             # hold steady until new heading is acheived w/in 2 degrees
             self.imu.heading = self.imu.get_all_data()
