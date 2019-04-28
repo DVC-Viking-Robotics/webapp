@@ -51,6 +51,7 @@ class BiPed(Drivetrain):
         # make sure speeds are an integer (not decimal/float) and send to motors
         if self.right > 0:
             #self.motor1.backward(self.right / 100.0)
+            pass
         elif self.right < 0:
             self.motor1.forward(self.right / -100.0)
         else:
@@ -58,6 +59,7 @@ class BiPed(Drivetrain):
         
         if self.left > 0:
            # self.motor2.backward(self.left / 100.0)
+           pass
         elif self.left < 0:
             self.motor2.forward(self.left / -100.0)
         else:
