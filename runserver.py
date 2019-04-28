@@ -71,7 +71,11 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
-    
+
+if cmd['IMU']['interface'] == 'serial':
+    from inputs.EXTnode import EXTnode as imu
+    IMUsensor = imu(cmd['IMU']['address'], int(cmd['IMU']['baud']))
+
 if cmd['Drivetrain']['interface'] == 'serial':
     import serial
     d = serial.Serial('/dev/ttyUSB0', 115200)
@@ -79,6 +83,9 @@ if cmd['Drivetrain']['interface'] == 'serial':
 if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
 else: gps = None
+
+from input.GPSnav import GPSnav
+nav = GPSnav(d, IMUsensor)
 
 @socketio.on('connect')
 def handle_connect():
