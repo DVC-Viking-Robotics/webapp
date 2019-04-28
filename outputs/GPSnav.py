@@ -4,10 +4,10 @@ class GPSnav:
     def __init__(self): # for testing heading calcs only
         self.waypoints = [{'lat': -122.07071872, 'lng': 37.96668393}, {'lat': -122.0711613, 'lng': 37.966604}]
 
-    def __init__(self, driveT, gpsIn):
+    def __init__(self, driveT, imu):
         self.waypoints = []
         self.d = driveT
-        self.gps = gpsIn
+        self.imu = imu
     
     def insert(self, index = -1, wp = None):
         if index < 0 or index > len(self.waypoints):
@@ -39,14 +39,14 @@ class GPSnav:
             return heading
 
     def alignHeading(self, heading):
-        if abs(heading - gps.heading) < abs(heading + 360 - gps.heading):
+        if abs(heading - self.imu.heading) < abs(heading + 360 - imu.heading):
             #turn left
             self.d.go(0, -50)
         else: #turn right
             self.d.go(0, 50)
-        while abs(gps.heading - heading) < 2:
+        while abs(self.imu.heading - heading) < 2:
             # hold steady until new heading is acheived w/in 2 degrees
-            pass 
+            self.imu.calcHeading()
         d.go(0,0) #stop after alignment completes
 # end GPSnav class
 
