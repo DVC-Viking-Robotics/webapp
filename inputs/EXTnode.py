@@ -3,6 +3,7 @@ class EXTnode():
     def __init__(self, address = '/dev/ttyS0', baud = -1):
         import serial
         self.baud = baud
+        self.heading = 0
         temp = address.rsplit(',')
         for i in range(len(temp)):
             try:
@@ -14,7 +15,7 @@ class EXTnode():
                 self.dummy = False
             except serial.SerialException:
                 self.dummy = True
-                print('unable to open port', addy)
+                print('unable to open port', self.address)
         del temp
 
     def get_all_data(self):
