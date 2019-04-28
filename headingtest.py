@@ -3,8 +3,8 @@ import time
 import serial
 
 ser = serial.Serial(
-  port = '/dev/ttyUSB0',
-  baudrate = 115200,
+  port = 'COM11',
+  baudrate = 9600,
   parity=serial.PARITY_NONE,
   stopbits=serial.STOPBITS_ONE,
   bytesize=serial.EIGHTBITS,
@@ -16,29 +16,23 @@ ser = serial.Serial(
 
 
 #import drivetrain libraries to drive motors
-from outputs.Drivetrain import BiPed as drivetrain
-d = drivetrain([18,17,13,22],0)
+#from outputs.Drivetrain import BiPed as drivetrain
+#d = drivetrain([18,17,13,22],0)
 
 #set desired heading value
 
-desiredHeading = 0
 
-while (1):
-#turn the robot until the desired compas position is reached (range is used for accuracy loss) 
-
-    turnToHeading(desiredHeading)
-
-    #stop the motors once it exits the loop (the desired heading has been reached)
-    print("desired heading received. 5 sec rest")
-    d.go(0,0)
-    time.sleep(5)
-
-
+desiredHeading = 340.0
+heading = 0.0
+time.sleep(0.1) 
+ser.readline()
 
 def turnToHeading(desiredHeading):
     
-    heading = ser.readline()
+    heading = float(ser.readline().decode('utf-8'))
     print("heading received")
+    print(heading)
+    
     desiredHeadingMin = desiredHeading  - 5
     
     if (desiredHeadingMin < 0):
@@ -46,13 +40,30 @@ def turnToHeading(desiredHeading):
 
     desiredHeadingMax = desiredHeading + 5
 
-    if (desiredHeadingMin > 360):
-        desiredHeadingMin -= 360
+    if (desiredHeadingMax > 360):
+        desiredHeadingMax -= 360
 
-    while (heading > desiredHeadingMax and heading < desiredHeadingMin):
+    while ((heading > desiredHeadingMax) or (heading < desiredHeadingMin)):
         print("turning to heading")
-        heading = ser.readline()
+        #d.go(50,0)
+        heading = float(ser.readline().decode('utf-8'))
         print(heading)
-        d.go(50,0)
+        
+
+
+while (1):
+#turn the robot until the desired compas position is reached (range is used for accuracy loss) 
+
+    turnToHeading(desiredHeading)
+    #(ser.readline().decode('utf-8'))
+    #stop the motors once it exits the loop (the desired heading has been reached)
+    print("desired heading received. 5 sec rest")
+    ser.flush()
+    heading = float(ser.readline().decode('utf-8'))
+    
+    
+    #d.go(0,0)
+   
+
     
     
