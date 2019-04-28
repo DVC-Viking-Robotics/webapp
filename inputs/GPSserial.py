@@ -21,7 +21,7 @@ class GPSserial():
             self.timeOut = t
         except serial.SerialException:
             self.dummy = True
-            print('unable to open', addy)
+            print('unable to open port', addy)
         self.NS = DEFAULT_LOC['lat']
         self.EW = DEFAULT_LOC['lng']
         self.UTC = ""
@@ -65,7 +65,7 @@ class GPSserial():
                     self.EW_dir = -1.0
                 else:
                     self.EW_dir = 1.0
-                    found = True
+                found = True
                 self.convertGPS()
             if (len(arr[5]) > 1):
                 self.UTC = arr[5]
