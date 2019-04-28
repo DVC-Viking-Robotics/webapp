@@ -31,9 +31,10 @@ class BiPed(Drivetrain):
         x = max(-100, min(100, x))
         y = max(-100, min(100, y))
         # assuming left/right axis is null (just going forward or backward)
-        self.left = y
-        self.right = y
-        if y == 0: 
+        if x == 0:
+            self.left = y
+            self.right = y
+        elif y == 0: 
             # if forward/backward axis is null ("turning on a dime" functionality)
             self.right = -1 * x
             self.left = x
