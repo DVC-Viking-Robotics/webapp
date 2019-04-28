@@ -46,8 +46,8 @@ class GPSnav:
             self.d.go(0, 5)
         while abs(self.imu.heading - heading) < 5.5:
             # hold steady until new heading is acheived w/in 2 degrees
-            self.imu.calcHeading()
-        d.go(0,0) #stop after alignment completes
+            self.imu.get_all_data()
+        self.d.go(0,0) #stop after alignment completes
 # end GPSnav class
 
 # self executable loop
