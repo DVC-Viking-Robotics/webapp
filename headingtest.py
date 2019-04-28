@@ -16,7 +16,7 @@ from outputs.Drivetrain import BiPed as drivetrain
 d = drivetrain([18,17,13,22],0)
 
 #set desired heading value here
-desiredHeading = 90.0 #always north
+desiredHeading = 0.0 #always north
 
 heading = 0.0
 time.sleep(0.1) 
