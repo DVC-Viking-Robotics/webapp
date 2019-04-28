@@ -73,8 +73,8 @@ class GPSnav:
             # hold steady until new heading is acheived w/in 2 degrees
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
-        self.d.go(0,10) #stop after alignment completes
-        time.sleep(3)
+        self.d.go(0,-20) #stop after alignment completes
+        time.sleep(6)
         self.d.go(0,0)
         print("Coord reached")
 # end GPSnav class
