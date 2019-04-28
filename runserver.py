@@ -126,7 +126,7 @@ def getIMU():
     senses[1] = gyro[x,y,z]
     senses[2] = mag[x,y,z]
     '''
-    if (cmd.getboolean('WhoAmI', 'onRaspi')):
+    if (cmd.getboolean('WhoAmI', 'onRaspi')) and int(cmd['IMU']['dof']) != 0:
         return IMUsensor.get_all_data()
     else:
         accel = [0,0,0]

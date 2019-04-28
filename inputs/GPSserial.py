@@ -109,7 +109,6 @@ class GPSserial():
             self.azi = int(arr[6])
             print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
             '''
-        print('found =', found)
         return found
     
     '''VERY IMPORTANT'''
