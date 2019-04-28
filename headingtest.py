@@ -72,7 +72,7 @@ while (1):
     turnToHeading(desiredHeading)
     #(ser.readline().decode('utf-8'))
     #stop the motors once it exits the loop (the desired heading has been reached)
-    print("desired heading received. 5 sec rest")
+    print("Desired heading achieved. Old Keith gotta take a rest")
     ser.flush()
     heading = float(ser.readline().decode('utf-8'))
     
