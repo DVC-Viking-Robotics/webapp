@@ -38,7 +38,7 @@ def turnToHeading(desiredHeading):
     if (desiredHeadingMax > 360):
         desiredHeadingMax -= 360
  """
-    while (abs(heading - desiredHeading) > 5):
+    while (abs(heading - desiredHeading) > 10):
         print("turning to heading")
 
         dTcw = desiredHeading - heading
