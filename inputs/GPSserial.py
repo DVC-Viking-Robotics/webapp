@@ -65,7 +65,7 @@ class GPSserial():
                     self.EW_dir = -1.0
                 else:
                     self.EW_dir = 1.0
-                    found = True
+                found = True
                 self.convertGPS()
             if (len(arr[5]) > 1):
                 self.UTC = arr[5]
