@@ -60,11 +60,11 @@ class GPSnav:
 
 
 
-       """  if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
+            """  if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
             print("Left turn")
             #turn left
             self.d.go(-5, 0)
-        else: #turn right
+            else: #turn right
             print("Right turn")
             self.d.go(5, 0) """
 
