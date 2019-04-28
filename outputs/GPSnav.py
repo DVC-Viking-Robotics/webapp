@@ -39,7 +39,7 @@ class GPSnav:
             return heading
 
     def alignHeading(self, heading):
-        if abs(heading - self.imu.heading) < abs(heading + 360 - imu.heading):
+        if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
             #turn left
             self.d.go(0, -50)
         else: #turn right
