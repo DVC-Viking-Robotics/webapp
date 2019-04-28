@@ -84,7 +84,7 @@ if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
 else: gps = None
 
-from outsputs.GPSnav import GPSnav
+from outputs.GPSnav import GPSnav
 nav = GPSnav(d, IMUsensor)
 
 @socketio.on('connect')
