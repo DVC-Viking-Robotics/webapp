@@ -25,4 +25,4 @@ class EXTnode():
             temp = temp.rsplit(',')
             if len(temp) > 0:
                 self.heading = float(temp[0])
-            return temp
+            return self.heading
