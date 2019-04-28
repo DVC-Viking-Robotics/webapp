@@ -18,7 +18,7 @@ class GPSnav:
 
     def pop(self, index = -1):
         # check bounds
-        if index >= len(self.waypoints) or index < 0:
+        if index >= len(self.waypoints) or index < -1:
             return None # do nothing if out of bounds
         else: return self.waypoints.pop(index)
 
