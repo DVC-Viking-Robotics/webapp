@@ -21,7 +21,7 @@ class EXTnode():
             if self.dummy: return 0.0 # if failed
             else: return self.get_all_data() # if success, re-call this function
         else:
-            temp = self.ser.readline()
+            temp = self.ser.readline().encode()
             temp = temp.rsplit(',')
             if len(temp) > 0:
                 self.heading = float(temp[0])
