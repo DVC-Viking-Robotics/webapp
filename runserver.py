@@ -203,7 +203,7 @@ def about():
     )
 
 if __name__ == '__main__':
-    nav.alignHeading(0.0)
+    nav.alignHeading(90.0)
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:

@@ -1,5 +1,5 @@
 import math
-
+import time
 class GPSnav:
     def __init__(self): # for testing heading calcs only
         self.waypoints = [{'lat': -122.07071872, 'lng': 37.96668393}, {'lat': -122.0711613, 'lng': 37.966604}]
@@ -73,7 +73,9 @@ class GPSnav:
             # hold steady until new heading is acheived w/in 2 degrees
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
-        self.d.go(0,0) #stop after alignment completes
+        self.d.go(0,10) #stop after alignment completes
+        time.sleep(3)
+        self.d.go(0,0)
         print("Coord reached")
 # end GPSnav class
 
