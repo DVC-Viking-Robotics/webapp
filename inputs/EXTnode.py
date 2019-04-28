@@ -4,19 +4,16 @@ class EXTnode():
         import serial
         self.baud = baud
         self.heading = 0
-        temp = address.rsplit(',')
-        for i in range(len(temp)):
-            try:
-                self.address = temp[i]
-                if baud < 0:
-                    self.ser = serial.Serial(self.address)
-                else:
-                    self.ser = serial.Serial(self.address, baud)
-                self.dummy = False
-            except serial.SerialException:
-                self.dummy = True
-                print('unable to open port', self.address)
-        del temp
+        try:
+            self.address = address
+            if baud < 0:
+                self.ser = serial.Serial(self.address)
+            else:
+                self.ser = serial.Serial(self.address, baud)
+            self.dummy = False
+        except serial.SerialException:
+            self.dummy = True
+            print('unable to open port', self.address)
 
     def get_all_data(self):
         if self.dummy: # attempt to reconnect
