@@ -55,16 +55,16 @@ class BiPed(Drivetrain):
             self.motor1.backward(self.right / 100.0)
             
         elif self.right < 0:
-            #self.motor1.forward(self.right / -100.0)
-            pass
+            self.motor1.forward(self.right / -100.0)
+            # pass
         else:
             self.motor1.stop()
         
         if self.left > 0:
            self.motor2.backward(self.left / 100.0)
         elif self.left < 0:
-            #self.motor2.forward(self.left / -100.0)
-            pass
+            self.motor2.forward(self.left / -100.0)
+            # pass
         else:
             self.motor2.stop()
         
