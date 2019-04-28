@@ -39,6 +39,8 @@ class GPSnav:
             return heading
 
     def alignHeading(self, heading):
+        
+        self.imu.heading = self.imu.get_all_data()
         print(self.imu.heading)
         if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
             print("Left turn")
