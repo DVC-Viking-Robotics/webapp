@@ -2,8 +2,10 @@ class Drivetrain(object):
     # using BCM pins = [18, 17, 13, 22]
     def __init__(self, pins, phased = False):
         if phased:  
+            # from outputs.phasedMotor import phasedMotor as biMotor
             from gpiozero import PhaseEnableMotor as biMotor
         else: 
+            # from outputs.biMotor import biMotor
             from gpiozero import Motor as biMotor
         self.motor1 = biMotor(pins[0], pins[1])
         self.motor2 = biMotor(pins[2], pins[3])
