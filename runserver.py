@@ -129,10 +129,7 @@ def getIMU():
     if (cmd.getboolean('WhoAmI', 'onRaspi')) and int(cmd['IMU']['dof']) != 0:
         return IMUsensor.get_all_data()
     else:
-        accel = [0,0,0]
-        gyro = [0,0,0]
-        mag = [0,0,0]
-        return [accel, gyro, mag]
+        return [[0,0,0], [0,0,0], [0,0,0]]
 
 
 @socketio.on('sensorDoF')
