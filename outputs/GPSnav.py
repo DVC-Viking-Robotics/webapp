@@ -42,10 +42,10 @@ class GPSnav:
         if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
             print("Left turn")
             #turn left
-            self.d.go(0, -5)
+            self.d.go(-5, 0)
         else: #turn right
             print("Right turn")
-            self.d.go(0, 5)
+            self.d.go(5, 0)
         while abs(self.imu.heading - heading) > 5.5:
             print("Turning")
             # hold steady until new heading is acheived w/in 2 degrees
