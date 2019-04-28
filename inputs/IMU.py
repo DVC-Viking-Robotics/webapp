@@ -338,6 +338,9 @@ class LSM9DS1(IMU):
         # ensure proper range of [0, 360]
         if (self.heading > 360): self.heading -= 360
         elif (self.heading < 0): self.heading += 360
+        return self.heading# ensure proper range of [0, 360]
+        if (self.heading > 360): self.heading -= 360
+        elif (self.heading < 0): self.heading += 360
         return self.heading
         """ 
         if 337.25 < heading < 22.5 == North
