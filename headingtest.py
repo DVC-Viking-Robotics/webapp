@@ -13,7 +13,7 @@ ser = serial.Serial(
 
 #import drivetrain libraries to drive motors
 from outputs.Drivetrain import BiPed as drivetrain
-d = drivetrain([18,17,13,22],0)
+d = drivetrain([18,17,13,22],1)
 
 #set desired heading value here
 desiredHeading = 0.0 #always north

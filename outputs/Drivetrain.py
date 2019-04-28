@@ -5,6 +5,8 @@ class Drivetrain(object):
             from gpiozero import PhaseEnableMotor as biMotor
         else: 
             from gpiozero import Motor as biMotor
+        # (phase, enable)
+        # [direction, speed]
         self.motor1 = biMotor(pins[0], pins[1])
         self.motor2 = biMotor(pins[2], pins[3])
 
