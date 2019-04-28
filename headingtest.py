@@ -28,12 +28,12 @@ def turnToHeading(desiredHeading):
     print("heading received")
     print(heading)
     
-    desiredHeadingMin = desiredHeading  - 5
+    desiredHeadingMin = desiredHeading  - 10
     
     if (desiredHeadingMin < 0):
         desiredHeadingMin += 360
 
-    desiredHeadingMax = desiredHeading + 5
+    desiredHeadingMax = desiredHeading + 10
 
     if (desiredHeadingMax > 360):
         desiredHeadingMax -= 360
@@ -50,10 +50,10 @@ def turnToHeading(desiredHeading):
             dTccw +=360
 
         if (dTcw < dTccw):
-            d.go(50,0)
+            d.go(5,0)
             print("turning clockwise")
         else:
-            d.go(-50,0)
+            d.go(-5,0)
             print("turning counterclockwise")
 
         heading = float(ser.readline().decode('utf-8'))
