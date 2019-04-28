@@ -36,8 +36,8 @@ class BiPed(Drivetrain):
             self.right = y
         elif y == 0:
             # if forward/backward axis is null ("turning on a dime" functionality)
-            self.right =  x
-            self.left = -1* x
+            self.right = -x
+            self.left = x
         else: 
             # if forward/backward axis is not null and left/right axis is not null
             offset = (100 - abs(x)) / 100.0
@@ -45,6 +45,8 @@ class BiPed(Drivetrain):
                 self.right = y * offset
             elif x < 0:
                 self.left = y * offset
+
+        self.print()
         
         # make sure speeds are an integer (not decimal/float) and send to motors
         if self.right > 0:
