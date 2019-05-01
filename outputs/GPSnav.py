@@ -91,9 +91,9 @@ class GPSnav:
         NESW = [{'lat': self.gps.NS, 'lng': self.gps.EW}]
         #just making sure that the coordinates are getting stored properly
         print("current lat: ")
-        print(waypoints[0]['lat'])
+        print(self.waypoints[0]['lat'])
         print("current long: ")
-        print(waypoints[0]['lng'])
+        print(self.waypoints[0]['lng'])
         print("----------------")
         print("target lat: ")
         print(NESW[0]['lat'])
