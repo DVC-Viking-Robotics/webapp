@@ -84,6 +84,8 @@ class GPSnav:
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
         self.d.go(0,0)
+        self.d.go(0,40)
+        time.sleep(20)
         print("Coord reached")
 # end GPSnav class
 
@@ -109,8 +111,7 @@ class GPSnav:
         print(destinationHeading)
         #turn the robot toward destination
         self.alignHeading(destinationHeading)
-        self.d.go(0,40)
-        time.sleep(20)
+        
         
 
         
