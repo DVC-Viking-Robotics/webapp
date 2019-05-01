@@ -62,10 +62,10 @@ class GPSnav:
             dTccw +=360
 
         if (dTcw < dTccw):
-            self.d.go(8,0)
+            self.d.go(15,0)
             print("turning clockwise")
         else:
-            self.d.go(-8,0)
+            self.d.go(-15,0)
             print("turning counterclockwise")
 
 
@@ -109,7 +109,7 @@ class GPSnav:
         print(destinationHeading)
         #turn the robot toward destination
         self.alignHeading(destinationHeading)
-        d.go(0,20)
+        self.d.go(0,40)
         time.sleep(20)
         
 
