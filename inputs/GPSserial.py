@@ -85,7 +85,7 @@ class GPSserial():
         elif (str.find('GGA') != -1):
             typeState = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
             arr = str.rsplit(',')
-            # print(repr(arr))
+            print(repr(arr))
             self.sat["quality"] = typeState[int(arr[6])]
             self.sat["connected"] = int(arr[7])
             if (len(arr[9]) > 1):
