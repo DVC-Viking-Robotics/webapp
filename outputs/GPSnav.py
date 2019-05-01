@@ -90,7 +90,8 @@ class GPSnav:
     def drivetoWaypoint(self):
         #retrieve the current position of the robot
         self.gps.getData(True)
-        NESW = {'lat': self.gps.NS, 'lng': self.gps.EW}
+        NESW = {'lat': -122.07071872, 'lng': 37.96668393}
+        #NESW = {'lat': self.gps.NS, 'lng': self.gps.EW}
         #just making sure that the coordinates are getting stored properly
         print("current lat: ")
         print(self.waypoints[0]['lat'])
