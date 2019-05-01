@@ -100,3 +100,15 @@ function lngMinus(){
     var temp = {lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() - 0.01};
     markers[tempLen].setPosition(temp);
 }
+
+function copyMarkers(){
+    let result = [];
+    for (let i = 1; i < markers.length; ++i){
+        result[i - 1] = {lat: markers[i].getPosition().lat(), lng: markers[i].getPosition().lng()};
+    }
+    return result;
+}
+
+function dumpMarkers(clear = true){
+    socket.emit('buildWaypoints', copyMarkers(), clear);    
+}

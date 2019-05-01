@@ -111,6 +111,13 @@ def handle_webcam_request():
         emit('webcam-response', base64.b64encode(buffer))
 
 @socketio.on('gps')
+def build_wapypoints(wp, clear):
+    if clear: nav.clear()
+    for i in range(len(wp)):
+        print('lat =', wp[i]['lat'], 'lng =', wp[i]['lng'])
+        nav.insert(wp[i])
+
+@socketio.on('gps')
 def handle_gps_request():
     print('gps data sent')
     NESW = (0,0)
