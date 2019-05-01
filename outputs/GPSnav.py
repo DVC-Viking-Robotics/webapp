@@ -109,6 +109,8 @@ class GPSnav:
         print(destinationHeading)
         #turn the robot toward destination
         self.alignHeading(destinationHeading)
+        d.go(0,20)
+        time.sleep(20)
         
 
         
