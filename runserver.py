@@ -85,7 +85,7 @@ if cmd['GPS']['interface'] == 'serial':
 else: gps = None
 
 from outputs.GPSnav import GPSnav
-#nav = GPSnav(d, IMUsensor)
+nav = GPSnav(d, IMUsensor, gps)
 
 @socketio.on('connect')
 def handle_connect():
@@ -202,11 +202,11 @@ def about():
         message='This Web App is meant to control a robot powered by Raspberry Pi via WiFi or LAN. '
     )
 
-#if __name__ == '__main__':
-#    nav.alignHeading(90.0)
-#    nav.drivetoWaypoint()
-#    try:
-#        socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
-#    except KeyboardInterrupt:
-#        pass
+if __name__ == '__main__':
+    nav.drivetoWaypoint()
+    
+    try:
+        socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
+    except KeyboardInterrupt:
+        pass
 
