@@ -88,7 +88,7 @@ class GPSnav:
     def drivetoWaypoint(self):
         #retrieve the current position of the robot
         self.gps.getData(True)
-        NESW = [{'lat': self.gps.NS, 'lng': self.gps.EW}]
+        NESW = {'lat': self.gps.NS, 'lng': self.gps.EW}
         #just making sure that the coordinates are getting stored properly
         print("current lat: ")
         print(self.waypoints[0]['lat'])
@@ -96,9 +96,9 @@ class GPSnav:
         print(self.waypoints[0]['lng'])
         print("----------------")
         print("target lat: ")
-        print(NESW[0]['lat'])
+        print(NESW['lat'])
         print("target long: ")
-        print(NESW[1]['lng'])
+        print(NESW['lng'])
         
         #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
         destinationHeading = self.getNewHeading(NESW)
