@@ -48,7 +48,7 @@ class GPSnav:
             return heading
 
     def alignHeading(self, heading):
-        
+        self.d.go(0,0)
         self.imu.heading = self.imu.get_all_data()
         print("current robot heading: ")
         print(self.imu.heading)
@@ -84,8 +84,8 @@ class GPSnav:
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
         self.d.go(0,0)
-        self.d.go(0,-40)
-        time.sleep(5)
+        self.d.go(0,-30)
+        time.sleep(2)
         self.d.go(0,0)
         print("Coord reached")
 # end GPSnav class
