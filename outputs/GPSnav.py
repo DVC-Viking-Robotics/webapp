@@ -91,14 +91,14 @@ class GPSnav:
         NESW = [{'lat': self.gps.NS, 'lng': self.GPS.EW}]
         #just making sure that the coordinates are getting stored properly
         print("current lat: ")
-        print([waypoints[0]['lat'])
+        print(waypoints[0]['lat'])
         print("current long: ")
-        print([waypoints[0]['lng'])
+        print(waypoints[0]['lng'])
         print("----------------")
         print("target lat: ")
-        print([NESW[0]['lat'])
+        print(NESW[0]['lat'])
         print("target long: ")
-        print([NESW[1]['lng'])
+        print(NESW[1]['lng'])
         
         #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
         destinationHeading = self.getNewHeading(NESW)
