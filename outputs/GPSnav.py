@@ -37,8 +37,8 @@ class GPSnav:
         else: # calc slope between 2 points and return as heading
             y2 = float(self.waypoints[base]['lat'])
             x2 = float(self.waypoints[base]['lng'])
-            y1 = float(currentPos[0]['lat'])
-            x1 = float(currentPos[0]['lng'])
+            y1 = float(currentPos['lat'])
+            x1 = float(currentPos['lng'])
 
             #y1 = float(self.waypoints[base]['lat'])
             #x1 = float(self.waypoints[base]['lng'])
