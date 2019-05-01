@@ -84,16 +84,17 @@ class GPSnav:
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
         self.d.go(0,0)
-        self.d.go(0,40)
-        time.sleep(20)
+        self.d.go(0,-40)
+        time.sleep(5)
+        self.d.go(0,0)
         print("Coord reached")
 # end GPSnav class
 
     def drivetoWaypoint(self):
         #retrieve the current position of the robot
         self.gps.getData(True)
-        NESW = {'lat': -122.07071872, 'lng': 37.96668393}
-        #NESW = {'lat': self.gps.NS, 'lng': self.gps.EW}
+        #NESW = {'lat': -122.07071872, 'lng': 37.96668393}
+        NESW = {'lat': self.gps.NS, 'lng': self.gps.EW}
         #just making sure that the coordinates are getting stored properly
         print("current lat: ")
         print(self.waypoints[0]['lat'])
@@ -106,11 +107,12 @@ class GPSnav:
         print(NESW['lng'])
         
         #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
-        destinationHeading = self.getNewHeading(NESW)
-        print("Destination heading =")
-        print(destinationHeading)
-        #turn the robot toward destination
-        self.alignHeading(destinationHeading)
+        while(1):
+            destinationHeading = self.getNewHeading(NESW)
+            print("Destination heading =")
+            print(destinationHeading)
+            #turn the robot toward destination
+            self.alignHeading(destinationHeading)
         
         
 
