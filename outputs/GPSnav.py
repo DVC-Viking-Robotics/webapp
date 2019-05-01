@@ -4,10 +4,11 @@ class GPSnav:
     def __init__(self): # for testing heading calcs only
         self.waypoints = [{'lat': -122.07071872, 'lng': 37.96668393}, {'lat': -122.0711613, 'lng': 37.966604}]
 
-    def __init__(self, driveT, imu):
-        self.waypoints = []
+    def __init__(self, driveT, imu, gps):
+        self.waypoints = [{'lat': -122.0711613, 'lng': 37.966604}]
         self.d = driveT
         self.imu = imu
+        self.gps = gps
     
     def insert(self, index = -1, wp = None):
         if index < 0 or index > len(self.waypoints):
@@ -28,19 +29,26 @@ class GPSnav:
     def len(self):
         return len(self.waypoints)
 
-    def getNewHeading(self, base = 0):
-        if len(self.waypoints) <= (base + 1): return 0
+    def getNewHeading(self, currentPos, base = 0):
+        
+        if len(self.waypoints) == (base): 
+            print("No GPS waypoints established.")
+            return 0
         else: # calc slope between 2 points and return as heading
-            y2 = float(self.waypoints[base + 1]['lat'])
-            x2 = float(self.waypoints[base + 1]['lng'])
-            y1 = float(self.waypoints[base]['lat'])
-            x1 = float(self.waypoints[base]['lng'])
+            y2 = float(self.waypoints[base]['lat'])
+            x2 = float(self.waypoints[base]['lng'])
+            y1 = float(currentPos[0]['lat'])
+            x1 = float(currentPos[0]['lng'])
+
+            #y1 = float(self.waypoints[base]['lat'])
+            #x1 = float(self.waypoints[base]['lng'])
             heading = math.degrees(math.atan2((y2 - y1), (x2 - x1)))
             return heading
 
     def alignHeading(self, heading):
         
         self.imu.heading = self.imu.get_all_data()
+        print("current robot heading: ")
         print(self.imu.heading)
 
         dTcw = heading - self.imu.heading
@@ -73,11 +81,42 @@ class GPSnav:
             # hold steady until new heading is acheived w/in 2 degrees
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
-        self.d.go(0,-20) #stop after alignment completes
-        time.sleep(6)
         self.d.go(0,0)
         print("Coord reached")
 # end GPSnav class
+
+    def drivetoWaypoint(self):
+        #retrieve the current position of the robot
+        self.gps.getData(True)
+        NESW = [{'lat': self.gps.NS, 'lng': self.GPS.EW}]
+        #just making sure that the coordinates are getting stored properly
+        print("current lat: ")
+        print([waypoints[0]['lat'])
+        print("current long: ")
+        print([waypoints[0]['lng'])
+        print("----------------")
+        print("target lat: ")
+        print([NESW[0]['lat'])
+        print("target long: ")
+        print([NESW[1]['lng'])
+        
+        #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
+        destinationHeading = self.getNewHeading(NESW)
+        print("Destination heading =")
+        print(destinationHeading)
+        #turn the robot toward destination
+        self.alignHeading(destinationHeading)
+        
+
+        
+
+
+
+        
+
+        #current position of the robot is stored in self.waypoints[base]['lat'] & self.waypoints[base]['lng']
+
+
 
 # self executable loop
 if __name__ == "__main__":
