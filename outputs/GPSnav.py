@@ -43,6 +43,8 @@ class GPSnav:
             #y1 = float(self.waypoints[base]['lat'])
             #x1 = float(self.waypoints[base]['lng'])
             heading = math.degrees(math.atan2((y2 - y1), (x2 - x1)))
+            if(heading < 0):
+                heading+= 360
             return heading
 
     def alignHeading(self, heading):
