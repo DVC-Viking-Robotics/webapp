@@ -208,7 +208,8 @@ if __name__ == '__main__':
     nav.alignHeading(180)
     
     try:
-        socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
-    except KeyboardInterrupt:
         pass
+        #socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
+    except KeyboardInterrupt:
+        d.go(0,0)
 

@@ -84,9 +84,6 @@ class GPSnav:
             self.imu.heading = self.imu.get_all_data()
             print(self.imu.heading)
         self.d.go(0,0)
-        self.d.go(0,-30)
-        time.sleep(2)
-        self.d.go(0,0)
         print("Coord reached")
 # end GPSnav class
 
