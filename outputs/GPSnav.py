@@ -48,8 +48,13 @@ class GPSnav:
             return heading
 
     def alignHeading(self, heading):
+        correctionAngle = 0
         self.d.go(0,0)
         self.imu.heading = self.imu.get_all_data()
+        
+        #correction angle based on how the mag3110 is mounted. edit value until 0 aligns robot with true north. 
+        self.imu.heading += correctionAngle
+
         print("current robot heading: ")
         print(self.imu.heading)
 
@@ -104,7 +109,7 @@ class GPSnav:
         print(NESW['lng'])
         
         #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
-    
+
         destinationHeading = self.getNewHeading(NESW)
         print("Destination heading =")
         print(destinationHeading)
