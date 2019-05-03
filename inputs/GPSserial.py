@@ -83,7 +83,7 @@ class GPSserial():
             if (len(arr[4]) > 1):
                 self.speed["kmph"] = float(arr[4])
         elif (str.find('GGA') != -1):
-            typeState = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)"]
+            typeState = ["Fix Unavailable", "Valid Fix (SPS)", "Valid Fix (GPS)", "unknown1", "unknown2", "unknown3"]
             arr = str.rsplit(',')
             # print(repr(arr))
             self.sat["quality"] = typeState[int(arr[6])]
