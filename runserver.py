@@ -203,7 +203,9 @@ def about():
     )
 
 if __name__ == '__main__':
-    nav.drivetoWaypoint()
+    nav.alignHeading(0)
+    input("Press Enter to continue...")
+    nav.alignHeading(180)
     
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)

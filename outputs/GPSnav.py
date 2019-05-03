@@ -107,13 +107,13 @@ class GPSnav:
         print(NESW['lng'])
         
         #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
-        while(1):
-            destinationHeading = self.getNewHeading(NESW)
-            print("Destination heading =")
-            print(destinationHeading)
-            #turn the robot toward destination
-            self.alignHeading(destinationHeading)
-        
+    
+        destinationHeading = self.getNewHeading(NESW)
+        print("Destination heading =")
+        print(destinationHeading)
+        #turn the robot toward destination
+        self.alignHeading(destinationHeading)
+    
         
 
         
