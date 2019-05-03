@@ -68,8 +68,30 @@ class GPSnav:
             else:
                 self.d.go(-15,0)
                 print("turning counterclockwise")
+            correctionAngle = 0
+            self.d.go(0,0)
+            self.imu.heading = self.imu.get_all_data()
+            
+            #correction angle based on how the mag3110 is mounted. edit value until 0 aligns robot with true north. 
+            self.imu.heading += correctionAngle
 
+            print("current robot heading: ")
+            print(self.imu.heading)
 
+            dTcw = heading - self.imu.heading
+            dTccw = self.imu.heading - heading
+            if (dTcw < 0):
+                dTcw +=360
+
+            if (dTccw < 0):
+                dTccw +=360
+
+            if (dTcw < dTccw):
+                self.d.go(15,0)
+                print("turning clockwise")
+            else:
+                self.d.go(-15,0)
+                print("turning counterclockwise")
 
             """  if abs(heading - self.imu.heading) < abs(heading + 360 - self.imu.heading):
             print("Left turn")
@@ -79,16 +101,13 @@ class GPSnav:
             print("Right turn")
             self.d.go(5, 0) """
 
-        while abs(self.imu.heading - heading) > 6.5:
-            print("Turning")
-            # hold steady until new heading is acheived w/in 2 degrees
-            self.imu.heading = self.imu.get_all_data()
-            print(self.imu.heading)
-        self.d.go(0,0)
-        self.d.go(0,-30)
-        time.sleep(2)
-        self.d.go(0,0)
-        print("Coord reached")
+            while abs(self.imu.heading - heading) > 6.5:
+                print("Turning")
+                # hold steady until new heading is acheived w/in 2 degrees
+                self.imu.heading = self.imu.get_all_data()
+                print(self.imu.heading)
+            self.d.go(0,0)
+            print("Coord reached")
 # end GPSnav class
 
     def drivetoWaypoint(self):
@@ -108,21 +127,13 @@ class GPSnav:
         print(NESW['lng'])
         
         #calculated the heading between current position and target coordinate (waypoint[0]['lat]['lng'])
-        while(1):
-            destinationHeading = self.getNewHeading(NESW)
-            print("Destination heading =")
-            print(destinationHeading)
-            #turn the robot toward destination
-            self.alignHeading(destinationHeading)
-        
-        
 
-        
-
-
-
-        
-
+        destinationHeading = self.getNewHeading(NESW)
+        print("Destination heading =")
+        print(destinationHeading)
+        #turn the robot toward destination
+        self.alignHeading(destinationHeading)
+    
         #current position of the robot is stored in self.waypoints[base]['lat'] & self.waypoints[base]['lng']
 
 

@@ -213,4 +213,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         socketio.stop
         del d, nav, IMUsensor
-
+    """ d.go(0,0)
+    #nav.alignHeading(0)
+    input("Press Enter to continue...")
+    #nav.alignHeading(180) """
