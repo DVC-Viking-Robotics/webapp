@@ -48,25 +48,26 @@ class GPSnav:
             return heading
 
     def alignHeading(self, heading):
-        self.d.go(0,0)
-        self.imu.heading = self.imu.get_all_data()
-        print("current robot heading: ")
-        print(self.imu.heading)
+        if self.d != None: 
+            self.d.go(0,0)
+            self.imu.heading = self.imu.get_all_data()
+            print("current robot heading: ")
+            print(self.imu.heading)
 
-        dTcw = heading - self.imu.heading
-        dTccw = self.imu.heading - heading
-        if (dTcw < 0):
-            dTcw +=360
+            dTcw = heading - self.imu.heading
+            dTccw = self.imu.heading - heading
+            if (dTcw < 0):
+                dTcw +=360
 
-        if (dTccw < 0):
-            dTccw +=360
+            if (dTccw < 0):
+                dTccw +=360
 
-        if (dTcw < dTccw):
-            self.d.go(15,0)
-            print("turning clockwise")
-        else:
-            self.d.go(-15,0)
-            print("turning counterclockwise")
+            if (dTcw < dTccw):
+                self.d.go(15,0)
+                print("turning clockwise")
+            else:
+                self.d.go(-15,0)
+                print("turning counterclockwise")
 
 
 

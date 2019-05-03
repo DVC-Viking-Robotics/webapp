@@ -78,7 +78,10 @@ if cmd['IMU']['interface'] == 'serial':
 
 if cmd['Drivetrain']['interface'] == 'serial':
     import serial
-    d = serial.Serial('/dev/ttyUSB0', 115200)
+    try:
+        d = serial.Serial(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
+    except serial.SerialException:
+        d = None
 
 if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
@@ -203,10 +206,11 @@ def about():
     )
 
 if __name__ == '__main__':
-    nav.drivetoWaypoint()
+    # nav.drivetoWaypoint()
     
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
-        pass
+        socketio.stop
+        del d, nav, IMUsensor
 
