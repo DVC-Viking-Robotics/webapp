@@ -203,9 +203,10 @@ def about():
     )
 
 if __name__ == '__main__':
-    nav.alignHeading(0)
+    d.go(0,0)
+    #nav.alignHeading(0)
     input("Press Enter to continue...")
-    nav.alignHeading(180)
+    #nav.alignHeading(180)
     
     try:
         pass
