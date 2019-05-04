@@ -102,13 +102,18 @@ function lngMinus(){
 }
 
 function copyMarkers(){
+    // assemble modified shadow copy for transfering to navigator 
     let result = [];
     for (let i = 1; i < markers.length; ++i){
-        result[i - 1] = {lat: markers[i].getPosition().lat(), lng: markers[i].getPosition().lng()};
+        if (markers[i].label != 'You'){
+            let currPos = result.push({lat: markers[i].getPosition().lat(), lng: markers[i].getPosition().lng()});
+            // console.log(currPos + ' = ' + result[currPos-1].lat + '; ' + result[currPos - 1].lng)
+        }
     }
     return result;
 }
 
 function dumpMarkers(clear = true){
-    socket.emit('buildWaypoints', copyMarkers(), clear);    
+    // console.log('sending waypoints list')
+    socket.emit('WaypointList', copyMarkers(), clear);    
 }

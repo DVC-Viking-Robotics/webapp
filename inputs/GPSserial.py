@@ -21,7 +21,7 @@ class GPSserial():
             self.timeOut = t
         except serial.SerialException:
             self.dummy = True
-            print('unable to open port', addy)
+            print('unable to reach GPS module @ port', addy)
         self.NS = DEFAULT_LOC['lat']
         self.EW = DEFAULT_LOC['lng']
         self.UTC = ""

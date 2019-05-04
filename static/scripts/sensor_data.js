@@ -1,5 +1,4 @@
 
-// this tactic won't work on table elements?
 var el_gps = document.getElementById('gps');
 var el_compass = document.getElementById('compass');
 // Sensor data request loop
