@@ -10,7 +10,7 @@ class GPSnav:
         self.imu = imu
         self.gps = gps
     
-    def insert(self, index = -1, wp = None):
+    def insert(self, wp = None, index = -1):
         if index < 0 or index > len(self.waypoints):
             # insert @ end of list if index is out of bounds
             self.waypoints.append(wp)
@@ -28,6 +28,10 @@ class GPSnav:
     
     def len(self):
         return len(self.waypoints)
+
+    def printWP(self):
+        for i in range(len(self.waypoints)):
+            print(i + 1, 'lat =', self.waypoints[i]['lat'], 'lng =', self.waypoints[i]['lng'])
 
     def getNewHeading(self, currentPos, base = 0):
         

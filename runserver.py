@@ -71,17 +71,17 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
+    if cmd['Drivetrain']['interface'] == 'serial':
+        import serial
+        try:
+            d = serial.Serial(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
+        except serial.SerialException:
+            d = None
+    else: d = None
 
 if cmd['IMU']['interface'] == 'serial':
     from inputs.EXTnode import EXTnode as imu
     IMUsensor = imu(cmd['IMU']['address'], int(cmd['IMU']['baud']))
-
-if cmd['Drivetrain']['interface'] == 'serial':
-    import serial
-    try:
-        d = serial.Serial(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
-    except serial.SerialException:
-        d = None
 
 if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
@@ -112,6 +112,14 @@ def handle_webcam_request():
         b64 = base64.b64encode(buffer)
         print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', base64.b64encode(buffer))
+
+@socketio.on('WaypointList')
+def build_wapypoints(wp, clear):
+    if clear: nav.clear()
+    print('received waypoints')
+    for i in range(len(wp)):
+        nav.insert(wp[i])
+    nav.printWP()
 
 @socketio.on('gps')
 def handle_gps_request():

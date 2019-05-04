@@ -19,44 +19,21 @@
   <script type='text/javascript' src="../static/scripts/MapsAPI.js"></script>
   <p>Click on the map to add markers.</p>
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBEPoV-pgwZC36LaGzOuimUNFk5pWVBr-Y &callback=initMap" async defer></script>
+  <button type="button" id="GoButt" onclick="dumpMarkers(true);">Go go Gadget Robot</button>
   <table width = "90%" align = "center">
-  <tr width = "40%">
-    <td width = "20%"> 
-      <h3>Coordinates</h3>
-        <div id="gps" style="background-color: antiquewhite">1, 4, 7</div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h3>Speed</h3>
-      <div id="speed" style="background-color: antiquewhite">2</div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h3>Compass</h3>
-      <div id="compass" style="background-color: antiquewhite">3</div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h3>Gyroscope</h3>
-      <div id="gyro" style="background-color: antiquewhite">5.831085732</div>
-    </td>
-  </tr>
-  <tr>
-      <td>
-        <h3>Accelerometer</h3>
-        <div id="accel" style="background-color: antiquewhite">5.831085732</div>
+    <tr width = "40%">
+      <td width = "20%"> 
+        <h3>Coordinates</h3>
+          <div id="gps" style="background-color: antiquewhite">1, 4, 7</div>
       </td>
     </tr>
     <tr>
-    <td>
-      <h3>Battery</h3>
-      <div style="background-color: antiquewhite">0.1%</div>
-    </td>
-  </tr>
-</table>
+      <td>
+        <h3>Compass</h3>
+        <div id="compass" style="background-color: antiquewhite">3</div>
+      </td>
+    </tr>
+  </table>
 <script type='text/javascript' src="../static/scripts/sensor_data.js"></script>
 
 {% endblock %}

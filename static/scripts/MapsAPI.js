@@ -100,3 +100,20 @@ function lngMinus(){
     var temp = {lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() - 0.01};
     markers[tempLen].setPosition(temp);
 }
+
+function copyMarkers(){
+    // assemble modified shadow copy for transfering to navigator 
+    let result = [];
+    for (let i = 1; i < markers.length; ++i){
+        if (markers[i].label != 'You'){
+            let currPos = result.push({lat: markers[i].getPosition().lat(), lng: markers[i].getPosition().lng()});
+            // console.log(currPos + ' = ' + result[currPos-1].lat + '; ' + result[currPos - 1].lng)
+        }
+    }
+    return result;
+}
+
+function dumpMarkers(clear = true){
+    // console.log('sending waypoints list')
+    socket.emit('WaypointList', copyMarkers(), clear);    
+}
