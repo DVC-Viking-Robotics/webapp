@@ -1,6 +1,6 @@
 class Drivetrain(object):
     # using BCM pins = [18, 17, 13, 22]
-    def __init__(self, pins, phased = False):
+    def __init__(self, pins, phased = True, maxPower = 50):
         if phased:  
             # from outputs.phasedMotor import phasedMotor as biMotor
             from gpiozero import PhaseEnableMotor as biMotor
@@ -11,8 +11,8 @@ class Drivetrain(object):
         # [direction, speed]
         self.motor1 = biMotor(pins[0], pins[1])
         self.motor2 = biMotor(pins[2], pins[3])
-
-    
+        self.maxPower = maxPower
+        
     def stop(self):
         self.motor1.stop()
         self.motor2.stop()
@@ -23,8 +23,8 @@ class Drivetrain(object):
 # end Drivetrain class
 
 class BiPed(Drivetrain):
-    def __init__(self, pins, phased = False):
-        super(BiPed, self).__init__(pins, phased)
+    def __init__(self, pins, phased = True, maxPower = 50):
+        super(BiPed, self).__init__(pins, phased, maxPower)
         self.right = 0
         self.left = 0
 
@@ -54,17 +54,17 @@ class BiPed(Drivetrain):
         
         # make sure speeds are an integer (not decimal/float) and send to motors
         if self.right > 0:
-            self.motor1.backward(self.right / 100.0)
+            self.motor1.backward((self.right / 100.0)*(self.maxPower/100.0))
         elif self.right < 0:
-            self.motor1.forward(self.right / -100.0)
+            self.motor1.forward((self.right / -100.0)*(self.maxPower/100.0))
             # pass
         else:
             self.motor1.stop()
         
         if self.left > 0:
-           self.motor2.backward(self.left / 100.0)
+           self.motor2.backward((self.left / 100.0)*(self.maxPower/100.0))
         elif self.left < 0:
-            self.motor2.forward(self.left / -100.0)
+            self.motor2.forward((self.left / -100.0)*(self.maxPower/100.0))
             # pass
         else:
             self.motor2.stop()
