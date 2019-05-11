@@ -33,7 +33,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         pins = cmd['Drivetrain']['address'].rsplit(',')
         for i in range(len(pins)):
             pins[i] = int(pins[i])
-        d = drivetrain(pins, cmd.getboolean('Drivetrain', 'phasedM'))
+        d = drivetrain(pins, cmd.getboolean('Drivetrain', 'phasedM'), int(cmd['Drivetrain']['maxSpeed']))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     if cmd['IMU']['interface'] == 'i2c':
