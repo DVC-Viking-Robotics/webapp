@@ -13,7 +13,7 @@ class EXTnode():
             self.dummy = False
         except serial.SerialException:
             self.dummy = True
-            print('unable to serial device @ port', self.address)
+            print('unable to read serial device @ port', self.address)
 
     def get_all_data(self):
         if self.dummy: # attempt to reconnect
