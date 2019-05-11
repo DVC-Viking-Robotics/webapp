@@ -219,7 +219,7 @@ if __name__ == '__main__':
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
-        socketio.stop
+        socketio.stop()
         del d, nav, IMUsensor
     """ d.go(0,0)
     #nav.alignHeading(0)
