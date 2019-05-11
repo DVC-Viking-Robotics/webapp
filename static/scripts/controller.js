@@ -14,13 +14,24 @@ var gamepads = {};
 // gather data from the controller object
 function getArgs(){
     let result = [];
-    let xDiameter = ((controller.joystick.x + controller.joystick.radius) - (controller.joystick.x - controller.joystick.radius)) / 2;
-    let yDiameter = ((controller.joystick.y + controller.joystick.radius) - (controller.joystick.y - controller.joystick.radius)) / 2;
-    let xJoyPos = (controller.joystick.x - controller.joystick.stick.x) * -1;
-    let yJoyPos = (controller.joystick.y - controller.joystick.stick.y);
+    /*
+    // following comment block WAS used to return x,y in cartesian coordinates
+    // let xDiameter = ((controller.joystick.x + controller.joystick.radius) - (controller.joystick.x - controller.joystick.radius)) / 2;
+    // let yDiameter = ((controller.joystick.y + controller.joystick.radius) - (controller.joystick.y - controller.joystick.radius)) / 2;
+    // let xJoyPos = (controller.joystick.x - controller.joystick.stick.x) * -1;
+    // let yJoyPos = (controller.joystick.y - controller.joystick.stick.y);
+    // result[0] = Math.round(xJoyPos / xDiameter * 100);
+    // result[1] = Math.round(yJoyPos / yDiameter * 100);
+    */
+    // new algo to return x,y as polar coordinates
+    let radius = Math.round(controller.joystick.stick.touchRadius / controller.joystick.radius * 100);
+    let theta = Math.round(controller.joystick.stick.angle / Math.PI * 200);
+    // atan2() in controller.joystick returns negative for all positive y values and postitive for negative y values
+    radius *= theta < 0 ? 1 : -1; 
+    theta = (Math.abs(theta) - 100) * -1;
     let zJoyPos = controller.slider.stick.x - controller.slider.x - (controller.slider.length / 2);
-    result[0] = Math.round(xJoyPos / xDiameter * 100);
-    result[1] = Math.round(yJoyPos / yDiameter * 100);
+    result[0] = radius;
+    result[1] = theta;
     result[2] = Math.round(zJoyPos / (controller.slider.length / 2) * 100);
     return result;
 }
@@ -93,7 +104,7 @@ class Control {
             stick: {
                 x: 0, y: 0, radius: 0,
                 color: "white",
-                angle: null,
+                angle: 0,
                 touchRadius: 0
             },
             draw: function () {
