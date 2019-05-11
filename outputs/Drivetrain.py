@@ -61,7 +61,7 @@ class BiPed(Drivetrain):
             self.motor1.stop()
         
         if self.left > 0:
-           self.motor2.backward(self.left / 100.0))
+           self.motor2.backward(self.left / 100.0)
         elif self.left < 0:
             self.motor2.forward(self.left / -100.0)
         else:
