@@ -1,17 +1,15 @@
 class Drivetrain(object):
     # using BCM pins = [18, 17, 13, 22]
-    def __init__(self, pins, phased = True):
+    def __init__(self, pins, phased, maxSpeed):
+        self.maxSpeed = min(maxSpeed, 100) # ensure proper range
         if phased:  
             # from outputs.phasedMotor import phasedMotor as biMotor
             from gpiozero import PhaseEnableMotor as biMotor
         else: 
             # from outputs.biMotor import biMotor
             from gpiozero import Motor as biMotor
-        # (phase, enable)
-        # [direction, speed]
         self.motor1 = biMotor(pins[0], pins[1])
         self.motor2 = biMotor(pins[2], pins[3])
-        #self.maxPower = maxPower
 
     def stop(self):
         self.motor1.stop()
@@ -23,8 +21,8 @@ class Drivetrain(object):
 # end Drivetrain class
 
 class BiPed(Drivetrain):
-    def __init__(self, pins, phased = True, maxPower = 50):
-        super(BiPed, self).__init__(pins, phased)
+    def __init__(self, pins, phased = True, maxSpeed = 85):
+        super(BiPed, self).__init__(pins, phased, maxSpeed)
         self.right = 0
         self.left = 0
 
@@ -32,8 +30,8 @@ class BiPed(Drivetrain):
     # pass left/right (-100 to 100) as variable y
     def go(self, x, y):
         # make sure arguments are in their proper range
-        x = max(-100, min(100, x))
-        y = max(-100, min(100, y))
+        x = round(max(-100, min(100, x)))
+        y = round(max(-100, min(100, y)) * (self.maxSpeed / 100))
         # assuming left/right axis is null (just going forward or backward)
         if x == 0:
             self.left = y
@@ -74,8 +72,8 @@ class BiPed(Drivetrain):
 # end BiPed class
 
 class QuadPed(Drivetrain):
-    def __init__(self, pins, phased = False):
-        super(QuadPed, self).__init__(pins, phased)
+    def __init__(self, pins, phased = False, maxSpeed = 85):
+        super(QuadPed, self).__init__(pins, phased, maxSpeed)
         self.fr = 0 # forward/reverse direction
         self.lr = 0 # left/right direction
 
@@ -84,8 +82,8 @@ class QuadPed(Drivetrain):
     def go(self, x, y):
         # make sure arguments are in their proper range
         # make sure speeds are an integer (not decimal/float)
-        x = int(round(max(-100, min(100, x))))
-        y = int(round(max(-100, min(100, y))))
+        x = round(max(-100, min(100, x)))
+        y = round(max(-100, min(100, y)) * (self.maxSpeed / 100))
         # set the axis directly to their corresponding motors
         self.fr = y
         self.lr = x
