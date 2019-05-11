@@ -31,12 +31,13 @@ class BiPed(Drivetrain):
     def go(self, x, y):
         # make sure arguments are in their proper range
         x = round(max(-100, min(100, x)))
-        y = round(max(-100, min(100, y)) * (self.maxSpeed / 100))
+        y = round(max(-100, min(100, y)) * (self.maxSpeed / 100.0))
         # assuming left/right axis is null (just going forward or backward)
         self.left = y
         self.right = y
-        if y == 0:
+        if abs(x) == 100:
             # if forward/backward axis is null ("turning on a dime" functionality)
+            x *= self.maxSpeed / 100.0
             self.right = x
             self.left = x * -1
         else: 
@@ -82,7 +83,7 @@ class QuadPed(Drivetrain):
         # make sure arguments are in their proper range
         # make sure speeds are an integer (not decimal/float)
         x = round(max(-100, min(100, x)))
-        y = round(max(-100, min(100, y)) * (self.maxSpeed / 100))
+        y = round(max(-100, min(100, y)) * (self.maxSpeed / 100.0))
         # set the axis directly to their corresponding motors
         self.fr = y
         self.lr = x
