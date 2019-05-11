@@ -30,8 +30,8 @@ function getArgs(){
     radius *= theta < 0 ? 1 : -1; 
     theta = (Math.abs(theta) - 100) * -1;
     let zJoyPos = controller.slider.stick.x - controller.slider.x - (controller.slider.length / 2);
-    result[0] = radius;
-    result[1] = theta;
+    result[0] = theta;
+    result[1] = radius;
     result[2] = Math.round(zJoyPos / (controller.slider.length / 2) * 100);
     return result;
 }
