@@ -114,6 +114,7 @@ class Control {
                 if (this.stick.touchRadius > this.radius) {
                     this.stick.x = Math.cos(this.stick.angle) * this.radius + this.x;
                     this.stick.y = Math.sin(this.stick.angle) * this.radius + this.y;
+                    this.stick.touchRadius = this.radius;
                 }
                 ctx.beginPath();
                 ctx.fillStyle = this.color;
