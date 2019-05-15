@@ -11,6 +11,7 @@ import time
 import base64
 import os
 from flask import Flask, g, render_template
+from inputs.EXTnode import EXTnode
 from flask_socketio import SocketIO, emit
 # Allow secure connections
 
@@ -72,16 +73,13 @@ else: # running on a PC
         print('opencv-python is not installed')
         camera = None
     if cmd['Drivetrain']['interface'] == 'serial':
-        import serial
-        try:
-            d = serial.Serial(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
-        except serial.SerialException:
-            d = None
+        d = EXTnode(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
     else: d = None
 
-if cmd['IMU']['interface'] == 'serial':
-    from inputs.EXTnode import EXTnode as imu
-    IMUsensor = imu(cmd['IMU']['address'], int(cmd['IMU']['baud']))
+if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
+    IMUsensor = d
+elif cmd['IMU']['interface'] == 'serial':
+    IMUsensor = EXTnode(cmd['IMU']['address'], int(cmd['IMU']['baud']))
 
 if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
@@ -161,12 +159,7 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    if cmd['Drivetrain']['interface'] == 'serial':
-        command = 'Driv ' + repr(args[0]) + ' ' + repr(args[1])
-        command = bytes(command.encode('utf-8'))
-        d.write(command)
-    elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gpio':
-        d.go(args[0], args[1])
+    d.go(args[0], args[1])
     print('remote =', repr(args))
 
 @app.route('/')

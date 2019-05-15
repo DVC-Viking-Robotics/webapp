@@ -1,6 +1,6 @@
 
 class EXTnode():
-    def __init__(self, address = '/dev/ttyS0', baud = -1):
+    def __init__(self, address = '/dev/ttyUSB0', baud = -1):
         import serial
         self.baud = baud
         self.heading = 0
@@ -13,7 +13,7 @@ class EXTnode():
             self.dummy = False
         except serial.SerialException:
             self.dummy = True
-            print('unable to read serial device @ port', self.address)
+            print('unable to open serial arduino device @ port', self.address)
 
     def get_all_data(self):
         if self.dummy: # attempt to reconnect
@@ -26,3 +26,9 @@ class EXTnode():
             if len(temp) > 0:
                 self.heading = float(temp[0])
             return self.heading
+
+    def go(self, x, y):
+        if not self.dummy:
+            command = 'Driv ' + repr(x) + ' ' + repr(y)
+            command = bytes(command.encode('utf-8'))
+            self.ser.write(command)
