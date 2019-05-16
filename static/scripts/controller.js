@@ -28,7 +28,7 @@ function getArgs(){
     let theta = Math.round(controller.joystick.stick.angle / Math.PI * 200);
     // atan2() in controller.joystick returns negative for all positive y values and postitive for negative y values
     radius *= theta < 0 ? 1 : -1; 
-    theta = (Math.abs(theta) - 100) * -1;
+    theta = controller.joystick.stick.angle == 0 ? 0 : ((Math.abs(theta) - 100) * -1);
     let zJoyPos = controller.slider.stick.x - controller.slider.x - (controller.slider.length / 2);
     result[0] = theta;
     result[1] = radius;
