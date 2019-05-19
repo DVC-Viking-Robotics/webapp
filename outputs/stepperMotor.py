@@ -63,9 +63,9 @@ class Stepper(object):
             errorPrompt = 'Invalid Stepper Type = ' + repr(self.stepType)
             raise RuntimeError(errorPrompt)
 
-    def delay(self):
-        # delay between iterations based on set motor speed (mm/sec)
-        time.sleep(self.speed / 60000.0)
+    def delay(self, speed):
+        # delay between iterations based on motor speed (mm/sec)
+        time.sleep(speed / 60000.0)
 
     def write(self):
         if self.debug or self.dummy:
@@ -76,7 +76,7 @@ class Stepper(object):
             for i in range(len(self.pins)):
                 GPIO.output(self.pins[i], self.pinState[i])
 
-    def go(self, numSteps):
+    def go(self, numSteps, speed = None):
         # decipher rotational direction
         if numSteps > 0: isCW = True
         else: isCW = False
@@ -89,8 +89,11 @@ class Stepper(object):
             # write to pins
             self.write()
             # wait a certain amount of time based on motor speed
-            self.delay()
+            if not speed:
+                self.delay(self.speed)
+            else: 
+                self.delay(speed)
 
 if __name__ == "__main__":
     m = Stepper([1, 2], speed = 60, stepType = 'half')
-    m.go(-10)
+    m.go(-10, 60000)
