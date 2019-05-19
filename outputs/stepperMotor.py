@@ -18,7 +18,7 @@ class Stepper(object):
                 self.dummy = True
         else:# did not pass exactly 4 gpio pins
             self.dummy = True
-        self.it = -1 # iterator for rotating stepper
+        self.it = 0 # iterator for rotating stepper
         # self.steps = steps specific to motor
         self.setPinState()
 
@@ -59,7 +59,7 @@ class Stepper(object):
             maxStep = 4
             self.clamp(maxStep)
             self.pinState[self.it] = True
-        else: # stepTyoe specified is invalid
+        else: # stepType specified is invalid
             errorPrompt = 'Invalid Stepper Type = ' + repr(self.stepType)
             raise RuntimeError(errorPrompt)
 
@@ -69,8 +69,8 @@ class Stepper(object):
 
     def write(self):
         if self.debug or self.dummy:
-            for i in range(len(self.pinState)):
-                print(int(self.pinState[i]), sep = '', end = '')
+            for pin in self.pinState:
+                print(int(pin), sep = '', end = '')
             print(' ')
         elif not self.dummy:
             for i in range(len(self.pins)):
