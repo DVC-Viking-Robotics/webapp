@@ -73,9 +73,8 @@ class Stepper(object):
                 print(int(pin), sep = '', end = '')
             print(' ')
         elif not self.dummy:
-            for i in range(len(self.pins)):
-                GPIO.output(self.pins[i], self.pinState[i])
-
+            GPIO.output(self.pins, self.pinState)
+        
     def go(self, numSteps, speed = None):
         # decipher rotational direction
         if numSteps > 0: isCW = True
