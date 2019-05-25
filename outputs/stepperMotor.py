@@ -41,7 +41,7 @@ class Stepper(object):
         self.setPinState()
         self.angle = (self.steps * self.dps)
         if self.angle > 360: self.angle -= 360
-        elif self.angle < -360: self.angle += 360
+        elif self.angle < 0: self.angle += 360
         self.print()
 
     def print(self):
@@ -93,6 +93,7 @@ class Stepper(object):
     def goAngle(self, angle, speed = None):
         # clamp angle to constraints of 0-360 degrees
         angle = min(360, max(-360, angle))
+        if angle < 0: angle += 360
         # decipher rotational direction
         if abs(angle - self.angle) > abs(self.angle - angle) : 
             isCW = True
