@@ -95,8 +95,8 @@ class Stepper(object):
         if angle < self.angle:
             angle += 360
         if abs(angle - self.angle) > abs(self.angle - angle) : 
-            isCW = False
-        else: isCW = True
+            isCW = True
+        else: isCW = False
         while abs(self.angle - angle) > self.dps:
             # iterate self.steps
             self.step(isCW)
