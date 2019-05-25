@@ -39,7 +39,7 @@ class Stepper(object):
             self.it -= 1
         # now check for proper range according to stepper type
         self.setPinState()
-        self.angle = self.steps * self.dps
+        self.angle = (self.steps * self.dps)
         self.print()
 
     def print(self):
@@ -127,11 +127,14 @@ class Stepper(object):
 
 if __name__ == "__main__":
     m = Stepper([5,6,12,16])
-    m.goAngle(-90)
+    # m.goAngle(-90)
+    m.goSteps(64)
     time.sleep(2)
-    m.goAngle(-270)
+    # m.goAngle(-270)
+    m.goSteps(4096)
     time.sleep(2)
-    m.goAngle(0)
-    time.sleep(2)
-    m.goAngle(90)
+    m.goSteps(2048)
+    # m.goAngle(0)
+    # time.sleep(2)
+    # m.goAngle(90)
 
