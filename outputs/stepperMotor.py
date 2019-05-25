@@ -1,5 +1,8 @@
 import time
-
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False) # advised by useless debuggung prompts
+            
 class Stepper(object):
     def __init__(self, pins, speed = 60, stepType = 'half', DegreePerStep = 0.087890625, debug = False):
         self.dps = DegreePerStep
@@ -10,13 +13,10 @@ class Stepper(object):
         if len(pins) == 4:
             self.pins = pins
             try:
-                import RPi.GPIO as GPIO
-                GPIO.setmode(GPIO.BCM)
-                GPIO.setwarnings(False) # advised by useless debuggung prompts
                 for pin in pins:
                     GPIO.setup(pin, GPIO.OUT)
                     GPIO.output(pin, False)
-            except ModuleNotFoundError:
+            except NameError:
                 self.dummy = True
         else:# did not pass exactly 4 gpio pins
             self.dummy = True
