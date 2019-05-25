@@ -28,7 +28,7 @@ class Stepper(object):
         self.it = 0 # iterator for rotating stepper
         # self.steps = steps specific to motor
         self.setPinState()
-        self.angle = 360
+        self.angle = 0
         self.steps = 0
 
     def resetPins(self):
@@ -45,8 +45,7 @@ class Stepper(object):
         # now check for proper range according to stepper type
         self.setPinState()
         self.angle = (self.steps % self.maxSteps) * self.dps
-        if self.angle > 360: self.angle -= 360
-        elif self.angle <= 0: self.angle += 360
+        self.restrictAngle()
         self.print()
 
     def print(self):
@@ -116,7 +115,7 @@ class Stepper(object):
         else: isCCW = False
         
         """ breakpoint for debug """
-        while abs(self.angle - angle) > self.dps * 2:
+        while abs(self.angle - angle) > self.dps:
             # iterate self.steps
             self.step(isCCW)
             # write to pins
