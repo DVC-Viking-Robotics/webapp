@@ -46,7 +46,6 @@ class Stepper(object):
         self.setPinState()
         self.angle = (self.steps % self.maxSteps) * self.dps
         self.restrictAngle()
-        self.print()
 
     def print(self):
         print('Angle:', self.angle, 'steps:', self.steps)
@@ -91,9 +90,11 @@ class Stepper(object):
             for pin in self.pinState:
                 print(int(pin), sep = '', end = '')
             print(' ')
+            self.print()
         elif not self.dummy:
             GPIO.output(self.pins, self.pinState)
-    
+
+
     def restrictAngle(self, theta = None):
         if theta == None :
            temp = self.angle
@@ -115,7 +116,7 @@ class Stepper(object):
         else: isCCW = False
         
         """ breakpoint for debug """
-        while abs(self.angle - angle) > self.dps:
+        while abs(self.angle - angle) >= self.dps:
             # iterate self.steps
             self.step(isCCW)
             # write to pins
