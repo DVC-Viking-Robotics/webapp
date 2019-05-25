@@ -39,7 +39,9 @@ class Stepper(object):
             self.it -= 1
         # now check for proper range according to stepper type
         self.setPinState()
-        self.angle = ((self.steps * self.dps) % 360) * 360
+        self.angle = (self.steps * self.dps)
+        if self.angle > 360: self.angle -= 360
+        elif self.angle < -360: self.angle += 360
         self.print()
 
     def print(self):
