@@ -97,7 +97,7 @@ class Stepper(object):
         if abs(angle - self.angle) > abs(self.angle - angle) : 
             isCW = True
         else: isCW = False
-        while abs(self.angle - angle) > self.dps:
+        while abs(self.angle - angle) > self.dps * 2:
             # iterate self.steps
             self.step(isCW)
             # write to pins
