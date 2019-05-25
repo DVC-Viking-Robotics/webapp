@@ -1,10 +1,15 @@
 import time
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False) # advised by useless debuggung prompts
-            
+try:
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False) # advised by useless debuggung prompts
+except ModuleNotFoundError:
+    # probably running on PC
+    pass
+
 class Stepper(object):
-    def __init__(self, pins, speed = 60, stepType = 'half', DegreePerStep = 0.087890625, debug = False):
+    def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, debug = False):
+        self.maxSteps = maxSteps
         self.dps = DegreePerStep
         self.stepType = stepType
         self.debug = debug
@@ -23,7 +28,7 @@ class Stepper(object):
         self.it = 0 # iterator for rotating stepper
         # self.steps = steps specific to motor
         self.setPinState()
-        self.angle = 0
+        self.angle = 360
         self.steps = 0
 
     def resetPins(self):
@@ -39,9 +44,9 @@ class Stepper(object):
             self.it -= 1
         # now check for proper range according to stepper type
         self.setPinState()
-        self.angle = (self.steps * self.dps)
+        self.angle = (self.steps % self.maxSteps) * self.dps
         if self.angle > 360: self.angle -= 360
-        elif self.angle < 0: self.angle += 360
+        elif self.angle <= 0: self.angle += 360
         self.print()
 
     def print(self):
@@ -89,18 +94,31 @@ class Stepper(object):
             print(' ')
         elif not self.dummy:
             GPIO.output(self.pins, self.pinState)
-        
+    
+    def restrictAngle(self, theta = None):
+        if theta == None :
+           temp = self.angle
+        else: temp = theta
+        while temp > 360 : temp -= 360
+        while temp < 0 : temp += 360
+        if theta == None :
+            self.angle = temp
+        else: return temp
+
     def goAngle(self, angle, speed = None):
-        # clamp angle to constraints of 0-360 degrees
-        angle = min(360, max(-360, angle))
-        if angle < 0: angle += 360
+        # clamp angle to constraints of [0,360] degrees
+        angle = self.restrictAngle(angle)
         # decipher rotational direction
-        if abs(angle - self.angle) > abs(self.angle - angle) : 
-            isCW = True
-        else: isCW = False
+        dTccw = self.restrictAngle(self.angle - angle)
+        dTcw = self.restrictAngle(angle - self.angle)
+        if dTccw > dTcw: 
+            isCCW = True
+        else: isCCW = False
+        
+        """ breakpoint for debug """
         while abs(self.angle - angle) > self.dps * 2:
             # iterate self.steps
-            self.step(isCW)
+            self.step(isCCW)
             # write to pins
             self.write()
             # wait a certain amount of time based on motor speed
@@ -130,14 +148,14 @@ class Stepper(object):
 
 if __name__ == "__main__":
     m = Stepper([5,6,12,16])
-    m.goAngle(-90)
+    m.goAngle(-15)
     # m.goSteps(64)
     time.sleep(2)
-    m.goAngle(-270)
+    m.goAngle(15)
     # m.goSteps(4096)
     time.sleep(2)
     # m.goSteps(-2048)
     m.goAngle(0)
-    time.sleep(2)
-    m.goAngle(90)
+    # time.sleep(2)
+    # m.goAngle(90)
 
