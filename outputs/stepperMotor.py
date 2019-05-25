@@ -1,7 +1,8 @@
 import time
 
 class Stepper(object):
-    def __init__(self, pins, speed = 60, stepType = 'wave', debug = False):
+    def __init__(self, pins, speed = 60, stepType = 'half', DegreePerStep = ‭0.087890625‬, debug = False):
+        self.dps = DegreePerStep
         self.stepType = stepType
         self.debug = debug
         self.speed = speed
@@ -21,16 +22,23 @@ class Stepper(object):
         self.it = 0 # iterator for rotating stepper
         # self.steps = steps specific to motor
         self.setPinState()
+        self.angle = 0
+        self.steps = 0
 
     def resetPins(self):
         self.pinState = [False, False, False, False]
     
     def step(self, dir = True):
         # increment or decrement step
-        if dir: self.it += 1 # going CW
-        else: self.it -= 1   # going CCW
+        if dir: # going CW
+            self.steps += 1
+            self.it += 1
+        else: # going CCW
+            self.steps -= 1
+            self.it -= 1
         # now check for proper range according to stepper type
         self.setPinState()
+        self.angle = self.steps * self.dps
 
     def clamp(self, max):
         if self.it > max - 1: self.it -= max
@@ -75,16 +83,18 @@ class Stepper(object):
         elif not self.dummy:
             GPIO.output(self.pins, self.pinState)
         
-    def go(self, numSteps, speed = None):
+    def goAngle(self, angle, speed = None):
+        # clamp angle to constraints of 0-360 degrees
+        angle = min(360, max(360, angle))
         # decipher rotational direction
-        if numSteps > 0: isCW = True
-        else: isCW = False
-        # make numSteps positive for decrementing
-        numSteps = abs(numSteps)
-        while numSteps != 0:
+        if angle < self.angle:
+            angle += 360
+        if abs(angle - self.angle) > abs(self.angle - angle) : 
+            isCW = False
+        else: isCW = True
+        while self.angle != angle:
             # iterate self.steps
             self.step(isCW)
-            numSteps -= 1
             # write to pins
             self.write()
             # wait a certain amount of time based on motor speed
@@ -92,7 +102,25 @@ class Stepper(object):
                 self.delay(self.speed)
             else: 
                 self.delay(speed)
+        
+    def goSteps(self, numSteps, speed = None):
+            # decipher rotational direction
+            if numSteps > 0 : isCW = True
+            else: isCW = False
+            # make numSteps positive for decrementing
+            numSteps = abs(numSteps)
+            while numSteps != 0:
+                # iterate self.steps
+                self.step(isCW)
+                numSteps -= 1
+                # write to pins
+                self.write()
+                # wait a certain amount of time based on motor speed
+                if not speed:
+                    self.delay(self.speed)
+                else: 
+                    self.delay(speed)
 
 if __name__ == "__main__":
-    m = Stepper([1, 2], speed = 60, stepType = 'half')
+    m = Stepper([5,6,12,16])
     m.go(-10, 60000)

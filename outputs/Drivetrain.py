@@ -1,5 +1,8 @@
+
+
+
 class Drivetrain(object):
-    # using BCM pins = [18, 17, 13, 22]
+    # using BCM pins[DCmotors] = [[18, 17, 13, 22], [4]]
     def __init__(self, pins, phased, maxSpeed):
         self.maxSpeed = min(maxSpeed, 100) # ensure proper range
         if phased:  
@@ -10,10 +13,10 @@ class Drivetrain(object):
             from gpiozero import Motor as biMotor
         self.motor1 = biMotor(pins[0], pins[1])
         self.motor2 = biMotor(pins[2], pins[3])
-
-    def stop(self):
-        self.motor1.stop()
-        self.motor2.stop()
+        self.servo = None
+        self.stepper = None
+    def turnStepper(self, angle):
+        self.stepper.goAngle(angle)
         
     def __del__(self):
         del self.motor1
@@ -21,10 +24,17 @@ class Drivetrain(object):
 # end Drivetrain class
 
 class BiPed(Drivetrain):
+    # using BCM pins[DCmotors][Stepper/servo] = [[18, 17, 13, 22], [4]]
     def __init__(self, pins, phased = True, maxSpeed = 85):
-        super(BiPed, self).__init__(pins, phased, maxSpeed)
+        super(BiPed, self).__init__(pins[0], phased, maxSpeed)
         self.right = 0
         self.left = 0
+        if len(pins[1]) > 1: # use servo
+            from gpiozero import AngularServo
+            self.servo = AngularServo(pins[1])
+        elif len(pins[1]) == 4: # use bipolar stepper
+            from outputs.stepperMotor import Stepper
+            self.stepper = Stepper([pin[1][0], pin[1][1],pin[1][2], pin[1][3]],stepType="half")
 
     # pass backwards/forward (-100 to 100) as variable x
     # pass left/right (-100 to 100) as variable y
@@ -47,8 +57,8 @@ class BiPed(Drivetrain):
                 self.right *= offset
             elif x < 0:
                 self.left *= offset
-
-        self.print()
+        """ for debugging """
+        # self.print()
         
         # make sure speeds are an integer (not decimal/float) and send to motors
         if self.right > 0:
@@ -57,7 +67,6 @@ class BiPed(Drivetrain):
         elif self.right < 0:
             self.motor1.forward(self.right / -100.0)
             #self.motor1.backward(self.right / -100.0)
-
         else:
             self.motor1.stop()
         

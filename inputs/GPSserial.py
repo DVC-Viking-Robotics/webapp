@@ -19,6 +19,7 @@ class GPSserial():
         try:
             self.ser = serial.Serial(addy)
             self.timeOut = t
+            self.line = self.ser.readline() # discard any garbage artifacts
         except serial.SerialException:
             self.dummy = True
             print('unable to open serial GPS module @ port', addy)
