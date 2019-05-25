@@ -90,10 +90,8 @@ class Stepper(object):
         
     def goAngle(self, angle, speed = None):
         # clamp angle to constraints of 0-360 degrees
-        angle = min(360, max(360, angle))
+        angle = min(360, max(-360, angle))
         # decipher rotational direction
-        if angle < 0:
-            angle += 360
         if abs(angle - self.angle) > abs(self.angle - angle) : 
             isCW = True
         else: isCW = False
