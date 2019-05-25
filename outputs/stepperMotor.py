@@ -40,6 +40,10 @@ class Stepper(object):
         # now check for proper range according to stepper type
         self.setPinState()
         self.angle = self.steps * self.dps
+        self.print()
+
+    def print(self):
+        print('Angle:', self.angle, 'steps:', self.steps)
 
     def clamp(self, max):
         if self.it > max - 1: self.it -= max
@@ -91,8 +95,8 @@ class Stepper(object):
         if angle < self.angle:
             angle += 360
         if abs(angle - self.angle) > abs(self.angle - angle) : 
-            isCW = False
-        else: isCW = True
+            isCW = True
+        else: isCW = False
         while self.angle != angle:
             # iterate self.steps
             self.step(isCW)
@@ -103,6 +107,7 @@ class Stepper(object):
                 self.delay(self.speed)
             else: 
                 self.delay(speed)
+            
         
     def goSteps(self, numSteps, speed = None):
             # decipher rotational direction
