@@ -123,4 +123,4 @@ class Stepper(object):
 
 if __name__ == "__main__":
     m = Stepper([5,6,12,16])
-    m.go(-10)
+    m.goAngle(-10)
