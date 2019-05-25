@@ -6,7 +6,7 @@ class Stepper(object):
         self.stepType = stepType
         self.debug = debug
         self.speed = speed
-        self.dummy = True = False
+        self.dummy = False
         if len(pins) == 4:
             self.pins = pins
             try:
