@@ -1,7 +1,7 @@
 import time
 
 class Stepper(object):
-    def __init__(self, pins, speed = 60, stepType = 'half', DegreePerStep = ‭0.087890625‬, debug = False):
+    def __init__(self, pins, speed = 60, stepType = 'half', DegreePerStep = 0.087890625, debug = False):
         self.dps = DegreePerStep
         self.stepType = stepType
         self.debug = debug
@@ -123,4 +123,4 @@ class Stepper(object):
 
 if __name__ == "__main__":
     m = Stepper([5,6,12,16])
-    m.go(-10, 60000)
+    m.go(-10)
