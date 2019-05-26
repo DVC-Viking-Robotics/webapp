@@ -5,11 +5,11 @@ from outputs.stepperMotor import Stepper
 
 
 class Drivetrain(object):
-    motors = []
-    # using BCM pins[DCmotors] = [(18, 17), (13, 22)]
+    # using BCM pins = [[18,17], [13,22], [4], [5,6,12,16]]
     # phased = "true,false" order correspnding to order of DC motor pins that are passed
     def __init__(self, pins, phased, maxSpeed):
-        self.maxSpeed = min(maxSpeed, 100) # ensure proper range
+        self.motors = []
+        self.maxSpeed = max(0, min(maxSpeed, 100)) # ensure proper range
         phased_i = 0
         phased = phased.rsplit(',')
         for b in phased:
