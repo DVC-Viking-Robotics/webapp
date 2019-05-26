@@ -32,8 +32,9 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
             # for race car configuration
             from outputs.Drivetrain import QuadPed as drivetrain
         pins = cmd['Drivetrain']['address'].rsplit(',')
-        for i in range(len(pins)):
-            pins[i] = int(pins[i])
+        pins = [[int(pins[0]), int(pins[1])], [int(pins[2]), int(pins[3])]]
+        pins.append([5,6,12,16])#test stepper
+        pins.append([4])#test servo
         d = drivetrain(pins, cmd.getboolean('Drivetrain', 'phasedM'), int(cmd['Drivetrain']['maxSpeed']))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
@@ -159,7 +160,7 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go(args[0], args[1])
+    d.go(args[0], args[1], args[2])
     print('remote =', repr(args))
 
 @app.route('/')
