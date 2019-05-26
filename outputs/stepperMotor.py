@@ -6,7 +6,11 @@ import time
 # except ModuleNotFoundError:
 #     # probably running on PC
 #     pass
-from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, GPIOThread
+from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
+try:
+    from gpiozero import GPIOThread as thread
+except ImportError:
+    from threading import Thread as thread
 
 class Stepper(SourceMixin, CompositeDevice):
     def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, debug = False):
@@ -18,18 +22,20 @@ class Stepper(SourceMixin, CompositeDevice):
         self.dummy = False
         if len(pins) == 4:
             self.pins = pins
-            try:
-                for i in range(len(pins) - 1):
+            for i in range(len(pins)):
+                try:
                     # GPIO.setup(pin, GPIO.OUT)
                     # GPIO.output(pin, False)
                     self.pins[i] = DigitalOutputDevice(pins[i])
-            except NameError:
-                self.dummy = True
+                except BadPinFactory:
+                    self.dummy = True
+                    self.pins[i] = False
         else:# did not pass exactly 4 gpio pins
             self.dummy = True
         self._it = 0 # iterator for rotating stepper
         # self._steps = steps specific to motor
         self.resetZeroAngle()
+        self._move_thread = None
     
     def resetZeroAngle(self):
         self._steps = 0
@@ -60,13 +66,15 @@ class Stepper(SourceMixin, CompositeDevice):
             next = base + 1
             if next == len(self.pins):
                 next = 0
-            for i in range(len(pins)):
-                if i == base:
-                    self.pins[i].on()
-                elif i == next and self._it % 2 == 1:
-                        self.pins[next].on()
+            for i in range(len(self.pins)):
+                if i == base or (i == next and self._it % 2 == 1):
+                    if self.dummy:
+                        self.pins[i] = True
+                    else: self.pins[i].on()
                 else:
-                    self.pins[i].off()
+                    if self.dummy:
+                        self.pins[i] = False
+                    else: self.pins[i].off()        
         elif self.stepType == "full":
             maxStep = 4
             self.__clamp_it(maxStep)
@@ -74,13 +82,25 @@ class Stepper(SourceMixin, CompositeDevice):
             else: next = self._it + 1
             for i in range(len(pins) - 1):
                 if i == self._it or i == next:
-                    self.pins[i].on()
+                    if self.dummy:
+                        self.pins[i] = True
+                    else: self.pins[i].on()
                 else:
-                    self.pins[i].off()
+                    if self.dummy:
+                        self.pins[i] = False
+                    else: self.pins[i].off()        
         elif self.stepType == "wave":
             maxStep = 4
             self.__clamp_it(maxStep)
-            self.pins[self._it] = True
+            for i in range(len(pins) - 1):
+                if i == self._it:
+                    if self.dummy:
+                        self.pins[i] = True
+                    else: self.pins[i].on()
+                else:
+                    if self.dummy:
+                        self.pins[i] = False
+                    else: self.pins[i].off()        
         else: # stepType specified is invalid
             errorPrompt = 'Invalid Stepper Type = ' + repr(self.stepType)
             raise RuntimeError(errorPrompt)
@@ -91,8 +111,12 @@ class Stepper(SourceMixin, CompositeDevice):
 
     def print(self):
         if self.debug or self.dummy:
-            for pin in self.pin:
-                print(int(pin.value), sep = '', end = '')
+            for pin in self.pins:
+                if not self.dummy:
+                    print(int(pin.value), sep = '', end = '')
+                else:
+                    print(int(pin), sep = '', end = '')
+
             print(' ')
             self.printDets()
 
@@ -106,27 +130,24 @@ class Stepper(SourceMixin, CompositeDevice):
         return theta
     
     def _stop_thread(self):
-        if getattr(self, '_controller', None):
-            self._controller._move_thread(self)
-        self._controller = None
         if getattr(self, '_move_thread', None):
-            self._move_thread.stop()
+            self._move_thread.join()
         self._move_thread = None
  
-    def move2Angle(self, angle, isCCW, speed) :
-        while abs(self.angle - angle) >= self.dps:
+    def move2Angle(self, angle, isCCW) :
+        if abs(self.angle - angle) >= self.dps:
             # iterate self._steps
             self.step(isCCW)
             # write to pins
             self.setPinState()
             self.print()
             # wait a certain amount of time based on motor speed
-            if not speed:
-                self.delay(self.speed)
-            else: 
-                self.delay(speed)
+            self.delay(self.speed)
+            self.move2Angle(angle, isCCW)
+        else:
+            return None
     
-    def moveSteps(self, numSteps, isCW, speed):
+    def moveSteps(self, numSteps, isCW):
         while numSteps != 0:
             # iterate self._steps
             self.step(isCW)
@@ -135,10 +156,8 @@ class Stepper(SourceMixin, CompositeDevice):
             self.setPinState()
             self.print()
             # wait a certain amount of time based on motor speed
-            if not speed:
-                self.delay(self.speed)
-            else: 
-                self.delay(speed)
+            self.delay(self.speed)
+
     @property
     def angle(self):
         """
@@ -158,8 +177,8 @@ class Stepper(SourceMixin, CompositeDevice):
             isCCW = True
         else: isCCW = False
         self._stop_thread()
-        self._move_thread = GPIOThread(
-            target=self.move2Angle, args=(angle, isCCW, speed)
+        self._move_thread = thread(
+            target=self.move2Angle, args=(angle, isCCW)
         )
         self._move_thread.start()
     
@@ -178,14 +197,14 @@ class Stepper(SourceMixin, CompositeDevice):
         # make numSteps positive for decrementing
         numSteps = abs(numSteps)
         self._stop_thread()
-        self._move_thread = GPIOThread(
+        self._move_thread = thread(
             target=self.move2Angle, args=(angle, isCCW, speed)
         )
         self._move_thread.start()
         
 
 if __name__ == "__main__":
-    m = Stepper((5,6,12,16))
+    m = Stepper([5,6,12,16])
     m.angle = -15
     # m.goSteps(64)
     time.sleep(2)
@@ -194,6 +213,6 @@ if __name__ == "__main__":
     time.sleep(2)
     # m.goSteps(-2048)
     m.angle = 0
-    # time.sleep(2)
+    time.sleep(2)
     # m.angle = 90
 
