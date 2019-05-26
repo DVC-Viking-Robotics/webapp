@@ -31,10 +31,11 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         elif int(cmd['Drivetrain']['motorConfig']) == 0:
             # for race car configuration
             from outputs.Drivetrain import QuadPed as drivetrain
-        pins = cmd['Drivetrain']['address'].rsplit(',')
-        pins = [[int(pins[0]), int(pins[1])], [int(pins[2]), int(pins[3])]]
-        # pins.append([5,6,12,16])#test stepper
-        pins.append([4])#test servo
+        pins = cmd['Drivetrain']['address'].rsplit(';')
+        for m in pins: 
+            m = m.rsplit(',')
+            for p in m:
+                p = int(p)
         d = drivetrain(pins, cmd.getboolean('Drivetrain', 'phasedM'), int(cmd['Drivetrain']['maxSpeed']))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors

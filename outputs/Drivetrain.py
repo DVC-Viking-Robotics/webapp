@@ -20,7 +20,7 @@ class Drivetrain(object):
             elif len(pins[i]) == 4: # use bipolar stepper
                 self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]]))
             elif len(pins[i]) == 2:
-                if phased_i:  
+                if phased[phased_i]:  
                     # from outputs.phasedMotor import phasedMotor as PhaseEnableMotor
                     self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
                 else: 
@@ -157,8 +157,10 @@ if __name__ == "__main__":
     import argparse
     # add description to program's help screen
     parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "0" or "1"')
-    gps_defaults = '0'
-    parser.add_argument('--d', default=gps_defaults, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
+    d_defaults = '0'
+    m_defaults = 'false,false'
+    parser.add_argument('--d', default=d_defaults, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
+    parser.add_argument('--m', default=m_defaults, help='list of dc motor phase flags. "true" = 1 PWM + 1 Dir pins per motor; "false" = 2 PWM pins per motor.')
     class args():
         def __init__(self):
             parser.parse_args(namespace=self)
@@ -167,10 +169,10 @@ if __name__ == "__main__":
     # finish get cmd line args
     if(cmd.d == 1):
         myPins = [[18,17], [13,22], [5,6,12,16]]
-        d = BiPed(myPins)
+        d = BiPed(myPins, cmd.m)
     else: 
         myPins = [[18,17], [4], [13]]
-        d = QuadPed(myPins)
+        d = QuadPed(myPins, cmd.m)
     d.go([100, 0, 50])
     time.sleep(2)
     d.go([0, 100, 0])
