@@ -11,16 +11,16 @@ class Drivetrain(object):
         self.maxSpeed = min(maxSpeed, 100) # ensure proper range
         for i in range(len(pins)):
             if len(pins[i]) == 1: # use servo
-                self.motors[i] = AngularServo(pins[i][0])
+                self.motors.append(AngularServo(pins[i][0]))
             elif len(pins[i]) == 4: # use bipolar stepper
-                self.motors[i] = Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]])
+                self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]]))
             elif len(pins[i]) == 2:
                 if phased:  
                     # from outputs.phasedMotor import phasedMotor as PhaseEnableMotor
-                    self.motors[i] = PhaseEnableMotor(pins[i][0], pins[i][1])
+                    self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
                 else: 
                     # from outputs.biMotor import biMotor as Motor
-                    self.motors[i] = Motor(pins[i][0], pins[i][1])
+                    self.motors.append(Motor(pins[i][0], pins[i][1]))
 
     def gogo(self, zAux):
         for i in (2, range(len(zAux))):
