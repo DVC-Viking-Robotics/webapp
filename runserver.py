@@ -34,7 +34,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         pins = cmd['Drivetrain']['address'].rsplit(',')
         pins = [[int(pins[0]), int(pins[1])], [int(pins[2]), int(pins[3])]]
         pins.append([5,6,12,16])#test stepper
-        pins.append([4])#test servo
+        # pins.append([4])#test servo
         d = drivetrain(pins, cmd.getboolean('Drivetrain', 'phasedM'), int(cmd['Drivetrain']['maxSpeed']))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
