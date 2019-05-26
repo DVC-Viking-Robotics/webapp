@@ -1,5 +1,4 @@
 from gpiozero import AngularServo, PhaseEnableMotor, Motor
-# from stepperMotor import Stepper
 from outputs.stepperMotor import Stepper
         
 
@@ -151,6 +150,7 @@ class QuadPed(Drivetrain):
 
 
 if __name__ == "__main__":
+    from stepperMotor import Stepper
     import time
     # handle cmd line args
     import os
