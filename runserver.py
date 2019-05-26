@@ -160,7 +160,7 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go([args[0], args[1], args[2], args[2]])
+    d.go([args[0], args[1], args[2]])
     print('remote =', repr(args))
 
 @app.route('/')
