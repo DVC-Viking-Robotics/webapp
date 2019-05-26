@@ -90,7 +90,7 @@ class BiPed(Drivetrain):
             self.motors[1].forward(self.left / -100.0)
             #self.motors[1].backward(self.left / -100.0)
         else:
-            self.motors[2].stop()
+            self.motors[1].stop()
         self.gogo(cmds)
 
     # for debugging purposes
