@@ -28,12 +28,13 @@ class Drivetrain(object):
                     # from outputs.biMotor import biMotor as Motor
                     self.motors.append(Motor(pins[i][0], pins[i][1]))
                 phased_i += 1
-                print('motor', i, 'DC @', repr(pins[i]))
+                print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
             else:
                 print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
+            print('motor.value =', zAux[i] / 100.0)
             self.motors[i].value = zAux[i] / 100.0
   
     def __del__(self):
