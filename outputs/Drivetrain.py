@@ -24,7 +24,7 @@ class Drivetrain(object):
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
-            self.motors[i].angle = zAux[i] / 100.0 * 180
+            self.motors[i].angle = (zAux[i] + 100) / 200.0 * 360
   
     def __del__(self):
         while len(self.motors) > 0:

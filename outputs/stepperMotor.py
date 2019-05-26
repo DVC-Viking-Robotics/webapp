@@ -41,7 +41,7 @@ class Stepper(SourceMixin, CompositeDevice):
             self._steps -= 1
             self._it -= 1
         # now check for proper range according to stepper type
-        self.setPinState()
+        # self.setPinState()
 
     def printDets(self):
         print('Angle:', self.angle, 'steps:', self._steps)
