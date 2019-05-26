@@ -9,7 +9,7 @@ class Drivetrain(object):
     # using BCM pins[DCmotors] = [(18, 17), (13, 22)]
     def __init__(self, pins, phased, maxSpeed):
         self.maxSpeed = min(maxSpeed, 100) # ensure proper range
-        for i in range(len(pins)-1):
+        for i in range(len(pins)):
             if len(pins[i]) == 1: # use servo
                 self.motors[i] = AngularServo(pins[i][0])
             elif len(pins[i]) == 4: # use bipolar stepper
