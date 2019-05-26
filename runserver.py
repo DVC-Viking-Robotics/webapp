@@ -32,12 +32,13 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
             # for race car configuration
             from outputs.Drivetrain import QuadPed as drivetrain
         pins = cmd['Drivetrain']['address'].rsplit(':')
-        for m in pins: 
-            m = m.rsplit(',')
-            for p in m:
-                p = int(p)
+        for i in range(len(pins)): 
+            pins[i] = pins[i].rsplit(',')
+            for j in range(len(pin[i])):
+                pins[i][j] = int(pins[i][j])
             #     print(p, end = ',')
             # print(':', end = '')
+        print(repr(pins))
         d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']))
 
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
