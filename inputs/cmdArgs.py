@@ -69,7 +69,7 @@ class args:
             Config['GPS']['interface'] = temp[0]
             if len(temp) > 1:
                 del temp[0]
-                Config['GPS']['address'] = ','.join(temp)
+                Config['GPS']['address'] = temp
             else: Config['GPS']['address'] = None
 
     def get_cam(self):
@@ -108,7 +108,7 @@ class args:
                 del temp[0]
                 Config['IMU']['interface'] = temp[0]
                 del temp[0]
-                Config['IMU']['address'] = ','.join(temp)
+                Config['IMU']['address'] = temp
             else: 
                 Config['IMU']['dof'] = temp[0]
                 Config['IMU']['address'] = None
@@ -124,7 +124,7 @@ class args:
                 Config['Drivetrain']['interface'] = temp[0]
                 del temp[0]
                 if len(temp) > 0:
-                    Config['Drivetrain']['address'] = ';'.join(temp)
+                    Config['Drivetrain']['address'] = temp
                 else: Config['Drivetrain']['address'] = None
 
 
