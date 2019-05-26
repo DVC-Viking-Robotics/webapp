@@ -6,26 +6,31 @@ from stepperMotor import Stepper
 
 class Drivetrain(object):
     motors = []
-
     # using BCM pins[DCmotors] = [(18, 17), (13, 22)]
+    # phased = "true,false" order correspnding to order of DC motor pins that are passed
     def __init__(self, pins, phased, maxSpeed):
         self.maxSpeed = min(maxSpeed, 100) # ensure proper range
+        phased_i = 0
+        phased = phased.rsplit(',')
+        for b in phased:
+            b = bool(b)
         for i in range(len(pins)):
             if len(pins[i]) == 1: # use servo
                 self.motors.append(AngularServo(pins[i][0]))
             elif len(pins[i]) == 4: # use bipolar stepper
                 self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]]))
             elif len(pins[i]) == 2:
-                if phased:  
+                if phased_i:  
                     # from outputs.phasedMotor import phasedMotor as PhaseEnableMotor
                     self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
                 else: 
                     # from outputs.biMotor import biMotor as Motor
                     self.motors.append(Motor(pins[i][0], pins[i][1]))
+                phased_i += 1
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
-            self.motors[i].angle = zAux[i] / 100.0 * 90
+            self.motors[i].value = zAux[i] / 100.0
   
     def __del__(self):
         while len(self.motors) > 0:
@@ -76,22 +81,19 @@ class BiPed(Drivetrain):
         
         # make sure speeds are an integer (not decimal/float) and send to motors
         if self.right > 0:
-            self.motors[0].backward(self.right / 100.0)
+            self.motors[0].value = self.right / 100.0
             #self.motors[0].forward(self.right / 100.0)
         elif self.right < 0:
-            self.motors[0].forward(self.right / -100.0)
-            #self.motors[0].backward(self.right / -100.0)
+            self.motors[0].value = self.right / -100.0
         else:
-            self.motors[0].stop()
+            self.motors[0].value = 0
         
         if self.left > 0:
-           self.motors[1].backward(self.left / 100.0)
-           #self.motors[1].forward(self.left / 100.0)
+           self.motors[1].value = self.left / 100.0
         elif self.left < 0:
-            self.motors[1].forward(self.left / -100.0)
-            #self.motors[1].backward(self.left / -100.0)
+            self.motors[1].value = self.left / -100.0
         else:
-            self.motors[1].stop()
+            self.motors[1].value = 0
         self.gogo(cmds)
 
     # for debugging purposes
@@ -125,18 +127,18 @@ class QuadPed(Drivetrain):
         self.fr = cmds[0]
         self.lr = cmds[0]
         if self.lr > 0:
-            self.motors[0].forward(self.lr / 100.0)
+            self.motors[0].value = self.lr / 100.0
         elif self.lr < 0:
-            self.motors[0].backward(self.lr * -0.01)
+            self.motors[0].value = self.lr * -0.01
         else:
-            self.motors[0].stop()
+            self.motors[0].value = 0
         
         if self.fr > 0:
-            self.motors[1].forward(self.fr / 100.0)
+            self.motors[1].value = self.fr / 100.0
         elif self.fr < 0:
-            self.motors[1].backward(self.fr * -0.01)
+            self.motors[1].value = self.fr * -0.01
         else:
-            self.motors[1].stop()
+            self.motors[1].value = 0
         self.gogo(cmds)
 
     # for debugging purposes
@@ -163,11 +165,12 @@ if __name__ == "__main__":
             self.d = int(self.d)
     cmd = args()
     # finish get cmd line args
-    myPins = [[17, 27], [22, 23], [4]]
-    # myPins = [[17, 27], [22, 23], [5,6,12,16]]
     if(cmd.d == 1):
+        myPins = [[18,17], [13,22], [5,6,12,16]]
         d = BiPed(myPins)
-    else: d = QuadPed(myPins)
+    else: 
+        myPins = [[18,17], [4], [13]]
+        d = QuadPed(myPins)
     d.go([100, 0, 50])
     time.sleep(2)
     d.go([0, 100, 0])
