@@ -138,7 +138,7 @@ class Stepper(SourceMixin, CompositeDevice):
             self.print()
             # wait a certain amount of time based on motor speed
             self.delay(self.speed)
-            self.move2Angle(angle, isCCW)
+            
         
     def moveSteps(self, numSteps, isCW):
         while numSteps != 0:
