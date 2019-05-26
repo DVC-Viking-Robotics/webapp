@@ -130,7 +130,7 @@ class Stepper(SourceMixin, CompositeDevice):
         self._move_thread = None
  
     def move2Angle(self, angle, isCCW) :
-        if abs(self.angle - angle) >= self.dps:
+        while abs(self.angle - angle) >= self.dps:
             # iterate self._steps
             self.step(isCCW)
             # write to pins
@@ -139,9 +139,7 @@ class Stepper(SourceMixin, CompositeDevice):
             # wait a certain amount of time based on motor speed
             self.delay(self.speed)
             self.move2Angle(angle, isCCW)
-        else:
-            return None
-    
+        
     def moveSteps(self, numSteps, isCW):
         while numSteps != 0:
             # iterate self._steps
