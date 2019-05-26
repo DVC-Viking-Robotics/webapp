@@ -23,7 +23,7 @@ class Drivetrain(object):
                     self.motors.append(Motor(pins[i][0], pins[i][1]))
 
     def gogo(self, zAux):
-        for i in (2, range(len(zAux))):
+        for i in range(2, len(zAux) - 1):
             self.motors[i].value = zAux[i] / 100.0
   
     def __del__(self):
