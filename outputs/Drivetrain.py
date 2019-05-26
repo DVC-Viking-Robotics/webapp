@@ -180,6 +180,6 @@ if __name__ == "__main__":
     time.sleep(2)
     d.go([-100, -100, -25])
     time.sleep(2)
-    d.stop()
+    d.go([0, 0, 0])
 
     del d
