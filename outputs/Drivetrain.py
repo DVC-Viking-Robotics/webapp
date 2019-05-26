@@ -1,5 +1,6 @@
 from gpiozero import AngularServo, PhaseEnableMotor, Motor
-from outputs.stepperMotor import Stepper
+from stepperMotor import Stepper
+# from outputs.stepperMotor import Stepper
         
 
 
