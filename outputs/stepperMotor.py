@@ -169,7 +169,7 @@ class Stepper(CompositeDevice):
     @angle.setter
     def angle(self, angle):
         # __clamp_it angle to constraints of [0,360] degrees
-        angle = self.wrapAngle(angle)
+        angle = self.wrapAngle(angle * 180)
         # decipher rotational direction
         dTccw = self.wrapAngle(self.angle - angle)
         dTcw = self.wrapAngle(angle - self.angle)
