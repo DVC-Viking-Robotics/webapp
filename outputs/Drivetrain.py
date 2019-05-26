@@ -162,21 +162,22 @@ if __name__ == "__main__":
             self.d = int(self.d)
     cmd = args()
     # finish get cmd line args
-    myPins = [[17, 27, 22, 23], [5,6,12,16]]
+    myPins = [[17, 27, 22, 23], [4]]
+    # myPins = [[17, 27, 22, 23], [5,6,12,16]]
     if(cmd.d == 1):
-        d = BiPed()
-    else: d = QuadPed([17, 27, 22, 23])
-    d.go(100, 0)
+        d = BiPed(myPins)
+    else: d = QuadPed(myPins)
+    d.go([100, 0, 50])
     time.sleep(2)
-    d.go(0, 100)
+    d.go([0, 100, 0])
     time.sleep(2)
-    d.go(100, 100)
+    d.go([100, 100, -50])
     time.sleep(2)
-    d.go(-100, 0)
+    d.go([-100, 0, 0])
     time.sleep(2)
-    d.go(0, -100)
+    d.go([0, -100, 25])
     time.sleep(2)
-    d.go(-100, -100)
+    d.go([-100, -100, -25])
     time.sleep(2)
     d.stop()
 
