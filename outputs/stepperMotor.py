@@ -8,11 +8,11 @@ import time
 #     pass
 from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
 try:
-    from gpiozero import GPIOThread as thread
+    from gpiozero import GPIOThread
 except ImportError:
-    from threading import Thread as thread
+    from threading import Thread
 
-class Stepper(SourceMixin, CompositeDevice):
+class Stepper(CompositeDevice):
     def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, debug = False):
         self.maxSteps = maxSteps
         self.dps = DegreePerStep
@@ -20,8 +20,8 @@ class Stepper(SourceMixin, CompositeDevice):
         self.debug = debug
         self.speed = speed
         self.dummy = False
+        self.pins = pins
         if len(pins) == 4:
-            self.pins = pins
             for i in range(len(pins)):
                 try:
                     # GPIO.setup(pin, GPIO.OUT)
@@ -111,13 +111,13 @@ class Stepper(SourceMixin, CompositeDevice):
 
     def print(self):
         if self.debug or self.dummy:
-            for pin in self.pins:
+            pinBin = 0b0
+            for i in range(len(self.pins)):
                 if not self.dummy:
-                    print(int(pin.value), sep = '', end = '')
+                    pinBin |= (int(self.pins[i].value) << i)
                 else:
-                    print(int(pin), sep = '', end = '')
-
-            print(' ')
+                    pinBin |= (int(self.pins[i]) << i)
+            print(format(pinBin, 'b').format('b=4'))
             self.printDets()
 
 
@@ -177,10 +177,12 @@ class Stepper(SourceMixin, CompositeDevice):
             isCCW = True
         else: isCCW = False
         self._stop_thread()
-        self._move_thread = thread(
-            target=self.move2Angle, args=(angle, isCCW)
-        )
-        self._move_thread.start()
+        try:
+            self._move_thread = Thread(target=self.move2Angle, args=(angle, isCCW))
+        except NameError:
+            self._move_thread = GPIOThread(target=self.move2Angle, args=(angle, isCCW))
+        finally:
+            self._move_thread.start()
     
     @property
     def steps(self):
