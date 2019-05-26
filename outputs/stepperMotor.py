@@ -1,18 +1,11 @@
 import time
-# try:
-#     import RPi.GPIO as GPIO
-#     GPIO.setmode(GPIO.BCM)
-#     GPIO.setwarnings(False) # advised by useless debuggung prompts
-# except ModuleNotFoundError:
-#     # probably running on PC
-#     pass
 from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
 try:
     from gpiozero import GPIOThread
 except ImportError:
     from threading import Thread
 
-class Stepper(CompositeDevice):
+class Stepper(SourceMixin, CompositeDevice):
     def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, debug = False):
         self.maxSteps = maxSteps
         self.dps = DegreePerStep
@@ -21,15 +14,14 @@ class Stepper(CompositeDevice):
         self.speed = speed
         self.dummy = False
         self.pins = pins
+        super(SourceMixin, self).__init__()
         if len(pins) == 4:
-            for i in range(len(pins)):
-                try:
-                    # GPIO.setup(pin, GPIO.OUT)
-                    # GPIO.output(pin, False)
-                    self.pins[i] = DigitalOutputDevice(pins[i])
-                except BadPinFactory:
-                    self.dummy = True
-                    self.pins[i] = False
+            try:
+                self.pins = CompositeDevice(
+                    DigitalOutputDevice(pins[0]), DigitalOutputDevice(pins[1]), DigitalOutputDevice(pins[2]), DigitalOutputDevice(pins[3]))
+            except BadPinFactory:
+                self.dummy = True
+                self.pins[i] = False
         else:# did not pass exactly 4 gpio pins
             self.dummy = True
         self._it = 0 # iterator for rotating stepper
@@ -109,15 +101,18 @@ class Stepper(CompositeDevice):
         # delay between iterations based on motor speed (mm/sec)
         time.sleep(speed / 60000.0)
 
+    def _getPinBin(self):
+        pinBin = 0b0
+        for i in range(len(self.pins)):
+            if not self.dummy:
+                pinBin |= (int(self.pins[i].value) << i)
+            else:
+                pinBin |= (int(self.pins[i]) << i)
+        return format(pinBin, 'b')
+            
     def print(self):
         if self.debug or self.dummy:
-            pinBin = 0b0
-            for i in range(len(self.pins)):
-                if not self.dummy:
-                    pinBin |= (int(self.pins[i].value) << i)
-                else:
-                    pinBin |= (int(self.pins[i]) << i)
-            print(format(pinBin, 'b').format('b=4'))
+            print(self._getPinBin())
             self.printDets()
 
 
@@ -169,7 +164,7 @@ class Stepper(CompositeDevice):
     @angle.setter
     def angle(self, angle):
         # __clamp_it angle to constraints of [0,360] degrees
-        angle = self.wrapAngle(angle * 180)
+        angle = self.wrapAngle(angle)
         # decipher rotational direction
         dTccw = self.wrapAngle(self.angle - angle)
         dTcw = self.wrapAngle(angle - self.angle)
@@ -203,6 +198,24 @@ class Stepper(CompositeDevice):
             target=self.move2Angle, args=(angle, isCCW, speed)
         )
         self._move_thread.start()
+    
+    @property
+    def value(self):
+        """
+        Returns binary number representing the pins (pin1 = LSB ... pin4 = MSB). Setting
+        this property changes the percent angle of the motor.
+        """
+        return _getPinBin()
+
+    @value.setter
+    def value(self, value):
+        if value is None:
+            self.resetZeroAngle()
+        elif -1 <= value <= 1:
+            self.angle = value * 180.0
+        else:
+            raise OutputDeviceBadValue(
+                "stepper value must be between -1 and 1, or None")
         
 
 if __name__ == "__main__":
