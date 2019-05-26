@@ -31,7 +31,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         elif int(cmd['Drivetrain']['motorConfig']) == 0:
             # for race car configuration
             from outputs.Drivetrain import QuadPed as drivetrain
-        pins = cmd['Drivetrain']['address'].rsplit(';')
+        pins = cmd['Drivetrain']['address'].rsplit(':')
         for m in pins: 
             m = m.rsplit(',')
             for p in m:
