@@ -29,7 +29,7 @@ class Drivetrain(object):
     def __del__(self):
         while len(self.motors) > 0:
             del self.motors[len(self.motors) - 1]
-        del self.motors
+        # del self.motors
 # end Drivetrain class
 
 class BiPed(Drivetrain):
