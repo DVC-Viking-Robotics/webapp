@@ -16,8 +16,10 @@ class Drivetrain(object):
         for i in range(len(pins)):
             if len(pins[i]) == 1: # use servo
                 self.motors.append(AngularServo(pins[i][0]))
+                print('motor', i, 'Servo @', repr(pins[i]))
             elif len(pins[i]) == 4: # use bipolar stepper
                 self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]]))
+                print('motor', i, 'Stepper @', repr(pins[i]))
             elif len(pins[i]) == 2:
                 if phased[phased_i]:  
                     # from outputs.phasedMotor import phasedMotor as PhaseEnableMotor
@@ -26,6 +28,9 @@ class Drivetrain(object):
                     # from outputs.biMotor import biMotor as Motor
                     self.motors.append(Motor(pins[i][0], pins[i][1]))
                 phased_i += 1
+                print('motor', i, 'DC @', repr(pins[i]))
+            else:
+                print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
