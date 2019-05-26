@@ -15,16 +15,16 @@ parser.add_argument('--host', default=None, help='Type IP address (domain). "0.0
 parser.add_argument('--port', default=None, help='Type port number for the server. "5555" is default.')
 
 # add option '--d' for drivetrain and pin #s
-parser.add_argument('--d', default=None, help='Select drivetrain type. "2" = usb+arduino. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup). Specify the interface in text (ie "gpio", "serial", or "i2c"). Any comma seperated list of numbers delimited by a semicolon that follow the <interface> will be taken as pairs for the address of GPIO pins for each motor. ie "1;gpio;18,17;13,22"')
+parser.add_argument('--d', default=None, help='Select drivetrain type. "2" = usb+arduino. "1" = bi-ped (R2D2 - like). "0" = quad-Ped (race car setup). Specify the interface in text (ie "gpio", "serial", or "i2c"). Any comma seperated list of numbers delimited by a colon that follow the <type>:<interface>: will be taken as the address of GPIO pins for each motor. ie "1:gpio:18,17:13,22"')
 
 # add option '--m' for motor driver
 parser.add_argument('--m', default=None, help='comma seperated list of Motor Driver IC type (with order corresponding to order of appearance in --d address arg). "true" = motor uses 1 PWM + 1 direction signals. "false" = motor uses 2 PWM signals')
 
 # add option '--dof' for Degrees of Freedom and I2C addresses
-parser.add_argument('--dof', default=None, help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Optionally specify the interface in text (ie "serial" or "i2c"). Any additionally comma separated numbers or text that follow the <interface> will be used as addresses. ie "9;i2c;0x6b,0x1e"')
+parser.add_argument('--dof', default=None, help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Optionally specify the interface in text (ie "serial" or "i2c"). Any additionally comma separated numbers or text that follow the <#DOF>:<interface>: will be used as interface address(es). ie "9:i2c:0x6b,0x1e"')
 
 # add option '--gps' for Degrees of Freedom and I2C addresses
-parser.add_argument('--gps', default=None, help='Select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow will be used as i2c addresses or serial address. ie "i2c;0x6a,0x1c" or "serial;comm3". The "spi: flag ignores additional arguments.')
+parser.add_argument('--gps', default=None, help='Select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow the <interface>: will be used as interface address(es). ie "i2c:0x6a,0x1c" or "serial:comm3". The "spi: flag ignores additional address arguments.')
 
 # add option '--d' for drivetrain and pin #s
 parser.add_argument('--cam', default=None, help='Toggle camera. "1" = on (default); "0" = off.')
@@ -64,7 +64,7 @@ class args:
     def get_gps(self):
         # set gps variable
         if self.gps != None:
-            temp = self.gps.rsplit(';')
+            temp = self.gps.rsplit(':')
             # print(repr(self.gps))
             Config['GPS']['interface'] = temp[0]
             if len(temp) > 1:
@@ -101,7 +101,7 @@ class args:
     def get_dof(self):
         # set DoF variable
         if self.dof != None:
-            temp = self.dof.rsplit(';')
+            temp = self.dof.rsplit(':')
             # print(repr(temp))
             if len(temp) >= 2:
                 Config['IMU']['dof'] = temp[0]
@@ -116,7 +116,7 @@ class args:
     def get_drivetrain(self):
         # set drivetrain section
         if self.d != None:
-            temp = self.d.rsplit(';')
+            temp = self.d.rsplit(':')
             # print(repr(temp))
             Config['Drivetrain']['motorConfig'] = temp[0]
             if len(temp) >= 2:
