@@ -85,20 +85,8 @@ class BiPed(Drivetrain):
         # self.print()
         
         # make sure speeds are an integer (not decimal/float) and send to motors
-        if self.right > 0:
-            self.motors[0].value = self.right / 100.0
-            #self.motors[0].forward(self.right / 100.0)
-        elif self.right < 0:
-            self.motors[0].value = self.right / -100.0
-        else:
-            self.motors[0].value = 0
-        
-        if self.left > 0:
-           self.motors[1].value = self.left / 100.0
-        elif self.left < 0:
-            self.motors[1].value = self.left / -100.0
-        else:
-            self.motors[1].value = 0
+        self.motors[0].value = self.right / 100.0
+        self.motors[1].value = self.left / 100.0
         self.gogo(cmds)
 
     # for debugging purposes
@@ -131,19 +119,8 @@ class QuadPed(Drivetrain):
         # set the axis directly to their corresponding motors
         self.fr = cmds[0]
         self.lr = cmds[0]
-        if self.lr > 0:
-            self.motors[0].value = self.lr / 100.0
-        elif self.lr < 0:
-            self.motors[0].value = self.lr * -0.01
-        else:
-            self.motors[0].value = 0
-        
-        if self.fr > 0:
-            self.motors[1].value = self.fr / 100.0
-        elif self.fr < 0:
-            self.motors[1].value = self.fr * -0.01
-        else:
-            self.motors[1].value = 0
+        self.motors[0].value = self.lr / 100.0
+        self.motors[1].value = self.fr / 100.0
         self.gogo(cmds)
 
     # for debugging purposes
