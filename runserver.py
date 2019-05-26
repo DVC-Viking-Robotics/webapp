@@ -34,7 +34,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         pins = cmd['Drivetrain']['address'].rsplit(':')
         for i in range(len(pins)): 
             pins[i] = pins[i].rsplit(',')
-            for j in range(len(pin[i])):
+            for j in range(len(pins[i])):
                 pins[i][j] = int(pins[i][j])
             #     print(p, end = ',')
             # print(':', end = '')
