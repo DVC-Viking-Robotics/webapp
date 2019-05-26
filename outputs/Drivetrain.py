@@ -28,7 +28,7 @@ class Drivetrain(object):
                     # from outputs.biMotor import biMotor as Motor
                     self.motors.append(Motor(pins[i][0], pins[i][1]))
                 phased_i += 1
-                print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
+                print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i-1])
             else:
                 print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
 
