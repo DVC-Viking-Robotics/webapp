@@ -6,15 +6,14 @@ except ImportError:
     from threading import Thread
 
 class Stepper(SourceMixin, CompositeDevice):
-    def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, debug = False):
+    def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625):
         self.maxSteps = maxSteps
         self.dps = DegreePerStep
         self.stepType = stepType
-        self.debug = debug
         self.speed = speed
         self.dummy = False
         self.pins = pins
-        super(SourceMixin, self).__init__()
+        super(Stepper, self).__init__()
         if len(pins) == 4:
             try:
                 self.pins = CompositeDevice(
