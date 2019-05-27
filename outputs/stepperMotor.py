@@ -3,7 +3,7 @@ from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFa
 try:
     from gpiozero import GPIOThread
 except ImportError:
-    print("could not moad GPIOThread class")
+    print("could not load GPIOThread class")
     from threading import Thread
 
 class Stepper(SourceMixin, CompositeDevice):
