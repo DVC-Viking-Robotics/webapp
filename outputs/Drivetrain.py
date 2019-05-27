@@ -1,5 +1,9 @@
 from gpiozero import AngularServo, PhaseEnableMotor, Motor
-from outputs.stepperMotor import Stepper
+try:
+    from outputs.stepperMotor import Stepper
+except NameError:# for self exec loop
+    from stepperMotor import Stepper
+
         
 
 
@@ -133,7 +137,6 @@ class QuadPed(Drivetrain):
 
 
 if __name__ == "__main__":
-    from stepperMotor import Stepper
     import time
     # handle cmd line args
     import os
