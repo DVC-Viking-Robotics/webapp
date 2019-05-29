@@ -10,6 +10,13 @@ class GPSnav:
         self.imu = imu
         self.gps = gps
     
+    # override [] operators to return the waypoints queue
+    def __getitem__(self, key):
+        return self.waypoints[key]
+
+    def __setitem__(self, key, val):
+        raise RuntimeWarning('GPSnav.waypoints can not be directly set!! Use .insert() & .pop() accordingly!!')
+
     def insert(self, wp = None, index = -1):
         if index < 0 or index > len(self.waypoints):
             # insert @ end of list if index is out of bounds

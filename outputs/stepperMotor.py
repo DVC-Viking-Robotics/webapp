@@ -1,4 +1,5 @@
 import time
+import math
 from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
 try:
     from gpiozero import GPIOThread
@@ -28,7 +29,14 @@ class Stepper(SourceMixin, CompositeDevice):
         # self._steps = steps specific to motor
         self.resetZeroAngle()
         self._move_thread = None
-    
+ 
+    # override [] operators to return the CompositeDevice's list of DigitalOutputDevice(s)
+    def __getitem__(self, key):
+        return self.pins[key]
+
+    def __setitem__(self, key, val):
+        self.pins[key].value = bool(math.ceil(abs(val)))
+
     def resetZeroAngle(self):
         self._steps = 0
     
@@ -207,7 +215,7 @@ class Stepper(SourceMixin, CompositeDevice):
 
     @value.setter
     def value(self, value):
-        if value is None:
+        if value is None or value == 0:
             self.resetZeroAngle()
         elif -1 <= value <= 1:
             self.angle = value * 180.0
