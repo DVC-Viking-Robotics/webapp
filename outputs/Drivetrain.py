@@ -1,7 +1,7 @@
 from gpiozero import AngularServo, PhaseEnableMotor, Motor
 try:
     from outputs.stepperMotor import Stepper
-except NameError:# for self exec loop
+except ImportError:# for self exec loop
     from stepperMotor import Stepper
 
         
