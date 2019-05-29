@@ -143,7 +143,7 @@ if __name__ == "__main__":
     import argparse
     # add description to program's help screen
     parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "0" or "1"')
-    d_defaults = '0'
+    d_defaults = '1'
     m_defaults = 'false,false'
     parser.add_argument('--d', default=d_defaults, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
     parser.add_argument('--m', default=m_defaults, help='list of dc motor phase flags. "true" = 1 PWM + 1 Dir pins per motor; "false" = 2 PWM pins per motor.')
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         myPins = [[18,17], [13,22], [5,6,12,16]]
         d = BiPed(myPins, cmd.m)
     else: 
-        myPins = [[18,17], [4], [13]]
+        myPins = [[18,17], [13, 22], [4]]
         d = QuadPed(myPins, cmd.m)
     d.go([100, 0, 50])
     time.sleep(2)
