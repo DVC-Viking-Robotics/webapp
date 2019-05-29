@@ -2,7 +2,7 @@ import time
 import math
 from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
 try:
-    from gpiozero import GPIOThread
+    from gpiozero.threads import GPIOThread
 except ImportError:
     print("could not load GPIOThread class")
     from threading import Thread
