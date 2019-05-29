@@ -38,8 +38,10 @@ class Drivetrain(object):
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
-            print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
-            self.motors[i].value = zAux[i] / 100.0
+            if i < len(self.motors):
+                print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
+                self.motors[i].value = zAux[i] / 100.0
+            else: print('motor[', i, '] not declared and/or installed', sep = '')
   
     def __del__(self):
         while len(self.motors) > 0:
