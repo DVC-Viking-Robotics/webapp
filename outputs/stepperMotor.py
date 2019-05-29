@@ -115,7 +115,7 @@ class Stepper(SourceMixin, CompositeDevice):
         return format(pinBin, 'b')
             
     def print(self):
-        if self.debug or self.dummy:
+        if self.dummy:
             print(self._getPinBin())
             self.printDets()
 
