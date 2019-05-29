@@ -1,11 +1,7 @@
 import time
 import math
 from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
-try:
-    from gpiozero.threads import GPIOThread
-except ImportError:
-    print("could not load GPIOThread class")
-    from threading import Thread
+from gpiozero.threads import GPIOThread
 
 class Stepper(SourceMixin, CompositeDevice):
     def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625):
@@ -201,7 +197,7 @@ class Stepper(SourceMixin, CompositeDevice):
         numSteps = abs(numSteps)
         self._stop_thread()
         self._move_thread = thread(
-            target=self.move2Angle, args=(angle, isCCW, speed)
+            target=self.moveSteps, args=(numSteps, isCW)
         )
         self._move_thread.start()
     
@@ -218,7 +214,7 @@ class Stepper(SourceMixin, CompositeDevice):
         if value is None or value == 0:
             self.resetZeroAngle()
         elif -1 <= value <= 1:
-            self.angle = value * 180.0
+            self.steps = value * 180.0 / self.dps
         else:
             raise OutputDeviceBadValue(
                 "stepper value must be between -1 and 1, or None")
