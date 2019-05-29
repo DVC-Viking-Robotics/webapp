@@ -130,7 +130,7 @@ class Stepper(SourceMixin, CompositeDevice):
     
     def _stop_thread(self):
         if getattr(self, '_move_thread', None):
-            self._move_thread.join()
+            self._move_thread.stop()
         self._move_thread = None
  
     def move2Angle(self, angle, isCCW) :
