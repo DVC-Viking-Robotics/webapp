@@ -196,7 +196,7 @@ class Stepper(SourceMixin, CompositeDevice):
         # make numSteps positive for decrementing
         numSteps = abs(numSteps)
         self._stop_thread()
-        self._move_thread = thread(
+        self._move_thread = GPIOThread(
             target=self.moveSteps, args=(numSteps, isCW)
         )
         self._move_thread.start()
