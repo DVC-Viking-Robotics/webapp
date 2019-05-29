@@ -211,7 +211,7 @@ class Stepper(SourceMixin, CompositeDevice):
 
     @value.setter
     def value(self, value):
-        if value is None or value == 0:
+        if value is None:
             self.resetZeroAngle()
         elif -1 <= value <= 1:
             self.angle = value * 180.0 / self.dps

@@ -159,17 +159,17 @@ if __name__ == "__main__":
     else: 
         myPins = [[18,17], [13, 22], [4]]
         d = QuadPed(myPins, cmd.m)
-    d.go([100, 0, 50])
+    d.go([100, 0, 100])
     time.sleep(2)
     d.go([0, 100, 0])
     time.sleep(2)
-    d.go([100, 100, -50])
+    d.go([100, 100, -100])
     time.sleep(2)
     d.go([-100, 0, 0])
     time.sleep(2)
-    d.go([0, -100, 25])
+    d.go([0, -100, 50])
     time.sleep(2)
-    d.go([-100, -100, -25])
+    d.go([-100, -100, -50])
     time.sleep(2)
     d.go([0, 0, 0])
 
