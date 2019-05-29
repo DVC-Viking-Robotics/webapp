@@ -214,7 +214,7 @@ class Stepper(SourceMixin, CompositeDevice):
         if value is None:
             self.resetZeroAngle()
         elif -1 <= value <= 1:
-            self.angle = value * 180.0 / self.dps
+            self.angle = value * 180.0
         else:
             raise OutputDeviceBadValue(
                 "stepper value must be between -1 and 1, or None")

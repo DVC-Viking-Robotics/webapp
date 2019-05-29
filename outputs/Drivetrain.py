@@ -38,7 +38,7 @@ class Drivetrain(object):
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
-            print('motor.value =', zAux[i] / 100.0)
+            print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
             self.motors[i].value = zAux[i] / 100.0
   
     def __del__(self):
