@@ -11,14 +11,15 @@ class Stepper(SourceMixin, CompositeDevice):
         self.speed = speed
         self.dummy = False
         self.pins = pins
-        super(Stepper, self).__init__()
-        if len(pins) == 4:
-            try:
-                self.pins = CompositeDevice(
-                    DigitalOutputDevice(pins[0]), DigitalOutputDevice(pins[1]), DigitalOutputDevice(pins[2]), DigitalOutputDevice(pins[3]))
-            except BadPinFactory:
-                self.dummy = True
-                self.pins[i] = False
+        for i in range(len(pins)):
+            if i < 4:
+                try:
+                    super(Stepper, self).__init__()
+                    self.pins = CompositeDevice(
+                        DigitalOutputDevice(pins[0]), DigitalOutputDevice(pins[1]), DigitalOutputDevice(pins[2]), DigitalOutputDevice(pins[3]))
+                except BadPinFactory:
+                    self.dummy = True
+                    self.pins[i] = False
         else:# did not pass exactly 4 gpio pins
             self.dummy = True
         self._it = 0 # iterator for rotating stepper

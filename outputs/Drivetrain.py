@@ -1,11 +1,13 @@
-from gpiozero import AngularServo, PhaseEnableMotor, Motor
+from gpiozero import AngularServo, PhaseEnableMotor, Motor, BadPinFactory
 try:
     from outputs.stepperMotor import Stepper
 except ImportError:# for self exec loop
     from stepperMotor import Stepper
 
         
-
+class dummyMotor:
+    def __init__(self, value = 0):
+        self.value = value
 
 class Drivetrain(object):
     # using BCM pins = [[18,17], [13,22], [4], [5,6,12,16]]
@@ -19,18 +21,24 @@ class Drivetrain(object):
             b = bool(b)
         for i in range(len(pins)):
             if len(pins[i]) == 1: # use servo
-                self.motors.append(AngularServo(pins[i][0]))
-                print('motor', i, 'Servo @', repr(pins[i]))
+                try:
+                    self.motors.append(AngularServo(pins[i][0]))
+                    print('motor', i, 'Servo @', repr(pins[i]))
+                except BadPinFactory:
+                    self.motors.append(dummyMotor())
             elif len(pins[i]) == 4: # use bipolar stepper
                 self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]]))
                 print('motor', i, 'Stepper @', repr(pins[i]))
             elif len(pins[i]) == 2:
-                if phased[phased_i]:  
-                    # from outputs.phasedMotor import phasedMotor as PhaseEnableMotor
-                    self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
-                else: 
-                    # from outputs.biMotor import biMotor as Motor
-                    self.motors.append(Motor(pins[i][0], pins[i][1]))
+                try:
+                    if phased[phased_i]:  
+                        # from outputs.phasedMotor import phasedMotor as PhaseEnableMotor
+                        self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
+                    else: 
+                        # from outputs.biMotor import biMotor as Motor
+                        self.motors.append(Motor(pins[i][0], pins[i][1]))
+                except BadPinFactory:
+                    self.motors.append(dummyMotor())
                 phased_i += 1
                 print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i-1])
             else:
@@ -38,9 +46,11 @@ class Drivetrain(object):
 
     def gogo(self, zAux):
         for i in range(2, len(zAux)):
-            if i < len(self.motors):
+            if i < len(self.motors) and type(self.motors[i]) is not dummyMotor:
                 print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
                 self.motors[i].value = zAux[i] / 100.0
+            elif type(self.motors[i]) is not dummyMotor:
+                print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
             else: print('motor[', i, '] not declared and/or installed', sep = '')
   
     def __del__(self):
@@ -91,14 +101,16 @@ class BiPed(Drivetrain):
         # self.print()
         
         # make sure speeds are an integer (not decimal/float) and send to motors
-        self.motors[0].value = self.right / 100.0
-        self.motors[1].value = self.left / 100.0
+        if type(self.motors[0]) is dummyMotor:
+            print("left =", self.left)
+        else:
+            self.motors[0].value = self.left / 100.0
+        if type(self.motors[1]) is dummyMotor:
+            print("right =", self.right)
+        else:
+            self.motors[1].value = self.right / 100.0
         self.gogo(cmds)
 
-    # for debugging purposes
-    def print(self):
-        print("left =", self.left)
-        print("right =", self.right)
 # end BiPed class
 
 class QuadPed(Drivetrain):
@@ -125,8 +137,14 @@ class QuadPed(Drivetrain):
         # set the axis directly to their corresponding motors
         self.fr = cmds[0]
         self.lr = cmds[0]
-        self.motors[0].value = self.lr / 100.0
-        self.motors[1].value = self.fr / 100.0
+        if type(self.motors[0]) is dummyMotor:
+            print("left =", self.lr)
+        else:
+            self.motors[0].value = self.lr / 100.0
+        if type(self.motors[1]) is dummyMotor:
+            print("right =", self.fr)
+        else:
+            self.motors[1].value = self.fr / 100.0
         self.gogo(cmds)
 
     # for debugging purposes
@@ -167,9 +185,9 @@ if __name__ == "__main__":
     time.sleep(2)
     d.go([100, 100, 0])
     time.sleep(2)
-    d.go([-100, 0, -50])
+    d.go([-100, 0])
     time.sleep(2)
-    d.go([0, -100, 25])
+    d.go([0, -100])
     time.sleep(2)
     d.go([-100, -100, 50])
     time.sleep(2)
