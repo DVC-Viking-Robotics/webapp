@@ -40,13 +40,12 @@ class Drivetrain(object):
                 self.motors.append(dummyMotor())
 
     def gogo(self, zAux):
-        for i in range(2, len(zAux)):
-            if i < len(self.motors) and type(self.motors[i]) is not dummyMotor:
-                print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
-                self.motors[i].value = zAux[i] / 100.0
-            elif type(self.motors[i]) is not dummyMotor:
-                print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
-            else: print('motor[', i, '] not declared and/or installed', sep = '')
+        if len(zAux) > 2:
+            for i in range(2, len(zAux)):
+                if i < len(self.motors):
+                    print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
+                    self.motors[i].value = zAux[i] / 100.0
+                else: print('motor[', i, '] not declared and/or installed', sep = '')
   
     def __del__(self):
         while len(self.motors) > 0:
@@ -158,6 +157,7 @@ if __name__ == "__main__":
     m_defaults = 'false,false'
     parser.add_argument('--d', default=d_defaults, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
     parser.add_argument('--m', default=m_defaults, help='list of dc motor phase flags. "true" = 1 PWM + 1 Dir pins per motor; "false" = 2 PWM pins per motor.')
+    parser.add_argument('--pipins', default=None, help='list of dc motor phase flags. "true" = 1 PWM + 1 Dir pins per motor; "false" = 2 PWM pins per motor.')
     class args():
         def __init__(self):
             parser.parse_args(namespace=self)
@@ -166,17 +166,18 @@ if __name__ == "__main__":
     # finish get cmd line args
     
     # use mock pin factory
-    # from gpiozero.pins.mock import MockFactory
-    # mock_pins = MockFactory()
+    from gpiozero.pins.mock import MockFactory
+    MockFactory()
     from gpiozero.pins.pigpio import PiGPIOFactory
-    mock_pins = PiGPIOFactory(host='b-pi3')
-
+    if cmd.pipins != None: cmd.pipins = PiGPIOFactory(host=cmd.pipins)
+    else: cmd.pipins = MockFactory()
     if(cmd.d == 1):
-        myPins = [[18,17], [13,22], [5,6,12,16], [4]]
-        d = BiPed(myPins, cmd.m, pin_factory = mock_pins)
+        myPins = [[18,17], [13,22]]
+        # , [5,6,12,16], [4]
+        d = BiPed(myPins, cmd.m, pin_factory = cmd.pipins)
     else: 
         myPins = [[18,17], [13, 22], [4]]
-        d = QuadPed(myPins, cmd.m, pin_factory = mock_pins)
+        d = QuadPed(myPins, cmd.m, pin_factory = cmd.pipins)
     d.go([100, 0, 50])
     time.sleep(2)
     d.go([0, 100, -25])
