@@ -13,7 +13,6 @@ import os
 from flask import Flask, g, render_template
 from inputs.EXTnode import EXTnode
 from flask_socketio import SocketIO, emit
-# Allow secure connections
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -24,23 +23,6 @@ from inputs.GPSserial import GPSserial
 from inputs.cmdArgs import args
 cmd = args()
 if cmd.getboolean('WhoAmI', 'onRaspi'):
-    if cmd['Drivetrain']['interface'] == 'gpio':
-        if int(cmd['Drivetrain']['motorConfig']) == 1:
-            # for R2D2 configuration
-            from outputs.Drivetrain import BiPed as drivetrain
-        elif int(cmd['Drivetrain']['motorConfig']) == 0:
-            # for race car configuration
-            from outputs.Drivetrain import QuadPed as drivetrain
-        pins = cmd['Drivetrain']['address'].rsplit(':')
-        for i in range(len(pins)): 
-            pins[i] = pins[i].rsplit(',')
-            for j in range(len(pins[i])):
-                pins[i][j] = int(pins[i][j])
-            #     print(p, end = ',')
-            # print(':', end = '')
-        print(repr(pins))
-        d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']))
-
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
     if cmd['IMU']['interface'] == 'i2c':
         if int(cmd['IMU']['dof']) == 6:
@@ -80,6 +62,23 @@ else: # running on a PC
     if cmd['Drivetrain']['interface'] == 'serial':
         d = EXTnode(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
     else: d = None
+
+if cmd['Drivetrain']['interface'] == 'gpio':
+        if int(cmd['Drivetrain']['motorConfig']) == 1:
+            # for R2D2 configuration
+            from outputs.Drivetrain import BiPed as drivetrain
+        elif int(cmd['Drivetrain']['motorConfig']) == 0:
+            # for race car configuration
+            from outputs.Drivetrain import QuadPed as drivetrain
+        pins = cmd['Drivetrain']['address'].rsplit(':')
+        for i in range(len(pins)): 
+            pins[i] = pins[i].rsplit(',')
+            for j in range(len(pins[i])):
+                pins[i][j] = int(pins[i][j])
+            #     print(p, end = ',')
+            # print(':', end = '')
+        # print(repr(pins))
+        d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']), pin_factory = cmd.pipins)
 
 if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
     IMUsensor = d
@@ -164,7 +163,7 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go([args[0], args[1], args[2]])
+    d.go([args[0], args[1]])
     print('remote =', repr(args))
 
 @app.route('/')

@@ -11,6 +11,9 @@ parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R. Pleas
 # add option '--host' for domain name address
 parser.add_argument('--host', default=None, help='Type IP address (domain). "0.0.0.0" is for localhost domain.')
 
+# add option '--pipins' for domain name address of pi running pigpiod EXPERIMENTAL!!!
+parser.add_argument('--pipins', default=None, help='Type IP address hostname of pi rynning "pigpiod"')
+
 # add option '--port' for domain name address
 parser.add_argument('--port', default=None, help='Type port number for the server. "5555" is default.')
 
@@ -44,6 +47,14 @@ class args:
         self.get_drivetrain()
         self.get_cam()
         self.get_gps()
+        self.getPiPins()
+
+    def getPiPins(self):
+        if self.pipins != None:
+            from gpiozero.pins.pigpio import PiGPIOFactory
+            #set host to hostname or ip address of rPi w/ pigpiod running
+            self.pipins = PiGPIOFactory(host=self.pipins)
+            
 
 
     # override [] operators to return the Config dictionaries

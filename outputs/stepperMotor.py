@@ -1,27 +1,27 @@
 import time
 import math
-from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice, BadPinFactory
+from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice
 from gpiozero.threads import GPIOThread
+from gpiozero.pins.mock import MockFactory
 
 class Stepper(SourceMixin, CompositeDevice):
-    def __init__(self, pins, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625):
+    def __init__(self, pins=None, initial_angle=0.0, min_angle=-180, max_angle=180, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, pin_factory=None, verbose = False):
         self.maxSteps = maxSteps
         self.dps = DegreePerStep
         self.stepType = stepType
         self.speed = speed
         self.dummy = False
         self.pins = pins
-        for i in range(len(pins)):
-            if i < 4:
-                try:
-                    super(Stepper, self).__init__()
-                    self.pins = CompositeDevice(
-                        DigitalOutputDevice(pins[0]), DigitalOutputDevice(pins[1]), DigitalOutputDevice(pins[2]), DigitalOutputDevice(pins[3]))
-                except BadPinFactory:
-                    self.dummy = True
-                    self.pins[i] = False
+        super(Stepper, self).__init__(pin_factory = pin_factory)
+        if len(pins) == 4:
+                self.pins = CompositeDevice(
+                    DigitalOutputDevice(pins[0], pin_factory = pin_factory), 
+                    DigitalOutputDevice(pins[1], pin_factory = pin_factory), 
+                    DigitalOutputDevice(pins[2], pin_factory = pin_factory), 
+                    DigitalOutputDevice(pins[3], pin_factory = pin_factory), 
+                    pin_factory = pin_factory)
         else:# did not pass exactly 4 gpio pins
-            self.dummy = True
+            raise RuntimeError('pins passed to stepper must be an iterable list or tuple of exactly 4 numbers!')
         self._it = 0 # iterator for rotating stepper
         # self._steps = steps specific to motor
         self.resetZeroAngle()
@@ -47,9 +47,6 @@ class Stepper(SourceMixin, CompositeDevice):
             self._it -= 1
         # now check for proper range according to stepper type
         # self.setPinState()
-
-    def printDets(self):
-        print('Angle:', self.angle, 'steps:', self._steps)
 
     def __clamp_it(self, max):
         if self._it > max - 1: self._it -= max
@@ -109,16 +106,12 @@ class Stepper(SourceMixin, CompositeDevice):
     def _getPinBin(self):
         pinBin = 0b0
         for i in range(len(self.pins)):
-            if not self.dummy:
                 pinBin |= (int(self.pins[i].value) << i)
-            else:
-                pinBin |= (int(self.pins[i]) << i)
-        return format(pinBin, 'b')
+        return pinBin
             
-    def print(self):
-        if self.dummy:
-            print(self._getPinBin())
-            self.printDets()
+    def __repr__(self):
+        output = 'pins = {} Angle: {} Steps: {}'.format(bin(self._getPinBin()), repr(self.angle), repr(self.steps))
+        return output
 
 
     def wrapAngle(self, theta):
@@ -140,7 +133,6 @@ class Stepper(SourceMixin, CompositeDevice):
             self.step(isCCW)
             # write to pins
             self.setPinState()
-            self.print()
             # wait a certain amount of time based on motor speed
             self.delay(self.speed)
             
@@ -152,7 +144,6 @@ class Stepper(SourceMixin, CompositeDevice):
             numSteps -= 1
             # write to pins
             self.setPinState()
-            self.print()
             # wait a certain amount of time based on motor speed
             self.delay(self.speed)
 
@@ -201,14 +192,24 @@ class Stepper(SourceMixin, CompositeDevice):
             target=self.moveSteps, args=(numSteps, isCW)
         )
         self._move_thread.start()
-    
+ 
+    @property
+    def is_active(self):
+        """
+        Returns :data:`True` if the motor is currently running and
+        :data:`False` otherwise.
+        """
+        if self._move_thread != None:
+            return not self._move_thread._is_stopped
+        else: return False
+
     @property
     def value(self):
         """
         Returns binary number representing the pins (pin1 = LSB ... pin4 = MSB). Setting
         this property changes the percent angle of the motor.
         """
-        return _getPinBin()
+        return self._getPinBin()
 
     @value.setter
     def value(self, value):
@@ -222,15 +223,18 @@ class Stepper(SourceMixin, CompositeDevice):
         
 
 if __name__ == "__main__":
-    m = Stepper([5,6,12,16])
-    m.angle = -15
-    # m.goSteps(64)
+    mockpins = MockFactory()
+    m = Stepper([5,6,12,16], pin_factory=mockpins)
+    # m.angle = -15
+    m.steps = 64
+    time.sleep(1)
+    print(repr(m))
+    # m.angle = 15
+    m.steps = 500
     time.sleep(2)
-    m.angle = 15
-    # m.goSteps(4096)
-    time.sleep(2)
-    # m.goSteps(-2048)
+    print(repr(m))
+    # m.steps = -512
     m.angle = 0
-    time.sleep(2)
-    # m.angle = 90
+    time.sleep(3)
+    print(repr(m))
 
