@@ -128,6 +128,7 @@ class GPSserial():
         self.EW = lngDec * self.EW_dir
     
     def threaded_Read(self, raw):
+        found = False
         while(not found):
             self.line = self.ser.readline()
             if (raw):
@@ -139,7 +140,6 @@ class GPSserial():
             found = self.parseline(self.line)
     
     def getData(self, raw = False):
-        found = False
         if not self.dummy:
             if self.GPS_thread != None:
                 self.GPS_thread.join()
