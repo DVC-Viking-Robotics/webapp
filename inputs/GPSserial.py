@@ -127,15 +127,6 @@ class GPSserial():
         self.NS = latDec * self.NS_dir
         self.EW = lngDec * self.EW_dir
     
-    def getData(self, raw = False):
-        found = False
-        if not self.dummy:
-            if self.GPS_thread != None:
-                self.GPS_thread.join()
-            self.GPS_thread = threading.Thread(target=threaded_Read, args=(raw))
-            self.GPS_thread.start()
-        return {"lat": self.NS, "lng": self.EW}
-
     def threaded_Read(self, raw):
         while(not found):
             self.line = self.ser.readline()
@@ -146,6 +137,16 @@ class GPSserial():
             self.line = bytes(self.line).decode('utf-8')
             # found = true if gps coordinates are captured
             found = self.parseline(self.line)
+    
+    def getData(self, raw = False):
+        found = False
+        if not self.dummy:
+            if self.GPS_thread != None:
+                self.GPS_thread.join()
+            self.GPS_thread = threading.Thread(target=threaded_Read, args=(raw))
+            self.GPS_thread.start()
+        return {"lat": self.NS, "lng": self.EW}
+
 if __name__ == "__main__":
     #handle cmd line args
     import os
