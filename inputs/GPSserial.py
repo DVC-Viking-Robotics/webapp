@@ -143,7 +143,7 @@ class GPSserial():
         if not self.dummy:
             if self.GPS_thread != None:
                 self.GPS_thread.join()
-            self.GPS_thread = threading.Thread(target=threaded_Read, args=(raw))
+            self.GPS_thread = threading.Thread(target=self.threaded_Read, args=(raw))
             self.GPS_thread.start()
         return {"lat": self.NS, "lng": self.EW}
 
