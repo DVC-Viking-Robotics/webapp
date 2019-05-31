@@ -170,8 +170,7 @@ if __name__ == "__main__":
     cmd = args()
     # finish get cmd line args
     if(cmd.d == 1):
-        myPins = [[18,17], [13,22]]
-        # , [5,6,12,16]
+        myPins = [[18,17], [13,22], [5,6,12,16]]
         d = BiPed(myPins, cmd.m, pin_factory = cmd.pipins)
     else: 
         myPins = [[18,17], [13, 22]]
