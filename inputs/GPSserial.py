@@ -22,6 +22,7 @@ class GPSserial():
             self.timeOut = t
             self.line = self.ser.readline() # discard any garbage artifacts
             self.GPS_thread = None
+            print('Successfully opened port', addy,'to GPS module')
         except serial.SerialException:
             self.dummy = True
             print('unable to open serial GPS module @ port', addy)

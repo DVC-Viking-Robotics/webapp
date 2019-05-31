@@ -11,6 +11,7 @@ class EXTnode():
             else:
                 self.ser = serial.Serial(self.address, baud)
             self.dummy = False
+            print('Successfully oned port', address, '@', baud, 'to Arduino device')
         except serial.SerialException:
             self.dummy = True
             print('unable to open serial arduino device @ port', self.address)
