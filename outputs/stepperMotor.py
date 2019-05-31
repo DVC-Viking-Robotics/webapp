@@ -2,7 +2,6 @@ import time
 import math
 from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice
 from gpiozero.threads import GPIOThread
-from gpiozero.pins.mock import MockFactory
 
 class Stepper(SourceMixin, CompositeDevice):
     def __init__(self, pins=None, initial_angle=0.0, min_angle=-180, max_angle=180, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, pin_factory=None, verbose = False):
@@ -223,8 +222,10 @@ class Stepper(SourceMixin, CompositeDevice):
         
 
 if __name__ == "__main__":
-    mockpins = MockFactory()
-    m = Stepper([5,6,12,16], pin_factory=mockpins)
+    # from gpiozero.pins.mock import MockFactory
+    # mockpins = MockFactory()
+    m = Stepper([5,6,12,16])
+    # , pin_factory=mockpins)
     # m.angle = -15
     m.steps = 64
     time.sleep(1)
