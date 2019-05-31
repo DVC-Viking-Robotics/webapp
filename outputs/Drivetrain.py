@@ -1,4 +1,5 @@
 from gpiozero import AngularServo, PhaseEnableMotor, Motor, PinPWMUnsupported
+import time
 try:
     from outputs.stepperMotor import Stepper
 except ImportError:# for self exec loop
