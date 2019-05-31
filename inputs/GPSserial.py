@@ -1,5 +1,6 @@
 import serial
 import time
+import threading
 
 DEFAULT_LOC = {'lat': 37.96713657090229, 'lng': -122.0712176165581}
 
@@ -20,6 +21,7 @@ class GPSserial():
             self.ser = serial.Serial(addy)
             self.timeOut = t
             self.line = self.ser.readline() # discard any garbage artifacts
+            self.GPS_thread = None
         except serial.SerialException:
             self.dummy = True
             print('unable to open serial GPS module @ port', addy)
@@ -128,22 +130,22 @@ class GPSserial():
     def getData(self, raw = False):
         found = False
         if not self.dummy:
-            while(not found):
-                self.line = self.ser.readline()
-                if (raw):
-                    print(self.line)
-                self.line = list(self.line)
-                del self.line[0]
-                self.line = bytes(self.line).decode('utf-8')
-                # found = true if gps coordinates are captured
-                found = self.parseline(self.line)
+            if self.GPS_thread != None:
+                self.GPS_thread.join()
+            self.GPS_thread = threading.Thread(target=threaded_Read, args=(raw))
+            self.GPS_thread.start()
         return {"lat": self.NS, "lng": self.EW}
-                
-    '''
-    def __del__(self):
-        del self.ser, self.north, self.west, self.line 
-    '''
-    
+
+    def threaded_Read(self, raw):
+        while(not found):
+            self.line = self.ser.readline()
+            if (raw):
+                print(self.line)
+            self.line = list(self.line)
+            del self.line[0]
+            self.line = bytes(self.line).decode('utf-8')
+            # found = true if gps coordinates are captured
+            found = self.parseline(self.line)
 if __name__ == "__main__":
     #handle cmd line args
     import os
