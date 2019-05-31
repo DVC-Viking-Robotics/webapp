@@ -14,10 +14,10 @@ class Drivetrain(object):
     def __init__(self, pins, phased, maxSpeed, pin_factory):
         self.motors = []
         self.maxSpeed = max(0, min(maxSpeed, 100)) # ensure proper range
-        phased_i = 0
         phased = phased.rsplit(',')
-        for b in phased:
-            b = bool(b)
+        for phased_i in range(len(phased)):
+            phased[phased_i] = bool(int(phased[phased_i]))
+        phased_i = 0
         for i in range(len(pins)):
             try:
                 if len(pins[i]) == 1: # use servo
@@ -28,8 +28,8 @@ class Drivetrain(object):
                     self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]], pin_factory = pin_factory))
                 elif len(pins[i]) == 2: # use DC bi-directional motor
                     print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
-                    if phased_i < len(phased) or phased[phased_i]: 
-                        # is the flag specified or does it use a Phase control signal 
+                    if phased_i < len(phased) and phased[phased_i]: 
+                        # is the flag specified and does it use a Phase control signal 
                         self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
                     else: 
                         self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
@@ -62,7 +62,7 @@ class BiPed(Drivetrain):
       4 pin tuple = stepper motor
       NOTE:the 1st 2 tuples are used to propell and steer respectively
     """
-    def __init__(self, pins, phased = True, maxSpeed = 85, pin_factory = None):
+    def __init__(self, pins, phased = 'True,False', maxSpeed = 85, pin_factory = None):
         super(BiPed, self).__init__(pins, phased, maxSpeed, pin_factory = pin_factory)
         self.right = 0
         self.left = 0
@@ -114,7 +114,7 @@ class QuadPed(Drivetrain):
       4 pin tuple = stepper motor
       NOTE:the 1st 2 tuples are used to propell and steer respectively
     """
-    def __init__(self, pins, phased = False, maxSpeed = 85, pin_factory = None):
+    def __init__(self, pins, phased = 'False,False', maxSpeed = 85, pin_factory = None):
         super(QuadPed, self).__init__(pins, phased, maxSpeed, pin_factory = pin_factory)
         self.fr = 0 # forward/reverse direction
         self.lr = 0 # left/right direction
@@ -162,21 +162,20 @@ if __name__ == "__main__":
         def __init__(self):
             parser.parse_args(namespace=self)
             self.d = int(self.d)
+            # use mock pin factory
+            from gpiozero.pins.mock import MockFactory
+            from gpiozero.pins.pigpio import PiGPIOFactory
+            if self.pipins != None: self.pipins = PiGPIOFactory(host=self.pipins)
+            else: self.pipins = MockFactory()
     cmd = args()
     # finish get cmd line args
-    
-    # use mock pin factory
-    from gpiozero.pins.mock import MockFactory
-    MockFactory()
-    from gpiozero.pins.pigpio import PiGPIOFactory
-    if cmd.pipins != None: cmd.pipins = PiGPIOFactory(host=cmd.pipins)
-    else: cmd.pipins = MockFactory()
     if(cmd.d == 1):
         myPins = [[18,17], [13,22]]
-        # , [5,6,12,16], [4]
+        # , [5,6,12,16]
         d = BiPed(myPins, cmd.m, pin_factory = cmd.pipins)
     else: 
-        myPins = [[18,17], [13, 22], [4]]
+        myPins = [[18,17], [13, 22]]
+        # , [4]
         d = QuadPed(myPins, cmd.m, pin_factory = cmd.pipins)
     d.go([100, 0, 50])
     time.sleep(2)

@@ -48,6 +48,7 @@ class args:
         self.get_cam()
         self.get_gps()
         self.getPiPins()
+        self.get_Phased()
 
     def getPiPins(self):
         if self.pipins != None:
@@ -55,7 +56,16 @@ class args:
             #set host to hostname or ip address of rPi w/ pigpiod running
             self.pipins = PiGPIOFactory(host=self.pipins)
             
-
+    def get_Phased(self):
+        if self.m != None:
+            temp = self.m.rsplit(',')
+            for i in range(len(temp)):
+                if str(temp[i]).lower == 'true' or int(temp[i]):
+                    temp[i] = '1'
+                elif str(temp[i]).lower == 'false' or not int(temp[i]):
+                    temp[i] = '0'
+            Config['Drivetrain']['phasedM'] = ','.join(temp)
+    
 
     # override [] operators to return the Config dictionaries
     def __getitem__(self, key):
@@ -138,10 +148,6 @@ class args:
                     Config['Drivetrain']['address'] = ':'.join(temp)
                 else: Config['Drivetrain']['address'] = ' '
 
-
-        # save boolean for using phased motors
-        if self.m != None:
-            Config['Drivetrain']['phasedM'] = self.m
 
     def is_valid_BCM(self, n):
         if n < 0 or n > 27:
