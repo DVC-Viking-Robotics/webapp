@@ -43,13 +43,13 @@ class Drivetrain(object):
         if len(zAux) > 2:
             for i in range(2, len(zAux)):
                 if i < len(self.motors):
-                    print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
+                    # print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
                     self.motors[i].value = zAux[i] / 100.0
                 else: print('motor[', i, '] not declared and/or installed', sep = '')
     
     def print(self, start = 0):
         for i in range(start, len(self.motors)):
-            print('motor[', i, '].value:', self.motors[i].value)
+            print('motor[', i, '].value = ', self.motors[i].value, sep = '')
     def __del__(self):
         while len(self.motors) > 0:
             del self.motors[len(self.motors) - 1]
