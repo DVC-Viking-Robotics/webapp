@@ -24,8 +24,11 @@ class Drivetrain(object):
                 print('motor', i, 'Servo @', repr(pins[i]))
                 self.motors.append(AngularServo(pins[i][0], pin_factory = pin_factory))
                 self.motors[len(self.motors) - 1].min()
+                time.sleep(2)
                 self.motors[len(self.motors) - 1].max()
+                time.sleep(2)
                 self.motors[len(self.motors) - 1].mid()
+                time.sleep(2)
             elif len(pins[i]) == 4: # use bipolar stepper
                 print('motor', i, 'Stepper @', repr(pins[i]))
                 self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]], pin_factory = pin_factory))
