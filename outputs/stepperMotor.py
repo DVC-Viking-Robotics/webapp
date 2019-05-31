@@ -208,7 +208,7 @@ class Stepper(SourceMixin, CompositeDevice):
         Returns binary number representing the pins (pin1 = LSB ... pin4 = MSB). Setting
         this property changes the percent angle of the motor.
         """
-        return self._getPinBin()
+        return self.angle / 360.0
 
     @value.setter
     def value(self, value):
