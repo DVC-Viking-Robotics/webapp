@@ -19,25 +19,25 @@ class Drivetrain(object):
             phased[phased_i] = bool(int(phased[phased_i]))
         phased_i = 0
         for i in range(len(pins)):
-            try:
-                if len(pins[i]) == 1: # use servo
-                    print('motor', i, 'Servo @', repr(pins[i]))
-                    self.motors.append(AngularServo(pins[i][0], pin_factory = pin_factory))
-                elif len(pins[i]) == 4: # use bipolar stepper
-                    print('motor', i, 'Stepper @', repr(pins[i]))
-                    self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]], pin_factory = pin_factory))
-                elif len(pins[i]) == 2: # use DC bi-directional motor
-                    print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
-                    if phased_i < len(phased) and phased[phased_i]: 
-                        # is the flag specified and does it use a Phase control signal 
-                        self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
-                    else: 
-                        self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
-                    phased_i += 1
-                else:
-                    print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
-            except PinPWMUnsupported: # except on PC during DEV mode 
-                self.motors.append(dummyMotor())
+            # try:
+            if len(pins[i]) == 1: # use servo
+                print('motor', i, 'Servo @', repr(pins[i]))
+                self.motors.append(AngularServo(pins[i][0], pin_factory = pin_factory))
+            elif len(pins[i]) == 4: # use bipolar stepper
+                print('motor', i, 'Stepper @', repr(pins[i]))
+                self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]], pin_factory = pin_factory))
+            elif len(pins[i]) == 2: # use DC bi-directional motor
+                print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
+                if phased_i < len(phased) and phased[phased_i]: 
+                    # is the flag specified and does it use a Phase control signal 
+                    self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                else: 
+                    self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                phased_i += 1
+            else:
+                print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
+            # except PinPWMUnsupported: # except on PC during DEV mode 
+            #     self.motors.append(dummyMotor())
 
     def gogo(self, zAux):
         if len(zAux) > 2:
@@ -46,7 +46,10 @@ class Drivetrain(object):
                     print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
                     self.motors[i].value = zAux[i] / 100.0
                 else: print('motor[', i, '] not declared and/or installed', sep = '')
-  
+    
+    def print(self, start = 0):
+        for i in range(start, len(self.motors)):
+            print('motor[', i, '].value:', self.motors[i].value)
     def __del__(self):
         while len(self.motors) > 0:
             del self.motors[len(self.motors) - 1]
@@ -66,13 +69,14 @@ class BiPed(Drivetrain):
         super(BiPed, self).__init__(pins, phased, maxSpeed, pin_factory = pin_factory)
         self.right = 0
         self.left = 0
-    """ 
-    pass cmds as [] = [x,y,z,aux,ect]
-        pass backwards/forward in range [-100,100] as variable x
-        pass left/right in range [-100,100] as variable y
-        pass attitude/yaw/roll (as percent angle) in range [-100,100] as variable z, aux, etc
-    """
+    
     def go(self, cmds):
+        """ 
+        pass cmds as [] = [x,y,z,aux,ect]
+            pass backwards/forward in range [-100,100] as variable x
+            pass left/right in range [-100,100] as variable y
+            pass attitude/yaw/roll (as percent angle) in range [-100,100] as variable z, aux, etc
+        """
         # make sure arguments are in their proper range
         cmds[0] = round(max(-100, min(100, cmds[0])))
         cmds[1] = round(max(-100, min(100, cmds[1])) * (self.maxSpeed / 100.0))
@@ -102,6 +106,7 @@ class BiPed(Drivetrain):
     def print(self):
         print("left =", self.left)
         print("right =", self.right)
+        super(BiPed, self).print(2)
 
 # end BiPed class
 
@@ -127,22 +132,17 @@ class QuadPed(Drivetrain):
         cmds[0] = round(max(-100, min(100, cmds[0])))
         cmds[1] = round(max(-100, min(100, cmds[1])) * (self.maxSpeed / 100.0))
         # set the axis directly to their corresponding motors
-        self.fr = cmds[0]
         self.lr = cmds[0]
-        if type(self.motors[0]) is dummyMotor:
-            print("left =", self.lr)
-        else:
-            self.motors[0].value = self.lr / 100.0
-        if type(self.motors[1]) is dummyMotor:
-            print("right =", self.fr)
-        else:
-            self.motors[1].value = self.fr / 100.0
+        self.fr = cmds[1]
+        self.motors[0].value = self.lr / 100.0
+        self.motors[1].value = self.fr / 100.0
         self.gogo(cmds)
 
     # for debugging purposes
     def print(self):
         print("forward/reverse =", self.fr)
         print("left/right =", self.lr)
+        super(QuadPed, self).print(2)
 # end QuadPed class
 
 
