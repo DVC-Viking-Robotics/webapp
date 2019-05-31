@@ -165,7 +165,7 @@ if __name__ == "__main__":
     # gps = GPSserial('/dev/ttyS0')
     while (True):
         try:
-            gps.getData(True)
+            gps.getData()
             print('RxStatus:', gps.rx_status)
             print('FixType:', gps.fix)
             print('sat["quality"]:', gps.sat["quality"], 'sat["connected"]:', gps.sat["connected"], 'Altitude:', gps.alt)
