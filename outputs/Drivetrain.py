@@ -163,10 +163,10 @@ if __name__ == "__main__":
             parser.parse_args(namespace=self)
             self.d = int(self.d)
             # use mock pin factory
-            from gpiozero.pins.mock import MockFactory
+            # from gpiozero.pins.mock import MockFactory
             from gpiozero.pins.pigpio import PiGPIOFactory
             if self.pipins != None: self.pipins = PiGPIOFactory(host=self.pipins)
-            else: self.pipins = MockFactory()
+            # else: self.pipins = MockFactory()
     cmd = args()
     # finish get cmd line args
     if(cmd.d == 1):
