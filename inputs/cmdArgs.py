@@ -60,7 +60,7 @@ class args:
         if self.m != None:
             temp = self.m.rsplit(',')
             for i in range(len(temp)):
-                temp[i] = int(temp[i])
+                temp[i] = str(int(temp[i]))
             Config['Drivetrain']['phasedM'] = ','.join(temp)
     
 
