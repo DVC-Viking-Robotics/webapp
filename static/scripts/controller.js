@@ -206,7 +206,7 @@ function getTouchPos(e) {
                     controller.joystick.stick.y = touchY;
                 }
                 else {
-                    controller.slider.stick.x = touch.pageX - touch.target.offsetLeft
+                    controller.slider.stick.x = touchX;
                 }
             }
         }
