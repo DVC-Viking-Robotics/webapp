@@ -21,7 +21,7 @@ parser.add_argument('--port', default=None, help='Type port number for the serve
 parser.add_argument('--d', default=None, help='Select drivetrain type. "2" = usb+arduino. "1" = bi-ped (R2D2 - like). "0" = quad-Ped (race car setup). Specify the interface in text (ie "gpio", "serial", or "i2c"). Any comma seperated list of numbers delimited by a colon that follow the <type>:<interface>: will be taken as the address of GPIO pins for each motor. ie "1:gpio:18,17:13,22"')
 
 # add option '--m' for motor driver
-parser.add_argument('--m', default=None, help='comma seperated list of Motor Driver IC type (with order corresponding to order of appearance in --d address arg). "true" = motor uses 1 PWM + 1 direction signals. "false" = motor uses 2 PWM signals')
+parser.add_argument('--m', default=None, help='comma seperated list of Motor Driver IC type (with order corresponding to order of appearance in --d address arg). "1" = motor uses 1 PWM + 1 direction signals. "0" = motor uses 2 PWM signals')
 
 # add option '--dof' for Degrees of Freedom and I2C addresses
 parser.add_argument('--dof', default=None, help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Optionally specify the interface in text (ie "serial" or "i2c"). Any additionally comma separated numbers or text that follow the <#DOF>:<interface>: will be used as interface address(es). ie "9:i2c:0x6b,0x1e"')
