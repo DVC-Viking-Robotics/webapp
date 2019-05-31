@@ -58,8 +58,8 @@ function loop() {
         window.requestAnimationFrame(loop);
     }
     else{ // no input: set output data to idle
-        socket.emit('remoteOut', [0, 0, 0]);
-        prevArgs = [0, 0, 0];
+        socket.emit('remoteOut', [0, 0, args[2]]);
+        prevArgs = [0, 0, args[2]];
     }
 }
 
@@ -160,12 +160,12 @@ class Control {
         this.slider.length = W - this.slider.x - 10;
         this.slider.stick.radius = this.slider.height * 0.75;
         if (!moving[0] && !moving[1]) {// when in idle only
-
-            //WHAT THE FUCK IS THIS MOVING ARRAY
-            this.joystick.stick.x = this.joystick.x;
-            this.joystick.stick.y = this.joystick.y;
-            this.slider.stick.x = this.slider.x + this.slider.length / 2;
-            this.slider.stick.y = this.slider.y;
+            // Move all joysticks and sliders back to idle position
+            this.joystick.stick.x = this.joystick.x;// move to 0
+            this.joystick.stick.y = this.joystick.y;// move to 0
+            this.slider.stick.x = this.slider.stick.x// move nowhere
+            // this.slider.stick.x = this.slider.x + this.slider.length / 2;// move to 0
+            this.slider.stick.y = this.slider.y;// move nowhere
         }
     }
     draw() {
