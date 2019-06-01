@@ -9,7 +9,6 @@ class Stepper(SourceMixin, CompositeDevice):
         self.dps = DegreePerStep
         self.stepType = stepType
         self.speed = speed
-        self.dummy = False
         self.pins = pins
         super(Stepper, self).__init__(pin_factory = pin_factory)
         if len(pins) == 4:
@@ -61,13 +60,9 @@ class Stepper(SourceMixin, CompositeDevice):
                 next = 0
             for i in range(len(self.pins)):
                 if i == base or (i == next and self._it % 2 == 1):
-                    if self.dummy:
-                        self.pins[i] = True
-                    else: self.pins[i].on()
+                    self.pins[i].on()
                 else:
-                    if self.dummy:
-                        self.pins[i] = False
-                    else: self.pins[i].off()        
+                    self.pins[i].off()        
         elif self.stepType == "full":
             maxStep = 4
             self.__clamp_it(maxStep)
@@ -75,25 +70,17 @@ class Stepper(SourceMixin, CompositeDevice):
             else: next = self._it + 1
             for i in range(len(pins) - 1):
                 if i == self._it or i == next:
-                    if self.dummy:
-                        self.pins[i] = True
-                    else: self.pins[i].on()
+                    self.pins[i].on()
                 else:
-                    if self.dummy:
-                        self.pins[i] = False
-                    else: self.pins[i].off()        
+                    self.pins[i].off()        
         elif self.stepType == "wave":
             maxStep = 4
             self.__clamp_it(maxStep)
             for i in range(len(pins) - 1):
                 if i == self._it:
-                    if self.dummy:
-                        self.pins[i] = True
-                    else: self.pins[i].on()
+                    self.pins[i].on()
                 else:
-                    if self.dummy:
-                        self.pins[i] = False
-                    else: self.pins[i].off()        
+                    self.pins[i].off()        
         else: # stepType specified is invalid
             errorPrompt = 'Invalid Stepper Type = ' + repr(self.stepType)
             raise RuntimeError(errorPrompt)
@@ -111,7 +98,6 @@ class Stepper(SourceMixin, CompositeDevice):
     def __repr__(self):
         output = 'pins = {} Angle: {} Steps: {}'.format(bin(self._getPinBin()), repr(self.angle), repr(self.steps))
         return output
-
 
     def wrapAngle(self, theta):
         """ 
@@ -156,6 +142,11 @@ class Stepper(SourceMixin, CompositeDevice):
 
     @angle.setter
     def angle(self, angle):
+        """
+        Rotate motor to specified angle where direction is 
+        automatically detirmined toward the shortest route.
+        All input angle is valid since it is wrapped to range [0,360]. *see wrapAngle()
+        """
         # __clamp_it angle to constraints of [0,360] degrees
         angle = self.wrapAngle(angle)
         # decipher rotational direction
@@ -181,6 +172,9 @@ class Stepper(SourceMixin, CompositeDevice):
 
     @steps.setter
     def steps(self, numSteps):
+        """
+        Task motor to execute specified numSteps where direction is the +/- sign on the numSteps variable
+        """
         # decipher rotational direction
         if numSteps > 0 : isCW = True
         else: isCW = False
@@ -205,13 +199,16 @@ class Stepper(SourceMixin, CompositeDevice):
     @property
     def value(self):
         """
-        Returns binary number representing the pins (pin1 = LSB ... pin4 = MSB). Setting
-        this property changes the percent angle of the motor.
+        Returns the percent angle of the motor.
         """
         return self.angle / 360.0
 
     @value.setter
     def value(self, value):
+        """
+        Sets the percent angle of the motor in range [-180,180]. 
+        Valid input value is in range [-1,1]
+        """
         if value is None:
             self.resetZeroAngle()
         elif -1 <= value <= 1:
