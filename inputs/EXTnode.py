@@ -33,6 +33,5 @@ class EXTnode():
             command = ' '
             for c in cmd:
                 command += repr(c) + ' '
-            print('go command =', command)
             command = bytes(command.encode('utf-8'))
             self.ser.write(command)
