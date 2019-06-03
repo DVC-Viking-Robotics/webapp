@@ -59,10 +59,7 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
-    if cmd['Drivetrain']['interface'] == 'serial':
-        d = EXTnode(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
-    else: d = None
-
+    
 if cmd['Drivetrain']['interface'] == 'gpio':
         if int(cmd['Drivetrain']['motorConfig']) == 1:
             # for R2D2 configuration
@@ -79,6 +76,9 @@ if cmd['Drivetrain']['interface'] == 'gpio':
             # print(':', end = '')
         # print(repr(pins))
         d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']), pin_factory = cmd.pipins)
+elif cmd['Drivetrain']['interface'] == 'serial':
+    d = EXTnode(cmd['Drivetrain']['address'], cmd['Drivetrain']['baud'])
+else: d = None
 
 if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
     IMUsensor = d
