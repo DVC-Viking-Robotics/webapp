@@ -30,7 +30,7 @@ class EXTnode():
 
     def go(self, cmd):
         if not self.dummy:
-            command = repr(x) + ' '
+            command = ' '
             for c in cmd:
                 command += repr(c) + ' '
             print('go command =', command)
