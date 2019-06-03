@@ -28,8 +28,11 @@ class EXTnode():
                 self.heading = float(temp[0])
             return self.heading
 
-    def go(self, x, y, z):
+    def go(self, cmd):
         if not self.dummy:
-            command = repr(x) + ' ' + repr(y) + ' ' + repr(z)
+            command = repr(x) + ' '
+            for c in cmd:
+                command += repr(c) + ' '
+            print('go command =', command)
             command = bytes(command.encode('utf-8'))
             self.ser.write(command)
