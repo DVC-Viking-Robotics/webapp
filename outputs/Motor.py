@@ -2,10 +2,14 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False) # advised by useless debuggung prompts
 
-class Motor(object):
-    def __init__(self, p1, p2, rampTime):
-        GPIO.setup(p1, GPIO.OUT)
-        GPIO.setup(p2, GPIO.OUT)
+class Solonoid(object):
+    def __init__(self, pins, rampTime):
+        self.signals = []
+        self.pins = []
+        for pin in pins:
+            # save pwm duty cycles as int [0,100]; direction signals will be treated like bool [0|1]
+            self.signals.append(0)
+            GPIO.setup(pin, GPIO.OUT)
         # variables used to track acceleration
         self.finSpeed = 0
         self.initSmooth = 0
@@ -45,24 +49,22 @@ class Motor(object):
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth, args=(isUp, baseSpeed))
         self.smoothing_thread.start()
-# end Motor parent class
 
-class BiMotor(Motor):
-    def __init__(self, pinB, pinF, rampTime = 1000):
-        super(BiMotor, self).__init__(pinF, pinB, rampTime)
+    def __del__(self):
+        self._stopThread()
+# end Solonoid parent class
+
+class BiMotor(Solonoid):
+    def __init__(self, pins, rampTime = 1000):
+        super(BiMotor, self).__init__(pins, rampTime)
         # save pin numbers as GPIO.PWM objects
-        self.pinF = GPIO.PWM(pinF, 50)
-        self.pinB = GPIO.PWM(pinB, 50)
-        # save pwm duty cycles as int [0,100]
-        self.pFor = 0
-        self.pBac = 0
-        # start PWM signal
-        self.pinF.start(self.pFor)
-        self.pinB.start(self.pBac)
+        for i in range(len(pins)):
+            self.pins.append(GPIO.PWM(pins[i], 50))
+            self.pins[i].start(self.signals[i])
 
     @property
     def value(self):
-        return self.pFor - self.pBac / 100.0
+        return self.signals[0] - (self.signals[1] if len(self.signals) >= 1 else 0) / 100.0
     
     #let x be the percentual target speed in range of [-1,1]
     @value.setter
@@ -71,44 +73,48 @@ class BiMotor(Motor):
         x = max(-100, min(100, round(x * 100)))
         # going forward
         if x > 0: 
-            self.pFor = x
-            self.pBac = 0
+            self.signals[0] = x
+            if len(self.pins) >= 1:
+                self.signals[1] = 0
         # going backward
         elif x < 0: 
-            self.pFor = 0
-            self.pBac = x * -1
+            self.signals[0] = 0
+            if len(self.pins) >= 1:
+                self.signals[1] = x * -1
         # otherwise stop
         else: 
-            self.pFor = 0
-            self.pBac = 0
-        self.pinF.ChangeDutyCycle(self.pFor)
-        self.pinB.ChangeDutyCycle(self.pBac)
+            self.signals[0] = 0
+            if len(self.pins) >= 1:
+                self.signals[1] = 0
+        self.pins[0].ChangeDutyCycle(self.signals[0])
+        if len(self.pins) >= 1:
+            self.pins[1].ChangeDutyCycle(self.signals[1])
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
-        self.pinF.stop()
-        self.pinB.stop()
-        del self.pinF
-        del self.pinB
+        self.pin[0].stop()
+        if len(self.pins) >= 1:
+            self.pin[1].stop()
+        super(BiMotor, self).__del__()
 # end BiMotor child class
 
-class PhasedMotor(Motor):
-    #pass the GPIO pin numbers connecting to L293D input pins
-    #example varName = bimotor(pin1, pin2) in main script
-    def __init__(self, dirPin, pwmPin, rampTime = 1000):
-        super(PhasedMotor, self).__init__(dirPin, pwmPin, rampTime)
-        # save pin numbers as GPIO.PWM objects
-        self.dirPin = dirPin
-        self.pwmPin = GPIO.PWM(pwmPin, 15000)
-        # save pwm duty cyle as in [0,100] & start PWM signal
-        self.pwm = 0
-        self.pwmPin.start(self.pwm)
-        self.dir = True
+class PhasedMotor(Solonoid):
+    def __init__(self, pins, rampTime = 1000):
+        super(PhasedMotor, self).__init__(pins, rampTime)
+        # save pin number as GPIO.PWM objects
+        self.pins.append(GPIO.PWM(pins[0], 15000))
+        self.pins[0].start(self.signals[0]) # start pwm signal
+        if len(pins) >= 1:
+            # save direction signal pin # & set coresponding signal value to true
+            self.pins.append(pins[1])
+            self.signals[1] = True
 
     #let x be the percentual target speed (in range of -100 to 100)
     @property
     def value(self):
-        return self.pwm / 100.0 + int(self.dir) * -1
+        if len(pins) >= 1:
+            return self.signals[0] / 100.0 * (1 if bool(self.signals[1]) else -1)
+        else: return self.signals[0] / 100.0
 
     @value.setter
     def value(self, x):
@@ -116,25 +122,29 @@ class PhasedMotor(Motor):
         x = max(-100, min(100, round(x * 100)))
         # going forward
         if x > 0: 
-            self.pwm = x
-            self.dir = True
+            self.signals[0] = x
+            if len(self.pins) >= 1:
+                self.signals[1] = True
         # going backward
         elif x < 0: 
-            self.pwm = x * -1
-            self.dir = False
+            self.signals[0] = x * -1
+            if len(self.pins) >= 1:
+                self.signals[1] = False
         # otherwise stop
         else: 
-            self.pwm = 0
-            self.dir = True
-        self.pwmPin.ChangeDutyCycle(x)
-        GPIO.output(self.dirPin, self.dir)
+            self.signals[0] = 0
+            if len(self.pins) >= 1:
+                self.signals[1] = True
+        self.pins[0].ChangeDutyCycle(x)
+        if len(self.pins) >= 1:
+            GPIO.output(self.pins[1], self.signals[1])
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
-        self.pwmPin.stop()
-        GPIO.output(self.dirPin, False)
-        del self.pwmPin
-        del self.dirPin
+        self.pins[0].stop()
+        if len(self.pins) >= 1:
+            GPIO.output(self.pins[1], False)
+        super(PhasedMotor, self).__del__()
 #end PhasedMotor child class 
 
 if __name__ == "__main__":
