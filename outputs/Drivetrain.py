@@ -40,9 +40,9 @@ class Drivetrain(object):
             # except PinPWMUnsupported: # except on PC during DEV mode 
             #     self.motors.append(dummyMotor())
 
-    def gogo(self, zAux):
-        if len(zAux) > 2:
-            for i in range(2, len(zAux)):
+    def gogo(self, zAux, init = 2):
+        if len(zAux) > init:
+            for i in range(init, len(zAux)):
                 if i < len(self.motors):
                     # print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
                     self.motors[i].value = zAux[i] / 100.0
@@ -53,6 +53,7 @@ class Drivetrain(object):
             print('motor[', i, '].value = ', self.motors[i].value, sep = '')
     def __del__(self):
         while len(self.motors) > 0:
+            self.motors[len(self.motors) - 1].close()
             del self.motors[len(self.motors) - 1]
         # del self.motors
 # end Drivetrain class

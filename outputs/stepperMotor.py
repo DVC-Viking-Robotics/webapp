@@ -19,7 +19,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     DigitalOutputDevice(pins[3], pin_factory = pin_factory), 
                     pin_factory = pin_factory)
         else:# did not pass exactly 4 gpio pins
-            raise RuntimeError('pins passed to stepper must be an iterable list or tuple of exactly 4 numbers!')
+            raise RuntimeError('pins passed to stepper must be an iterable list of exactly 4 numbers!')
         self._it = 0 # iterator for rotating stepper
         # self._steps = steps specific to motor
         self.resetZeroAngle()

@@ -1,30 +1,13 @@
+""" this file has been depricated! only use if GPIOzero library is not available (for some reason), but 
+NOTE there's no garantee it will work because its no longer tested"""
+
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False) # advised by useless debuggung prompts
-
-"""
-important info from datasheet
-L293D input pins: 2,7,10,15
-L293D output pins: 3,6,11,14
-L293D pins to pull high to enable: 1 enables pins 2-8, 9 enables 10-16
-L293D power pins: 8 powers motors (<36V @ 600mA cont.), 16 powers IC (4.5-7V)
-input pins can be pulled high by jumping wires from pin 16 to pins 1 and/or 9
-remember to connect ground to the following pins: 4,5,12,13
-"""
+import time 
+from threading import Thread
 
 class biMotor:
-    """
-    this class definition uses the L293D IC to drive a single bidirectional motor
-    note: each L293D IC can only drive up to 2 bidirectional motors
-    """
-
-    """
-    see this post for GPIO pin number scheme:
-    https://raspberrypi.stackexchange.com/questions/12966/what-is-the-difference-between-board-and-bcm-for-gpio-pin-numbering
-    """
-
-    #pass the GPIO pin numbers connecting to L293D input pins
-    #example varName = bimotor(pin1, pin2) in main script
     def __init__(self, pinB, pinF):
         GPIO.setup(pinF, GPIO.OUT)
         GPIO.setup(pinB, GPIO.OUT)
@@ -34,43 +17,63 @@ class biMotor:
         # save pin numbers as GPIO.PWM objects
         self.pinF = GPIO.PWM(pinF, 50)
         self.pinB = GPIO.PWM(pinB, 50)
+        # save pwm duty cycles as int [0,100]
+        self.pFor = 0
+        self.pBac = 0
         # start PWM signal
-        self.pinF.start(0)
-        self.pinB.start(0)
-        
-    #let finSpeed = target speed (-100 to 100)
-    #let t = time to change(ramp) speed from initSpeed(current speed) to finSpeed
-    def cellerate(self, finSpeed, t):
-        finSpeed = max(-100, min(100, finSpeed)) # bounds check
-        self.initSpeed = 0
-        self.currSpeedF = self.pi.get_PWM_dutycycle(self.pinF)
-        self.currSpeedB = self.pi.get_PWM_dutycycle(self.pinB)
-        if self.currSpeedF > self.currSpeedB:
-            self.initSpeed = self.currSpeedF
-        else: self.initSpeed = self.currSpeedB * -1
-        del self.currSpeedF, self.currSpeedB # clean temp vars
-        # initial and destination speeds are now set [-100 to 100]
-        """
-        add code to ramp speed here
-        requires multi-threading
-        """
+        self.pinF.start(self.pFor)
+        self.pinB.start(self.pBac)
+        self.smoothing_thread = None
 
-    #let x be the percentual target speed (in range of -100 to 100)
-    def setSpeed(self, x):
+    def _stopThread(self):
+        if self.smoothing_thread is not None:
+            self.smoothing_thread.join()
+        self.smoothing_thread = None
+
+    def _smooth(self, isUp, y0, dt):
+        # delta_speed, instSpeed, self.finspeed, and y0 are all percentage [-1,1]
+        # timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
+        timeI = time.time_ns() - self.initSmooth
+        while timeI < dt:
+            delta_speed = sin( timeI / dt * math.pi / 2 + (-1 * isUp * math.pi / 2) ) + isUp 
+            self.value = delta_speed * (self.finspeed - y0) + y0
+            timeI = time.time_ns() - self.initSmooth
+
+    #let finSpeed = target speed in range of [-1,1]
+    #let deltaT = time in milliseconds to change/ramp speed from current speed(self.value) to finSpeed in range of [-1,1]
+    def cellerate(self, finSpeed, deltaT = 1000):
+        self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
+        self.initSmooth = time.time_ns() # integer of nanoseconds
+        self.finSmooth = self.initSmooth + deltaT * 1000 # integer = milliseconds * 1000 therfore nanoseconds
+        baseSpeed = self.value 
+        isUP = 1 if self.finSpeed > baseSpeed else 0
+        self._stopThread()
+        self.smoothing_thread = Thread(target=self._smooth, args=(isUP, baseSpeed, deltaT * 1000))
+        self.smoothing_thread.start()
+       
+    @property
+    def value(self):
+        return self.pFor - self.pBac / 100.0
+    
+    #let x be the percentual target speed in range of [-1,1]
+    @value.setter
+    def value(self, x):
         # check proper range of variable x
-        x = max(-100, min(100, x))
+        x = max(-100, min(100, round(x * 100)))
         # going forward
         if x > 0: 
-            self.pinF.ChangeDutyCycle(x)
-            self.pinB.ChangeDutyCycle(0)
+            self.pFor = x
+            self.pBac = 0
         # going backward
         elif x < 0: 
-            self.pinF.ChangeDutyCycle(0)
-            self.pinB.ChangeDutyCycle(x *-1)
+            self.pFor = 0
+            self.pBac = x * -1
         # otherwise stop
         else: 
-            self.pinF.ChangeDutyCycle(0)
-            self.pinB.ChangeDutyCycle(0)
+            self.pFor = 0
+            self.pBac = 0
+        self.pinF.ChangeDutyCycle(self.pFor)
+        self.pinB.ChangeDutyCycle(self.pBac)
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
