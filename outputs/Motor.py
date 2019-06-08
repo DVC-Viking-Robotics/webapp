@@ -3,7 +3,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False) # advised by useless debuggung prompts
 
 class Motor(object):
-    def __init__(self, p1, p2):
+    def __init__(self, p1, p2, rampTime):
         GPIO.setup(p1, GPIO.OUT)
         GPIO.setup(p2, GPIO.OUT)
         # variables used to track acceleration
@@ -11,37 +11,43 @@ class Motor(object):
         self.initSmooth = 0
         self.finSmooth = 0
         self.smoothing_thread = None
+        self._dt = rampTime # time in milliseconds to change/ramp speed from self.value to self.finSpeed
 
     def _stopThread(self):
         if self.smoothing_thread is not None:
             self.smoothing_thread.join()
         self.smoothing_thread = None
 
-    def _smooth(self, isUp, y0, dt):
-        # delta_speed, instSpeed, self.finspeed, and y0 are all percentage [-1,1]
-        # timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
+    def _smooth(self, isUp, y0):
+        """ 
+        delta_speed, instSpeed, self.finspeed, and y0 are all percentage [-1,1]
+        timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
+         """
         timeI = time.time_ns() - self.initSmooth
-        while timeI < dt:
-            delta_speed = sin( timeI / dt * math.pi / 2 + (-1 * isUp * math.pi / 2) ) + isUp 
+        while timeI < self._dt * 1000:
+            delta_speed = sin( timeI / self._dt * 1000 * math.pi / 2 + (-1 * isUp * math.pi / 2) ) + isUp 
             self.value = delta_speed * (self.finspeed - y0) + y0
+            time.sleep(0.001) # wait 1 millisecond
             timeI = time.time_ns() - self.initSmooth
 
-    #let finSpeed = target speed in range of [-1,1]
-    #let deltaT = time in milliseconds to change/ramp speed from current speed(self.value) to finSpeed in range of [-1,1]
-    def cellerate(self, finSpeed, deltaT = 1000):
+    def cellerate(self, finSpeed, deltaT = 1.0):
+        """ 
+        let finSpeed = target speed in range of [-1,1]
+        let deltaT = percent [0,1] of delta time (self._dt in milliseconds)
+         """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
         self.initSmooth = time.time_ns() # integer of nanoseconds
-        self.finSmooth = self.initSmooth + deltaT * 1000 # integer = milliseconds * 1000 therfore nanoseconds
+        self.finSmooth = self.initSmooth + deltaT * self._dt * 1000
         baseSpeed = self.value 
         isUP = 1 if self.finSpeed > baseSpeed else 0
         self._stopThread()
-        self.smoothing_thread = Thread(target=self._smooth, args=(isUP, baseSpeed, deltaT * 1000))
+        self.smoothing_thread = Thread(target=self._smooth, args=(isUP, baseSpeed))
         self.smoothing_thread.start()
 # end Motor parent class
 
 class BiMotor(Motor):
-    def __init__(self, pinB, pinF):
-        super(BiMotor, self).__init__(pinF, pinB)
+    def __init__(self, pinB, pinF, rampTime = 1000):
+        super(BiMotor, self).__init__(pinF, pinB, rampTime)
         # save pin numbers as GPIO.PWM objects
         self.pinF = GPIO.PWM(pinF, 50)
         self.pinB = GPIO.PWM(pinB, 50)
@@ -82,14 +88,13 @@ class BiMotor(Motor):
         self.pinB.stop()
         del self.pinF
         del self.pinB
-        GPIO.cleanup()
 # end BiMotor child class
 
 class PhasedMotor(Motor):
     #pass the GPIO pin numbers connecting to L293D input pins
     #example varName = bimotor(pin1, pin2) in main script
-    def __init__(self, dirPin, pwmPin):
-        super(PhasedMotor, self).__init__(dirPin, pwmPin)
+    def __init__(self, dirPin, pwmPin, rampTime = 1000):
+        super(PhasedMotor, self).__init__(dirPin, pwmPin, rampTime)
         # save pin numbers as GPIO.PWM objects
         self.dirPin = dirPin
         self.pwmPin = GPIO.PWM(pwmPin, 15000)
@@ -106,7 +111,7 @@ class PhasedMotor(Motor):
     @value.setter
     def value(self, x):
         # check proper range of variable x
-        x = max(-100, min(100, x))
+        x = max(-100, min(100, round(x * 100)))
         # going forward
         if x > 0: 
             self.pwm = x
@@ -129,3 +134,10 @@ class PhasedMotor(Motor):
         del self.pwmPin
         del self.dirPin
 #end PhasedMotor child class 
+
+if __name__ == "__main__":
+    m = BiMotor(18, 17)
+    m.value = 0
+    m.cellerate(1.0)
+    time.sleep(1)
+    print(m.value)
