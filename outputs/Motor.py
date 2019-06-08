@@ -40,9 +40,9 @@ class Motor(object):
         baseSpeed = self.value 
         deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
         self.finSmooth = self.initSmooth + deltaT * self._dt * 1000
-        isUP = 1 if self.finSpeed > baseSpeed else 0
+        isUp = 1 if self.finSpeed > baseSpeed else 0
         self._stopThread()
-        self.smoothing_thread = Thread(target=self._smooth, args=(isUP, baseSpeed))
+        self.smoothing_thread = Thread(target=self._smooth, args=(isUp, baseSpeed))
         self.smoothing_thread.start()
 # end Motor parent class
 
