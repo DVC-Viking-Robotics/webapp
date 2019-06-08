@@ -29,6 +29,7 @@ class Motor(object):
             self.value = delta_speed * (self.finspeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
             timeI = time.time_ns() - self.initSmooth
+        self.value = self.finSpeed
 
     def cellerate(self, finSpeed):
         """ 
