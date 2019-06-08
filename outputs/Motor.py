@@ -25,7 +25,7 @@ class Motor(object):
          """
         timeI = time.time_ns() - self.initSmooth
         while timeI < self._dt * 1000:
-            delta_speed = sin( timeI / (self.finSmooth - self.initSmooth) * math.pi / 2 + ((-1 if isUp else 1) * math.pi / 2) ) + isUp 
+            delta_speed = sin( (timeI / (self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + isUp 
             self.value = delta_speed * (self.finspeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
             timeI = time.time_ns() - self.initSmooth
