@@ -30,15 +30,16 @@ class Motor(object):
             time.sleep(0.001) # wait 1 millisecond
             timeI = time.time_ns() - self.initSmooth
 
-    def cellerate(self, finSpeed, deltaT = 1.0):
+    def cellerate(self, finSpeed):
         """ 
         let finSpeed = target speed in range of [-1,1]
         let deltaT = percent [0,1] of delta time (self._dt in milliseconds)
          """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
         self.initSmooth = time.time_ns() # integer of nanoseconds
-        self.finSmooth = self.initSmooth + deltaT * self._dt * 1000
         baseSpeed = self.value 
+        deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
+        self.finSmooth = self.initSmooth + deltaT * self._dt * 1000
         isUP = 1 if self.finSpeed > baseSpeed else 0
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth, args=(isUP, baseSpeed))
