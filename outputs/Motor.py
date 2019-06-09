@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False) # advised by useless debuggung prompts
+import time
+from threading import Thread
 
 class Solonoid(object):
     def __init__(self, pins, rampTime = 100):
