@@ -3,7 +3,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False) # advised by useless debuggung prompts
 
 class Solonoid(object):
-    def __init__(self, pins, rampTime):
+    def __init__(self, pins, rampTime = 100):
         self.signals = []
         self.pins = []
         for pin in pins:
@@ -49,6 +49,37 @@ class Solonoid(object):
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth, args=(isUp, baseSpeed))
         self.smoothing_thread.start()
+
+    #let x be the percentual target speed (in range of -100 to 100)
+    @property
+    def value(self):
+        if len(pins) >= 1:
+            return int(self.signals[0]) or int(self.signals[1])
+        else: return int(self.signals[0])
+
+    @value.setter
+    def value(self, x):
+        # check proper range of variable x
+        x = max(-100, min(100, round(x * 100)))
+        # going forward
+        if x > 0: 
+            self.signals[0] = True
+            if len(self.pins) >= 1:
+                self.signals[1] = False
+        # going backward
+        elif x < 0: 
+            self.signals[0] = False
+            if len(self.pins) >= 1:
+                self.signals[1] = True
+        # otherwise stop
+        else: 
+            self.signals[0] = False
+            if len(self.pins) >= 1:
+                self.signals[1] = False
+        GPIO.output(self.pins[0], self.signals[0])
+        if len(self.pins) >= 1:
+            GPIO.output(self.pins[1], self.signals[1])
+
 
     def __del__(self):
         self._stopThread()
