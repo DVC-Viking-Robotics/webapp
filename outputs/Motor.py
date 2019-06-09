@@ -27,13 +27,13 @@ class Solonoid(object):
 
     def _smooth(self, isUp, y0):
         """ 
-        delta_speed, instSpeed, self.finspeed, and y0 are all percentage [-1,1]
+        delta_speed, instSpeed, self.finSpeed, and y0 are all percentage [-1,1]
         timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
          """
         timeI = (int(time.monotonic() * self._dt) % 1000) - self.initSmooth
         while timeI < self._dt:
             delta_speed = math.sin( (timeI / (self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + isUp 
-            self.value = delta_speed * (self.finspeed - y0) + y0
+            self.value = delta_speed * (self.finSpeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
             timeI = (int(time.monotonic() * 1000) % self._dt) - self.initSmooth
         self.value = self.finSpeed / 100.0
