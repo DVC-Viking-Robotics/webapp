@@ -162,7 +162,7 @@ class PhasedMotor(Solonoid):
                 self.signals[1] = True
         # going backward
         elif x < 0: 
-            self.signals[0] = x * -1
+            self.signals[0] = x
             if len(self.pins) >= 1:
                 self.signals[1] = False
         # otherwise stop
