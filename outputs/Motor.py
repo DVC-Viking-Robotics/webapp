@@ -3,6 +3,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False) # advised by useless debuggung prompts
 import time
 from threading import Thread
+import math
 
 class Solonoid(object):
     def __init__(self, pins, rampTime = 100):
@@ -29,13 +30,13 @@ class Solonoid(object):
         delta_speed, instSpeed, self.finspeed, and y0 are all percentage [-1,1]
         timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
          """
-        timeI = time.monotonic_ns() - self.initSmooth
-        while timeI < self._dt * 1000:
+        timeI = (int(time.monotonic() * self._dt) % 1000) - self.initSmooth
+        while timeI < self._dt:
             delta_speed = sin( (timeI / (self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + isUp 
             self.value = delta_speed * (self.finspeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
-            timeI = time.monotonic_ns() - self.initSmooth
-        self.value = self.finSpeed
+            timeI = (int(time.monotonic() * 1000) % self._dt) - self.initSmooth
+        self.value = self.finSpeed / 100.0
 
     def cellerate(self, finSpeed):
         """ 
@@ -43,10 +44,11 @@ class Solonoid(object):
         let deltaT = percent [0,1] of delta time (self._dt in milliseconds)
          """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
-        self.initSmooth = time.monotonic_ns() # integer of nanoseconds
+        self.initSmooth = (int(time.monotonic() * 1000) % self._dt) # integer of milliseconds
         baseSpeed = self.value 
-        deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
-        self.finSmooth = self.initSmooth + deltaT * self._dt * 1000000
+        # deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
+        self.finSmooth = self.initSmooth + self._dt
+        # self.finSmooth = self.initSmooth + deltaT * self._dt
         isUp = 1 if self.finSpeed > baseSpeed else 0
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth, args=(isUp, baseSpeed))
@@ -61,7 +63,7 @@ class Solonoid(object):
 
     @value.setter
     def value(self, x):
-        # check proper range of variable x
+        # check proper range of variable x [-1,1]
         x = max(-100, min(100, round(x * 100)))
         # going forward
         if x > 0: 
