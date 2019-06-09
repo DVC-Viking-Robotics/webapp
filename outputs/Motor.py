@@ -162,15 +162,15 @@ class PhasedMotor(Solonoid):
                 self.signals[1] = True
         # going backward
         elif x < 0: 
-            self.signals[0] = x
+            self.signals[0] = abs(x)
             if len(self.pins) >= 1:
                 self.signals[1] = False
         # otherwise stop
         else: 
-            self.signals[0] = 0
+            self.signals[0] = 0.0
             if len(self.pins) >= 1:
                 self.signals[1] = True
-        self.pins[0].ChangeDutyCycle(x)
+        self.pins[0].ChangeDutyCycle(self.signals[0])
         if len(self.pins) >= 1:
             GPIO.output(self.pins[1], self.signals[1])
 
