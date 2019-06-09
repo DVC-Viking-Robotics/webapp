@@ -2,8 +2,10 @@ from gpiozero import AngularServo, PhaseEnableMotor, Motor, PinPWMUnsupported
 import time
 try:
     from outputs.stepperMotor import Stepper
+    from outputs.Motor import BiMotor, PhasedMotor
 except ImportError:# for self exec loop
     from stepperMotor import Stepper
+    from Motor import BiMotor, PhasedMotor
 
 class dummyMotor:
     def __init__(self, value = 0):
@@ -31,9 +33,11 @@ class Drivetrain(object):
                 print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
                 if phased_i < len(phased) and phased[phased_i]: 
                     # is the flag specified and does it use a Phase control signal 
-                    self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                    # self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                    self.motors.append(PhasedMotor(pins[i]))
                 else: 
-                    self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                    # self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                    self.motors.append(BiMotor(pins[i]))
                 phased_i += 1
             else:
                 print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
@@ -53,7 +57,7 @@ class Drivetrain(object):
             print('motor[', i, '].value = ', self.motors[i].value, sep = '')
     def __del__(self):
         while len(self.motors) > 0:
-            self.motors[len(self.motors) - 1].close()
+            # self.motors[len(self.motors) - 1].close()
             del self.motors[len(self.motors) - 1]
         # del self.motors
 # end Drivetrain class
@@ -101,8 +105,10 @@ class BiPed(Drivetrain):
         # self.print()
         
         # make sure speeds are an integer (not decimal/float) and send to motors
-        self.motors[0].value = self.left / 100.0
-        self.motors[1].value = self.right / 100.0
+        # self.motors[0].value = self.left / 100.0
+        # self.motors[1].value = self.right / 100.0
+        self.motors[0].cellerate(self.left / 100.0)
+        self.motors[1].cellerate(self.right / 100.0)
         self.gogo(cmds)
     
     def print(self):
@@ -136,8 +142,10 @@ class QuadPed(Drivetrain):
         # set the axis directly to their corresponding motors
         self.lr = cmds[0]
         self.fr = cmds[1]
-        self.motors[0].value = self.lr / 100.0
-        self.motors[1].value = self.fr / 100.0
+        # self.motors[0].value = self.lr / 100.0
+        # self.motors[1].value = self.fr / 100.0
+        self.motors[0].cellerate(self.lr / 100.0)
+        self.motors[1].cellerate(self.fr / 100.0)
         self.gogo(cmds)
 
     # for debugging purposes
