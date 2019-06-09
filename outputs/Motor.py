@@ -29,12 +29,12 @@ class Solonoid(object):
         delta_speed, instSpeed, self.finspeed, and y0 are all percentage [-1,1]
         timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
          """
-        timeI = time.time_ns() - self.initSmooth
+        timeI = time.monotonic_ns() - self.initSmooth
         while timeI < self._dt * 1000:
             delta_speed = sin( (timeI / (self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + isUp 
             self.value = delta_speed * (self.finspeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
-            timeI = time.time_ns() - self.initSmooth
+            timeI = time.monotonic_ns() - self.initSmooth
         self.value = self.finSpeed
 
     def cellerate(self, finSpeed):
@@ -43,7 +43,7 @@ class Solonoid(object):
         let deltaT = percent [0,1] of delta time (self._dt in milliseconds)
          """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
-        self.initSmooth = time.time_ns() # integer of nanoseconds
+        self.initSmooth = time.monotonic_ns() # integer of nanoseconds
         baseSpeed = self.value 
         deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
         self.finSmooth = self.initSmooth + deltaT * self._dt * 1000000
