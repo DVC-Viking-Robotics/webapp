@@ -89,7 +89,9 @@ class Solonoid(object):
 
 
     def __del__(self):
-        self._stopThread()
+        if self.smoothing_thread is not None:
+            self.smoothing_thread._stop()
+        
 # end Solonoid parent class
 
 class BiMotor(Solonoid):
