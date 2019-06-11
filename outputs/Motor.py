@@ -46,13 +46,14 @@ class Solonoid(object):
         """ 
         let finSpeed = target speed in range of [-1,1]
         let deltaT = percent [0,1] of delta time (self._dt in milliseconds)
-         """
+        """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
         self.initSmooth = int(time.monotonic() * 1000) # integer of milliseconds
         self.initSpeed = int(self.value * 100)
         deltaT = abs((self.finSpeed - self.initSpeed) / 100.0)
         # self.finSmooth = self.initSmooth + self._dt
         self.finSmooth = self.initSmooth + deltaT * self._dt
+        
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth)
         self.smoothing_thread.start()
@@ -99,7 +100,7 @@ class BiMotor(Solonoid):
 
     @property
     def value(self):
-        return self.signals[0] - (self.signals[1] if len(self.signals) > 1 else 0) / 100.0
+        return (self.signals[0] - (self.signals[1] if len(self.signals) > 1 else 0)) / 100.0
     
     #let x be the percentual target speed in range of [-1,1]
     @value.setter
