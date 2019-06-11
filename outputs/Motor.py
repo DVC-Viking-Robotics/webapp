@@ -50,7 +50,7 @@ class Solonoid(object):
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
         self.initSmooth = int(time.monotonic() * 1000) # integer of milliseconds
         self.initSpeed = int(self.value * 100)
-        deltaT = abs((self.finSpeed - self.initSpeed) / 100.0)
+        deltaT = abs(((self.finSpeed - self.initSpeed) % 100) / 100.0)
         # self.finSmooth = self.initSmooth + self._dt
         self.finSmooth = self.initSmooth + deltaT * self._dt
         
