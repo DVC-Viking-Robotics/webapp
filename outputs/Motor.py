@@ -32,8 +32,11 @@ class Solonoid(object):
         """
         timeI = int(time.monotonic() * 1000) - self.initSmooth
         while timeI < (self.finSmooth - self.initSmooth):
+            print('time:', timeI, 'end_t:', self.finSmooth)
             delta_speed = 1 - math.cos(timeI / float(self.finSmooth - self.initSmooth) * math.pi / 2)
+            print('delta_s:', delta_speed, 'pwm:', (delta_speed * (self.finSpeed - self.initSpeed) + self.initSpeed) / 100.0)
             self.value = (delta_speed * (self.finSpeed - self.initSpeed) + self.initSpeed) / 100.0
+            time.sleep(0.001) # sleep 1 ms
             timeI = int(time.monotonic() * 1000) - self.initSmooth
         self.value = self.finSpeed / 100.0
 
