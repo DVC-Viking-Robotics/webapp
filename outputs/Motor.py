@@ -90,7 +90,7 @@ class Solonoid(object):
 
     def __del__(self):
         if self.smoothing_thread is not None:
-            self.smoothing_thread._stop()
+            del self.smoothing_thread
         
 # end Solonoid parent class
 
@@ -132,10 +132,10 @@ class BiMotor(Solonoid):
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
+        super(BiMotor, self).__del__()
         self.pins[0].stop()
         if len(self.pins) > 1:
             self.pins[1].stop()
-        super(BiMotor, self).__del__()
 # end BiMotor child class
 
 class PhasedMotor(Solonoid):
@@ -181,10 +181,10 @@ class PhasedMotor(Solonoid):
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
+        super(PhasedMotor, self).__del__()
         self.pins[0].stop()
         if len(self.pins) > 1:
             GPIO.output(self.pins[1], False)
-        super(PhasedMotor, self).__del__()
 #end PhasedMotor child class 
 
 if __name__ == "__main__":
