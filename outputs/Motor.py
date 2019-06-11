@@ -179,8 +179,14 @@ class PhasedMotor(Solonoid):
 #end PhasedMotor child class 
 
 if __name__ == "__main__":
-    m = BiMotor(18, 17)
+    m = BiMotor([18, 17])
     m.value = 0
     m.cellerate(1.0)
+    time.sleep(1)
+    print(m.value)
+    m.cellerate(-1.0)
+    time.sleep(1)
+    print(m.value)
+    m.cellerate(0.0)
     time.sleep(1)
     print(m.value)
