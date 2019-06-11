@@ -18,6 +18,7 @@ class Solonoid(object):
         self.initSmooth = 0
         self.finSmooth = 0
         self.smoothing_thread = None
+        self.TBC = False
         self._dt = rampTime # time in milliseconds to change/ramp speed from self.value to self.finSpeed
 
     def _stopThread(self):
@@ -31,7 +32,7 @@ class Solonoid(object):
         timeI & dt is in microseconds
         """
         timeI = int(time.monotonic() * 1000) - self.initSmooth
-        while timeI < (self.finSmooth - self.initSmooth):
+        while timeI < (self.finSmooth - self.initSmooth) and self.TBC:
             # print('time:', timeI, 'delta_t:', self.finSmooth - self.initSmooth)
             delta_speed = 1 - math.cos(timeI / float(self.finSmooth - self.initSmooth) * math.pi / 2)
             # print('delta_s:', delta_speed, '= 1 - cos(', timeI / float(self.finSmooth - self.initSmooth), '*PI/2)')
@@ -53,9 +54,10 @@ class Solonoid(object):
         deltaT = abs((self.finSpeed - self.initSpeed) / 200.0)
         # self.finSmooth = self.initSmooth + self._dt
         self.finSmooth = self.initSmooth + deltaT * self._dt
-        
+        self.TBC = False
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth)
+        self.TBC = True
         self.smoothing_thread.start()
 
     @property
