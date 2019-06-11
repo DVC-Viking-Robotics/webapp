@@ -128,9 +128,9 @@ class BiMotor(Solonoid):
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
-        self.pin[0].stop()
+        self.pins[0].stop()
         if len(self.pins) > 1:
-            self.pin[1].stop()
+            self.pins[1].stop()
         super(BiMotor, self).__del__()
 # end BiMotor child class
 
