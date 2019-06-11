@@ -190,7 +190,7 @@ if __name__ == "__main__":
     time.sleep(1)
     print(m.value)
     m.cellerate(-1.0)
-    time.sleep(1)
+    time.sleep(2)
     print(m.value)
     m.cellerate(0.0)
     time.sleep(1)
