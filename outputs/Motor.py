@@ -29,9 +29,9 @@ class Solonoid(object):
         """ 
         delta_speed, instSpeed, self.finSpeed, and y0 are all percentage [-1,1]
         timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
-         """
+        """
         timeI = int(time.monotonic() * 1000) - self.initSmooth
-        while timeI < self._dt:
+        while timeI < float(self.finSmooth - self.initSmooth):
             delta_speed = math.sin( (timeI / float(self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + (1 if isUp else -1)
             self.value = abs(delta_speed) * (self.finSpeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
