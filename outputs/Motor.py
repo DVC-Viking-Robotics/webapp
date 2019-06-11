@@ -30,36 +30,34 @@ class Solonoid(object):
         delta_speed, instSpeed, self.finSpeed, and y0 are all percentage [-1,1]
         timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
          """
-        timeI = (int(time.monotonic() * self._dt) % 1000) - self.initSmooth
+        timeI = int(time.time() * 1000) - self.initSmooth
         while timeI < self._dt:
-            delta_speed = math.sin( (timeI / (self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + isUp 
-            self.value = delta_speed * (self.finSpeed - y0) + y0
+            delta_speed = math.sin( (timeI / float(self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + (1 if isUp else -1)
+            self.value = abs(delta_speed) * (self.finSpeed - y0) + y0
             time.sleep(0.001) # wait 1 millisecond
-            timeI = (int(time.monotonic() * 1000) % self._dt) - self.initSmooth
+            timeI = int(time.time() * 1000) - self.initSmooth
         self.value = self.finSpeed / 100.0
 
+    # let finSpeed be the percentual target speed [-1,1]
     def cellerate(self, finSpeed):
         """ 
         let finSpeed = target speed in range of [-1,1]
         let deltaT = percent [0,1] of delta time (self._dt in milliseconds)
          """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
-        self.initSmooth = (int(time.monotonic() * 1000) % self._dt) # integer of milliseconds
-        baseSpeed = self.value 
-        # deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
-        self.finSmooth = self.initSmooth + self._dt
-        # self.finSmooth = self.initSmooth + deltaT * self._dt
+        self.initSmooth = int(time.time() * 1000) # integer of milliseconds
+        baseSpeed = int(self.value * 100)
+        deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
+        # self.finSmooth = self.initSmooth + self._dt
+        self.finSmooth = self.initSmooth + deltaT * self._dt
         isUp = 1 if self.finSpeed > baseSpeed else 0
         self._stopThread()
         self.smoothing_thread = Thread(target=self._smooth, args=(isUp, baseSpeed))
         self.smoothing_thread.start()
 
-    #let x be the percentual target speed (in range of -100 to 100)
     @property
     def value(self):
-        if len(pins) >= 1:
-            return int(self.signals[0]) or int(self.signals[1])
-        else: return int(self.signals[0])
+            return int(self.signals[0]) or (int(self.signals[1]) if len(pins) > 1 else 0)
 
     @value.setter
     def value(self, x):
@@ -68,20 +66,20 @@ class Solonoid(object):
         # going forward
         if x > 0: 
             self.signals[0] = True
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = False
         # going backward
         elif x < 0: 
             self.signals[0] = False
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = True
         # otherwise stop
         else: 
             self.signals[0] = False
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = False
         GPIO.output(self.pins[0], self.signals[0])
-        if len(self.pins) >= 1:
+        if len(self.pins) > 1:
             GPIO.output(self.pins[1], self.signals[1])
 
 
@@ -99,7 +97,7 @@ class BiMotor(Solonoid):
 
     @property
     def value(self):
-        return self.signals[0] - (self.signals[1] if len(self.signals) >= 1 else 0) / 100.0
+        return self.signals[0] - (self.signals[1] if len(self.signals) > 1 else 0) / 100.0
     
     #let x be the percentual target speed in range of [-1,1]
     @value.setter
@@ -109,26 +107,26 @@ class BiMotor(Solonoid):
         # going forward
         if x > 0: 
             self.signals[0] = x
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = 0
         # going backward
         elif x < 0: 
             self.signals[0] = 0
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = x * -1
         # otherwise stop
         else: 
             self.signals[0] = 0
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = 0
         self.pins[0].ChangeDutyCycle(self.signals[0])
-        if len(self.pins) >= 1:
+        if len(self.pins) > 1:
             self.pins[1].ChangeDutyCycle(self.signals[1])
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
         self.pin[0].stop()
-        if len(self.pins) >= 1:
+        if len(self.pins) > 1:
             self.pin[1].stop()
         super(BiMotor, self).__del__()
 # end BiMotor child class
@@ -147,7 +145,7 @@ class PhasedMotor(Solonoid):
     #let x be the percentual target speed (in range of -100 to 100)
     @property
     def value(self):
-        if len(pins) >= 1:
+        if len(pins) > 1:
             return self.signals[0] / 100.0 * (1 if bool(self.signals[1]) else -1)
         else: return self.signals[0] / 100.0
 
@@ -158,26 +156,26 @@ class PhasedMotor(Solonoid):
         # going forward
         if x > 0: 
             self.signals[0] = x
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = True
         # going backward
         elif x < 0: 
             self.signals[0] = x * -1
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = False
         # otherwise stop
         else: 
             self.signals[0] = 0.0
-            if len(self.pins) >= 1:
+            if len(self.pins) > 1:
                 self.signals[1] = True
         self.pins[0].ChangeDutyCycle(self.signals[0])
-        if len(self.pins) >= 1:
+        if len(self.pins) > 1:
             GPIO.output(self.pins[1], self.signals[1])
 
     #destructor to disable GPIO.PWM operation
     def __del__(self):
         self.pins[0].stop()
-        if len(self.pins) >= 1:
+        if len(self.pins) > 1:
             GPIO.output(self.pins[1], False)
         super(PhasedMotor, self).__del__()
 #end PhasedMotor child class 
