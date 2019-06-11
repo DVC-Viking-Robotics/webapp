@@ -25,16 +25,15 @@ class Solonoid(object):
             self.smoothing_thread.join()
         self.smoothing_thread = None
 
-    def _smooth(self, isUp, y0):
+    def _smooth(self):
         """ 
-        delta_speed, instSpeed, self.finSpeed, and y0 are all percentage [-1,1]
-        timeI & dt is in nanoseconds while isUp is a boolean [0 | 1]
+        delta_speed, self.finSpeed, and self.initSpeed are all percentage [-1,1]
+        timeI & dt is in microseconds
         """
         timeI = int(time.monotonic() * 1000) - self.initSmooth
-        while timeI < self.finSmooth:
-            delta_speed = math.sin( (timeI / float(self.finSmooth - self.initSmooth) + (-1 if isUp else 1)) * math.pi / 2 ) + (1 if isUp else -1)
-            self.value = abs(delta_speed) * (self.finSpeed - y0) + y0
-            time.sleep(0.001) # wait 1 millisecond
+        while timeI < (self.finSmooth - self.initSmooth):
+            delta_speed = 1 - math.cos(timeI / float(self.finSmooth - self.initSmooth) * math.pi / 2)
+            self.value = delta_speed * (self.finSpeed - self.initSpeed) + self.initSpeed
             timeI = int(time.monotonic() * 1000) - self.initSmooth
         self.value = self.finSpeed / 100.0
 
@@ -46,13 +45,12 @@ class Solonoid(object):
          """
         self.finSpeed = max(-100, min(100, round(finSpeed * 100))) # bounds check
         self.initSmooth = int(time.monotonic() * 1000) # integer of milliseconds
-        baseSpeed = int(self.value * 100)
-        deltaT = abs((self.finSpeed - baseSpeed) / 100.0)
+        self.initSpeed = int(self.value * 100)
+        deltaT = abs((self.finSpeed - self.initSpeed) / 100.0)
         # self.finSmooth = self.initSmooth + self._dt
         self.finSmooth = self.initSmooth + deltaT * self._dt
-        isUp = 1 if self.finSpeed > baseSpeed else 0
         self._stopThread()
-        self.smoothing_thread = Thread(target=self._smooth, args=(isUp, baseSpeed))
+        self.smoothing_thread = Thread(target=self._smooth)
         self.smoothing_thread.start()
 
     @property
