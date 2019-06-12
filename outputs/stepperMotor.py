@@ -121,7 +121,6 @@ class Stepper(SourceMixin, CompositeDevice):
         while self.targetPos != None and self._steps != self.targetPos:
             # iterate self._steps
             self.step(self.isCW())
-            numSteps -= 1
             # write to pins
             self.setPinState()
             # wait a certain amount of time based on motor speed
