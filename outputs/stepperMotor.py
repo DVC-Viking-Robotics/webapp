@@ -10,7 +10,7 @@ class Stepper(SourceMixin, CompositeDevice):
         self.stepType = stepType
         self.speed = speed
         self.pins = pins
-        self.targetPos = 0
+        self.targetPos = None
         self.min_angle = min_angle
         self.max_angle = max_angle
         super(Stepper, self).__init__(pin_factory = pin_factory)
@@ -220,6 +220,6 @@ if __name__ == "__main__":
     print(repr(m))
     # m.steps = -512
     m.angle = 0
-    time.sleep(3)
+    time.sleep(1)
     print(repr(m))
 
