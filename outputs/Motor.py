@@ -34,7 +34,7 @@ class Solonoid(object):
         timeI = int(time.monotonic() * 1000) - self.initSmooth
         while timeI < (self.finSmooth - self.initSmooth) and self.TBC:
             # print('time:', timeI, 'delta_t:', self.finSmooth - self.initSmooth)
-            delta_speed = 1 - math.cos(timeI / float(self.finSmooth - self.initSmooth) * math.pi / 2)
+            delta_speed = (1 - math.cos(timeI / float(self.finSmooth - self.initSmooth) * math.pi)) / 2
             # print('delta_s:', delta_speed, '= 1 - cos(', timeI / float(self.finSmooth - self.initSmooth), '*PI/2)')
             # print('pwm:', (delta_speed * (self.finSpeed - self.initSpeed) + self.initSpeed) / 100.0, '= (', delta_speed, '* (', self.finSpeed, '-', self.initSpeed, ') +', self.initSpeed, ') / 100.0')
             self.value = (delta_speed * (self.finSpeed - self.initSpeed) + self.initSpeed) / 100.0
@@ -89,6 +89,7 @@ class Solonoid(object):
 
 
     def __del__(self):
+        self.TBC = False
         if self.smoothing_thread is not None:
             del self.smoothing_thread
         
