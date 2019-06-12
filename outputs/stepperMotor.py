@@ -11,6 +11,8 @@ class Stepper(SourceMixin, CompositeDevice):
         self.speed = speed
         self.pins = pins
         self.targetPos = 0
+        self.min_angle = min_angle
+        self.max_angle = max_angle
         super(Stepper, self).__init__(pin_factory = pin_factory)
         if len(pins) == 4:
                 self.pins = CompositeDevice(
@@ -45,7 +47,6 @@ class Stepper(SourceMixin, CompositeDevice):
             self._steps -= 1
             self._it -= 1
         # now check for proper range according to stepper type
-        # self.setPinState()
     
     def wrap_it(self, max, min = 0, theta = None):
         """ 
@@ -63,10 +64,10 @@ class Stepper(SourceMixin, CompositeDevice):
                 return self.targetPos <= self._steps
             else: return self.targetPos >= self._steps
 
-    def setPinState(self):
+    def write(self):
         if self.stepType == "half":
             maxStep = 8
-            self._it = self.wrap_it(maxStep)
+            self.wrap_it(maxStep)
             base = int(self._it / 2)
             next = base + 1
             if next == len(self.pins):
@@ -78,7 +79,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     self.pins[i].off()        
         elif self.stepType == "full":
             maxStep = 4
-            self._it = self.wrap_it(maxStep)
+            self.wrap_it(maxStep)
             if self._it + 1 == maxStep: next = 0
             else: next = self._it + 1
             for i in range(len(pins) - 1):
@@ -88,7 +89,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     self.pins[i].off()        
         elif self.stepType == "wave":
             maxStep = 4
-            self._it = self.wrap_it(maxStep)
+            self.wrap_it(maxStep)
             for i in range(len(pins) - 1):
                 if i == self._it:
                     self.pins[i].on()
@@ -122,7 +123,7 @@ class Stepper(SourceMixin, CompositeDevice):
             # iterate self._steps
             self.step(self.isCW())
             # write to pins
-            self.setPinState()
+            self.write()
             # wait a certain amount of time based on motor speed
             self.delay()
 
@@ -193,7 +194,11 @@ class Stepper(SourceMixin, CompositeDevice):
         if value is None:
             self.resetZeroAngle()
         elif -1 <= value <= 1:
-            self.angle = value * 180.0
+            self.targetPos = None
+            self._stop_thread()
+            self.targetPos = self.wrap_it(self.SPR, 0, self.SPR / 2 * value)
+            self._move_thread = GPIOThread(target=self.moveSteps)
+            self._move_thread.start()
         else:
             raise OutputDeviceBadValue(
                 "stepper value must be between -1 and 1, or None")
@@ -204,12 +209,13 @@ if __name__ == "__main__":
     # mockpins = MockFactory()
     m = Stepper([5,6,12,16])
     # , pin_factory=mockpins)
-    # m.angle = -15
-    m.steps = 64
+    m.angle = -15
+    # m.steps = 64
     time.sleep(1)
     print(repr(m))
+    m.value = 0.5
     # m.angle = 15
-    m.steps = 500
+    # m.steps = 500
     time.sleep(2)
     print(repr(m))
     # m.steps = -512
