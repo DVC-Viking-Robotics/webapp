@@ -4,12 +4,13 @@ from gpiozero import DigitalOutputDevice, SourceMixin, CompositeDevice
 from gpiozero.threads import GPIOThread
 
 class Stepper(SourceMixin, CompositeDevice):
-    def __init__(self, pins=None, initial_angle=0.0, min_angle=-180, max_angle=180, speed = 60, stepType = 'half', maxSteps = 4069, DegreePerStep = 0.087890625, pin_factory=None, verbose = False):
-        self.maxSteps = maxSteps
-        self.dps = DegreePerStep
+    def __init__(self, pins=None, initial_angle=0.0, min_angle=-180, max_angle=180, speed = 60, stepType = 'half', StepsPerRevolution = 4069, DegreePerStep = 0.087890625, pin_factory=None, verbose = False):
+        self.SPR = StepsPerRevolution
+        self.DPS = DegreePerStep
         self.stepType = stepType
         self.speed = speed
         self.pins = pins
+        self.targetPos = 0
         super(Stepper, self).__init__(pin_factory = pin_factory)
         if len(pins) == 4:
                 self.pins = CompositeDevice(
@@ -45,15 +46,27 @@ class Stepper(SourceMixin, CompositeDevice):
             self._it -= 1
         # now check for proper range according to stepper type
         # self.setPinState()
+    
+    def wrap_it(self, max, min = 0, theta = None):
+        """ 
+        Ensure that argument 'theta' is kept accordingly within range [min,max]
+        """
+        if theta == None: theta = self._it
+        while theta > max : theta -= max
+        while theta < min : theta += max
+        return theta
 
-    def __clamp_it(self, max):
-        if self._it > max - 1: self._it -= max
-        elif self._it < 0: self._it += max
+    def isCW(self):
+        if self.targetPos == None: return False
+        else:
+            if (abs((self.targetPos % self.SPR) - (self._steps % SPR)) < self.SPR - abs((self.targetPos % self.SPR) - (self._steps % self.SPR))):
+                return self.targetPos <= self._steps
+            else: return self.targetPos >= self._steps
 
     def setPinState(self):
         if self.stepType == "half":
             maxStep = 8
-            self.__clamp_it(maxStep)
+            self._it = self.wrap_it(maxStep)
             base = int(self._it / 2)
             next = base + 1
             if next == len(self.pins):
@@ -65,7 +78,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     self.pins[i].off()        
         elif self.stepType == "full":
             maxStep = 4
-            self.__clamp_it(maxStep)
+            self._it = self.wrap_it(maxStep)
             if self._it + 1 == maxStep: next = 0
             else: next = self._it + 1
             for i in range(len(pins) - 1):
@@ -75,7 +88,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     self.pins[i].off()        
         elif self.stepType == "wave":
             maxStep = 4
-            self.__clamp_it(maxStep)
+            self._it = self.wrap_it(maxStep)
             for i in range(len(pins) - 1):
                 if i == self._it:
                     self.pins[i].on()
@@ -85,52 +98,34 @@ class Stepper(SourceMixin, CompositeDevice):
             errorPrompt = 'Invalid Stepper Type = ' + repr(self.stepType)
             raise RuntimeError(errorPrompt)
 
-    def delay(self, speed):
+    def delay(self):
         # delay between iterations based on motor speed (mm/sec)
-        time.sleep(speed / 60000.0)
+        time.sleep(self.speed / 60000.0)
 
     def _getPinBin(self):
         pinBin = 0b0
         for i in range(len(self.pins)):
-                pinBin |= (int(self.pins[i].value) << i)
+            pinBin |= (int(self.pins[i].value) << i)
         return pinBin
             
     def __repr__(self):
         output = 'pins = {} Angle: {} Steps: {}'.format(bin(self._getPinBin()), repr(self.angle), repr(self.steps))
         return output
 
-    def wrapAngle(self, theta):
-        """ 
-        Ensure that argument 'theta' is kept accordingly within range [0,360]
-        """
-        while theta > 360 : theta -= 360
-        while theta < 0 : theta += 360
-        return theta
-    
     def _stop_thread(self):
         if getattr(self, '_move_thread', None):
             self._move_thread.stop()
         self._move_thread = None
- 
-    def move2Angle(self, angle, isCCW) :
-        while abs(self.angle - angle) >= self.dps:
-            # iterate self._steps
-            self.step(isCCW)
-            # write to pins
-            self.setPinState()
-            # wait a certain amount of time based on motor speed
-            self.delay(self.speed)
-            
         
-    def moveSteps(self, numSteps, isCW):
-        while numSteps != 0:
+    def moveSteps(self):
+        while self.targetPos != None and self._steps != self.targetPos:
             # iterate self._steps
-            self.step(isCW)
+            self.step(self.isCW())
             numSteps -= 1
             # write to pins
             self.setPinState()
             # wait a certain amount of time based on motor speed
-            self.delay(self.speed)
+            self.delay()
 
     @property
     def angle(self):
@@ -138,30 +133,22 @@ class Stepper(SourceMixin, CompositeDevice):
         Returns current angle of motor rotation [0,360]. Setting
         this property changes the state of the device.
         """
-        return self.wrapAngle((self._steps % self.maxSteps) * self.dps)
+        return self.wrap_it(360, 0, (self._steps % self.SPR) * self.DPS)
 
     @angle.setter
     def angle(self, angle):
         """
         Rotate motor to specified angle where direction is 
         automatically detirmined toward the shortest route.
-        All input angle is valid since it is wrapped to range [0,360]. *see wrapAngle()
+        All input angle is valid since it is wrapped to range [0,360]. *see wrap_it()
         """
-        # __clamp_it angle to constraints of [0,360] degrees
-        angle = self.wrapAngle(angle)
-        # decipher rotational direction
-        dTccw = self.wrapAngle(self.angle - angle)
-        dTcw = self.wrapAngle(angle - self.angle)
-        if dTccw > dTcw: 
-            isCCW = True
-        else: isCCW = False
+        # wrap_it angle to constraints of [0,360] degrees
+        angle = self.wrap_it(360, 0, angle)
+        self.targetPos = None
         self._stop_thread()
-        try:
-            self._move_thread = Thread(target=self.move2Angle, args=(angle, isCCW))
-        except NameError:
-            self._move_thread = GPIOThread(target=self.move2Angle, args=(angle, isCCW))
-        finally:
-            self._move_thread.start()
+        self.targetPos = round(angle / self.DPS)
+        self._move_thread = GPIOThread(target=self.moveSteps)
+        self._move_thread.start()
     
     @property
     def steps(self):
@@ -175,15 +162,10 @@ class Stepper(SourceMixin, CompositeDevice):
         """
         Task motor to execute specified numSteps where direction is the +/- sign on the numSteps variable
         """
-        # decipher rotational direction
-        if numSteps > 0 : isCW = True
-        else: isCW = False
-        # make numSteps positive for decrementing
-        numSteps = abs(numSteps)
+        self.targetPos = None
         self._stop_thread()
-        self._move_thread = GPIOThread(
-            target=self.moveSteps, args=(numSteps, isCW)
-        )
+        self.targetPos = self.wrap_it(self.SPR, 0, numSteps)
+        self._move_thread = GPIOThread(target=self.moveSteps)
         self._move_thread.start()
  
     @property
@@ -201,7 +183,7 @@ class Stepper(SourceMixin, CompositeDevice):
         """
         Returns the percent angle of the motor.
         """
-        return self.angle / 360.0
+        return (self._steps % self.SPR) / self.SPR
 
     @value.setter
     def value(self, value):
