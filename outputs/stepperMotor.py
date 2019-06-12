@@ -59,7 +59,7 @@ class Stepper(SourceMixin, CompositeDevice):
     def isCW(self):
         if self.targetPos == None: return False
         else:
-            if (abs((self.targetPos % self.SPR) - (self._steps % SPR)) < self.SPR - abs((self.targetPos % self.SPR) - (self._steps % self.SPR))):
+            if (abs((self.targetPos % self.SPR) - (self._steps % self.SPR)) < self.SPR - abs((self.targetPos % self.SPR) - (self._steps % self.SPR))):
                 return self.targetPos <= self._steps
             else: return self.targetPos >= self._steps
 
