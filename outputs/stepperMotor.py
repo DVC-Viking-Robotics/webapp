@@ -62,12 +62,12 @@ class Stepper(SourceMixin, CompositeDevice):
             return None
         else:
             currPos = self.wrap_it(self.SPR, 0, self._steps % self.SPR)
-            return self.wrap_it(self.SPR, 0, currPos - self.SPR / 2) < self.targetPos < currPos:
+            return self.wrap_it(self.SPR, 0, currPos - self.SPR / 2) < self.targetPos < currPos
 
     def write(self):
         if self.stepType == "half":
             maxStep = 8
-            self.wrap_it(maxStep)
+            self._it = self.wrap_it(maxStep)
             base = int(self._it / 2)
             next = base + 1
             if next == len(self.pins):
@@ -79,7 +79,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     self.pins[i].off()        
         elif self.stepType == "full":
             maxStep = 4
-            self.wrap_it(maxStep)
+            self._it = self.wrap_it(maxStep)
             if self._it + 1 == maxStep: next = 0
             else: next = self._it + 1
             for i in range(len(pins) - 1):
@@ -89,7 +89,7 @@ class Stepper(SourceMixin, CompositeDevice):
                     self.pins[i].off()        
         elif self.stepType == "wave":
             maxStep = 4
-            self.wrap_it(maxStep)
+            self._it = self.wrap_it(maxStep)
             for i in range(len(pins) - 1):
                 if i == self._it:
                     self.pins[i].on()
