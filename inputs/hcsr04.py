@@ -1,14 +1,19 @@
 from gpiozero import DistanceSensor
-    
+
+
 class hcsr04:
     def __init__(self):
-        self.HCSR04 = [DistanceSensor(5, 6), DistanceSensor(12, 16), DistanceSensor(19, 26), DistanceSensor(20, 21)]
-        self.values = [0.0, 0.0, 0.0, 0.0]
-        self.get_dist_data()
+        self.HCSR04 = [
+            DistanceSensor(5, 6), 
+            DistanceSensor(12, 16), 
+            DistanceSensor(19, 26), 
+            DistanceSensor(20, 21)]
 
-    def get_dist_data(self):
-        for i in range(len(self.HCSR04)):
-            self.values[i] = self.HCSR04[i].value
+    # key is an int in range [0,3]
+    def __getattribute__(self, key):
+        assert 0 <= key <= 3
+        return self.HCSR04[key]
+
     '''
     maybe set some other functions for calibration
     GPIOzero MCP3008 library has some promising features

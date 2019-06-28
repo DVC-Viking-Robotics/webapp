@@ -103,7 +103,7 @@ class Control {
             color: "grey",
             stick: {
                 x: 0, y: 0, radius: 0,
-                color: "white",
+                color: "#008B8B",
                 angle: 0,
                 touchRadius: 0
             },
@@ -127,17 +127,21 @@ class Control {
             }
         }
         this.slider = {
-            x: 0, y: 0, height: 0, length: 0,
+            x: (W > H ? W / 2 : 0) + 10, 
+            y: 0, 
+            height: 0, 
+            length: W - (W > H ? W / 2 : 0),
             color: "grey",
             stick: {
-                x: 0, y: 0, radius: 0,
-                color: "white",
+                x: ((W > H ? W / 2 : 0) + 10) + (W - (W > H ? W / 2 : 0)) / 2,
+                y: 0, radius: 0,
+                color: "#FF4500",
             },
             draw: function () {
                 this.stick.x = Math.max(this.x, Math.min(this.stick.x, this.x + this.length));
                 ctx.strokeStyle = this.color;
                 ctx.beginPath();
-                ctx.lineCap = "square";
+                ctx.lineCap = "round";
                 ctx.lineWidth = this.height;
                 ctx.moveTo(this.x + this.height / 2, this.y);
                 ctx.lineTo(this.x + this.length - this.height / 2, this.y);
