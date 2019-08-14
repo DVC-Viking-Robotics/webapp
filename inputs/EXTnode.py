@@ -46,4 +46,4 @@ class NRF24L01():
 
     def go(self, cmd):
         temp = struct.pack('bb', cmd[0], cmd[1])
-        print('transmit', repr(cmd), 'returned:', self.rf.send(temp))
+        print('transmit', repr(cmd), 'returned:', self.rf.send(temp, ask_no_ack=True))
