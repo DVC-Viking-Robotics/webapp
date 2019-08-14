@@ -45,4 +45,5 @@ class NRF24L01():
         self.rf.what_happened(1)
 
     def go(self, cmd):
-        print('transmit', repr(cmd), 'returned:', self.rf.send(bytes(cmd)))
+        temp = struct.pack('bb', cmd[0], cmd[1])
+        print('transmit', repr(cmd), 'returned:', self.rf.send(temp))
