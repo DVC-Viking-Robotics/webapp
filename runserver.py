@@ -86,13 +86,16 @@ if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
     IMUsensor = d
 elif cmd['IMU']['interface'] == 'serial':
     IMUsensor = EXTnode(cmd['IMU']['address'], int(cmd['IMU']['baud']))
+else: IMUsensor = None
 
 if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
 else: gps = None
 
-from outputs.GPSnav import GPSnav
-nav = GPSnav(d, IMUsensor, gps)
+if gps is not None and IMUsensor is not None:
+    from outputs.GPSnav import GPSnav
+    nav = GPSnav(d, IMUsensor, gps)
+else: nav = None
 
 @socketio.on('connect')
 def handle_connect():
@@ -119,16 +122,17 @@ def handle_webcam_request():
 
 @socketio.on('WaypointList')
 def build_wapypoints(wp, clear):
-    if clear: nav.clear()
-    print('received waypoints')
-    for i in range(len(wp)):
-        nav.insert(wp[i])
-    nav.printWP()
+    if nav is not None:
+        if clear: nav.clear()
+        print('received waypoints')
+        for i in range(len(wp)):
+            nav.insert(wp[i])
+        nav.printWP()
 
 @socketio.on('gps')
 def handle_gps_request():
     print('gps data sent')
-    NESW = (0,0)
+    NESW = (0, 0)
     if gps != None:
         gps.getData()
         NESW = (gps.NS, gps.EW)
@@ -151,7 +155,7 @@ def getIMU():
     if (cmd.getboolean('WhoAmI', 'onRaspi')) and int(cmd['IMU']['dof']) != 0:
         return IMUsensor.get_all_data()
     else:
-        return [[0,0,0], [0,0,0], [0,0,0]]
+        return [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
 
 @socketio.on('sensorDoF')
@@ -165,9 +169,9 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go([args[0], args[1]])
-    # d.print() """for debugging"""
+    # for debugging
     print('remote =', repr(args))
+    d.go([args[0], args[1]])
 
 @app.route('/')
 @app.route('/remote')
