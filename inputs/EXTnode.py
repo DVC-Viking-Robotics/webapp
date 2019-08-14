@@ -35,3 +35,14 @@ class EXTnode():
                 command += repr(c) + ' '
             command = bytes(command.encode('utf-8'))
             self.ser.write(command)
+
+class NRF24L01():
+    def __init__(self, spi, csn, ce, address=b'rfpi0'):
+        from circuitpython_nrf24l01.rf24 import RF24
+        import struct
+        self.rf = RF24(spi, csn, ce)
+        self.rf.open_tx_pipe(address)
+        self.rf.what_happened(1)
+
+    def go(self, cmd):
+        print('transmit', repr(cmd), 'returned:', self.rf.send(bytes(cmd)))

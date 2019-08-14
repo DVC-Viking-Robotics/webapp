@@ -27,7 +27,7 @@ function getArgs(){
     let radius = Math.round(controller.joystick.stick.touchRadius / controller.joystick.radius * 100);
     let theta = Math.round(controller.joystick.stick.angle / Math.PI * 200);
     // atan2() in controller.joystick returns negative for all positive y values and postitive for negative y values
-    radius *= theta < 0 ? 1 : -1; 
+    radius *= theta < 0 ? 1 : -1;
     theta = radius == 0 ? 0 : ((Math.abs(theta) - 100) * -1);
     let zJoyPos = controller.slider.stick.x - controller.slider.x - (controller.slider.length / 2);
     result[0] = theta;
@@ -127,9 +127,9 @@ class Control {
             }
         }
         this.slider = {
-            x: (W > H ? W / 2 : 0) + 10, 
-            y: 0, 
-            height: 0, 
+            x: (W > H ? W / 2 : 0) + 10,
+            y: 0,
+            height: 0,
             length: W - (W > H ? W / 2 : 0),
             color: "grey",
             stick: {

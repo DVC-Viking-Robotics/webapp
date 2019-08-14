@@ -10,17 +10,16 @@ except ImportError:
 import time
 import base64
 import os
+from inputs.EXTnode import EXTnode, NRF24L01
+from inputs.GPSserial import GPSserial
+from inputs.cmdArgs import args
 from flask import Flask, g, render_template
-from inputs.EXTnode import EXTnode
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app, logger=False, engineio_logger=False, async_mode='eventlet')
-
-from inputs.GPSserial import GPSserial
-from inputs.cmdArgs import args
 cmd = args()
 if cmd.getboolean('WhoAmI', 'onRaspi'):
     # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
@@ -59,25 +58,28 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
-    
+
 if cmd['Drivetrain']['interface'] == 'gpio':
-        if int(cmd['Drivetrain']['motorConfig']) == 1:
-            # for R2D2 configuration
-            from outputs.Drivetrain import BiPed as drivetrain
-        elif int(cmd['Drivetrain']['motorConfig']) == 0:
-            # for race car configuration
-            from outputs.Drivetrain import QuadPed as drivetrain
-        pins = cmd['Drivetrain']['address'].rsplit(':')
-        for i in range(len(pins)): 
-            pins[i] = pins[i].rsplit(',')
-            for j in range(len(pins[i])):
-                pins[i][j] = int(pins[i][j])
-            #     print(p, end = ',')
-            # print(':', end = '')
-        # print(repr(pins))
-        d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']), pin_factory = cmd.pipins)
+    if int(cmd['Drivetrain']['motorConfig']) == 1:
+        # for R2D2 configuration
+        from outputs.Drivetrain import BiPed as drivetrain
+    elif int(cmd['Drivetrain']['motorConfig']) == 0:
+        # for race car configuration
+        from outputs.Drivetrain import QuadPed as drivetrain
+    pins = cmd['Drivetrain']['address'].rsplit(':')
+    for i in range(len(pins)):
+        pins[i] = pins[i].rsplit(',')
+        for j in range(len(pins[i])):
+            pins[i][j] = int(pins[i][j])
+        #     print(p, end = ',')
+        # print(':', end = '')
+    # print(repr(pins))
+    d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']), pin_factory = cmd.pipins)
 elif cmd['Drivetrain']['interface'] == 'serial':
     d = EXTnode(cmd['Drivetrain']['address'], int(cmd['Drivetrain']['baud']))
+elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'SPI':
+    import board, digitalio as dio
+    d = NRF24L01(board.SPI(), dio.DigitalInOut(board.D5), dio.DigitalInOut(board.CE0))
 else: d = None
 
 if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
@@ -163,7 +165,7 @@ def handle_DoF_request():
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
-    d.go([args[0], args[1], args[2], args[2]])
+    d.go([args[0], args[1]])
     # d.print() """for debugging"""
     print('remote =', repr(args))
 
@@ -213,14 +215,15 @@ def about():
 
 if __name__ == '__main__':
     # nav.drivetoWaypoint()
-    
+
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
         socketio.stop()
         if d != None: g.go(0,0)
         del d, nav, IMUsensor
-    """ d.go(0,0)
+    # finally:
+    # d.go(0,0)
     #nav.alignHeading(0)
-    input("Press Enter to continue...")
-    #nav.alignHeading(180) """
+    # input("Press Enter to continue...")
+    #nav.alignHeading(180)
