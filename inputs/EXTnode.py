@@ -1,3 +1,4 @@
+import struct
 
 class EXTnode():
     def __init__(self, address = '/dev/ttyUSB0', baud = -1):
@@ -39,7 +40,6 @@ class EXTnode():
 class NRF24L01():
     def __init__(self, spi, csn, ce, address=b'rfpi0'):
         from circuitpython_nrf24l01.rf24 import RF24
-        import struct
         self.rf = RF24(spi, csn, ce)
         self.rf.open_tx_pipe(address)
         self.rf.what_happened(1)
