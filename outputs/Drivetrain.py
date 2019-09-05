@@ -3,12 +3,12 @@ import time
 try:
     from outputs.stepperMotor import Stepper
     from outputs.Motor import BiMotor, PhasedMotor
-except ImportError:# for self exec loop
+except ImportError: # for self exec loop
     from stepperMotor import Stepper
     from Motor import BiMotor, PhasedMotor
 
 class dummyMotor:
-    def __init__(self, value = 0):
+    def __init__(self, value=0):
         self.value = value
 
 class Drivetrain(object):
@@ -31,17 +31,17 @@ class Drivetrain(object):
                 self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]], pin_factory = pin_factory))
             elif len(pins[i]) == 2: # use DC bi-directional motor
                 print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
-                if phased_i < len(phased) and phased[phased_i]: 
-                    # is the flag specified and does it use a Phase control signal 
+                if phased_i < len(phased) and phased[phased_i]:
+                    # is the flag specified and does it use a Phase control signal
                     # self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
                     self.motors.append(PhasedMotor(pins[i]))
-                else: 
+                else:
                     # self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
                     self.motors.append(BiMotor(pins[i]))
                 phased_i += 1
             else:
                 print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
-            # except PinPWMUnsupported: # except on PC during DEV mode 
+            # except PinPWMUnsupported: # except on PC during DEV mode
             #     self.motors.append(dummyMotor())
 
     def gogo(self, zAux, init = 2):
@@ -51,7 +51,7 @@ class Drivetrain(object):
                     # print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
                     self.motors[i].value = zAux[i] / 100.0
                 else: print('motor[', i, '] not declared and/or installed', sep = '')
-    
+
     def print(self, start = 0):
         for i in range(start, len(self.motors)):
             print('motor[', i, '].value = ', self.motors[i].value, sep = '')
@@ -63,9 +63,9 @@ class Drivetrain(object):
 # end Drivetrain class
 
 class BiPed(Drivetrain):
-    """ 
+    """
     using BCM pins = [(18,17), (13,22), (4), (5,6,12,16)]
-    pins arg contains tuples of pins. 1 tuple per motor. 
+    pins arg contains tuples of pins. 1 tuple per motor.
       2 pin tuple = bi-directional dc motor
       1 pin tuple = servo motor
       4 pin tuple = stepper motor
@@ -75,9 +75,9 @@ class BiPed(Drivetrain):
         super(BiPed, self).__init__(pins, phased, maxSpeed, pin_factory = pin_factory)
         self.right = 0
         self.left = 0
-    
+
     def go(self, cmds):
-        """ 
+        """
         pass cmds as [] = [x,y,z,aux,ect]
             pass backwards/forward in range [-100,100] as variable x
             pass left/right in range [-100,100] as variable y
@@ -94,7 +94,7 @@ class BiPed(Drivetrain):
             cmds[0] *= self.maxSpeed / 100.0
             self.right = cmds[0]
             self.left = cmds[0] * -1
-        else: 
+        else:
             # if forward/backward axis is not null and left/right axis is not null
             offset = (100 - abs(cmds[0])) / 100.0
             if cmds[0] > 0:
@@ -103,14 +103,14 @@ class BiPed(Drivetrain):
                 self.left *= offset
         """ for debugging """
         # self.print()
-        
+
         # make sure speeds are an integer (not decimal/float) and send to motors
         # self.motors[0].value = self.left / 100.0
         # self.motors[1].value = self.right / 100.0
         self.motors[0].cellerate(self.left / 100.0)
         self.motors[1].cellerate(self.right / 100.0)
         self.gogo(cmds)
-    
+
     def print(self):
         print("left =", self.left)
         print("right =", self.right)
@@ -119,9 +119,9 @@ class BiPed(Drivetrain):
 # end BiPed class
 
 class QuadPed(Drivetrain):
-    """ 
+    """
     using BCM pins = [(18,17), (13,22), (4), (5,6,12,16)]
-    pins arg contains tuples of pins. 1 tuple per motor. 
+    pins arg contains tuples of pins. 1 tuple per motor.
       2 pin tuple = bi-directional dc motor
       1 pin tuple = servo motor
       4 pin tuple = stepper motor
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     if(cmd.d == 1):
         myPins = [[18,17], [13,22], [5,6,12,16]]
         d = BiPed(myPins, cmd.m, pin_factory = cmd.pipins)
-    else: 
+    else:
         myPins = [[18,17], [13, 22]]
         # , [4]
         d = QuadPed(myPins, cmd.m, pin_factory = cmd.pipins)

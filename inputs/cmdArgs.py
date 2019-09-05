@@ -54,15 +54,18 @@ class args:
         if self.pipins != None:
             from gpiozero.pins.pigpio import PiGPIOFactory
             #set host to hostname or ip address of rPi w/ pigpiod running
-            self.pipins = PiGPIOFactory(host=self.pipins)
-            
+            try:
+                self.pipins = PiGPIOFactory(host=self.pipins)
+            except OSError:
+                self.pipins = None
+
     def get_Phased(self):
         if self.m != None:
             temp = self.m.rsplit(',')
             for i in range(len(temp)):
                 temp[i] = str(int(temp[i]))
             Config['Drivetrain']['phasedM'] = ','.join(temp)
-    
+
 
     # override [] operators to return the Config dictionaries
     def __getitem__(self, key):
@@ -74,7 +77,7 @@ class args:
     # wrap get() function from configparser
     def get(self, section, option):
         return Config.get(section, option)
-    
+
     # wrap getboolean() function from configparser
     def getboolean(self, section, option):
         return Config.getboolean(section, option)
@@ -105,7 +108,7 @@ class args:
             res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
             res = res.decode('utf-8')
             for line in res.splitlines():
-                if (line.find('BCM') > 1):
+                if line.find('BCM') > 1:
                     self.on_raspi = 'true'
                 break
         # save onRaspi
@@ -127,7 +130,7 @@ class args:
                 Config['IMU']['interface'] = temp[0]
                 del temp[0]
                 Config['IMU']['address'] = ','.join(temp)
-            else: 
+            else:
                 Config['IMU']['dof'] = temp[0]
                 Config['IMU']['address'] = ' '
 

@@ -38,10 +38,10 @@ class GPSserial():
         self.elev = 0.0
         self.fix = "no Fix"
         self.rx_status = "unknown"
-        
+
     def getCoords(self):
         pass
-    
+
     def getTime(self):
         if (self.UTC == ""):
             return "no UTC"
@@ -50,7 +50,7 @@ class GPSserial():
             min = int(self.UTC[3:4])
             sec = float(self.UTC[5:])
             return self.UTC
-            
+
     def parseline(self, str):
         found = False
         if str.find('GLL') != -1:
@@ -114,7 +114,7 @@ class GPSserial():
             print('sat["view"]:', self.sat["view"], 'elevation:', self.elev, 'Azimuth:', self.azi)
             '''
         return found
-    
+
     '''VERY IMPORTANT'''
     # needed to go from format 'DDHH.SS' into decimal degrees
     def convertGPS(self):
@@ -127,7 +127,7 @@ class GPSserial():
         lngDec = lng_DD + lng_SS/60
         self.NS = latDec * self.NS_dir
         self.EW = lngDec * self.EW_dir
-    
+
     def threaded_Read(self, raw):
         found = False
         while(not found):
@@ -139,7 +139,7 @@ class GPSserial():
             self.line = bytes(self.line).decode('utf-8')
             # found = true if gps coordinates are captured
             found = self.parseline(self.line)
-    
+
     def getData(self, raw = False):
         if not self.dummy:
             if self.GPS_thread != None:
@@ -154,14 +154,14 @@ if __name__ == "__main__":
     import argparse
     #add description to program's help screen
     parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "COM5" or "/dev/ttyS0"')
-    gps_defaults = '/dev/ttyS0'
+    gps_defaults = 'com6'
     parser.add_argument('--p', default=gps_defaults, help='Select serial port address. ie "COM3" or "/dev/ttyS0"')
     class args():
         def __init__(self):
             parser.parse_args(namespace=self)
     cmd = args()
     #finish get cmd line args
-    
+
     gps = GPSserial(cmd.p)
     # gps = GPSserial('/dev/ttyS0')
     while (True):
