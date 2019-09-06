@@ -11,7 +11,7 @@ import time
 import base64
 import os
 from inputs.EXTnode import EXTnode, NRF24L01
-from inputs.GPSserial import GPSserial
+from inputs.gps_serial import GPS_SERIAL
 from inputs.cmdArgs import args
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
@@ -29,7 +29,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         elif int(cmd['IMU']['dof']) == 9:
             from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
         # IMUsensor = imu()
-        IMUsensor = imu(address = cmd['IMU']['address'].rsplit(','))
+        IMUsensor = imu(address=cmd['IMU']['address'].rsplit(','))
     #camera dependencies
     try:
         import picamera
@@ -89,7 +89,7 @@ elif cmd['IMU']['interface'] == 'serial':
 else: IMUsensor = None
 
 if cmd['GPS']['interface'] == 'serial':
-    gps = GPSserial(cmd['GPS']['address'])
+    gps = GPS_SERIAL(cmd['GPS']['address'])
 else: gps = None
 
 if gps is not None and IMUsensor is not None:
@@ -224,7 +224,7 @@ if __name__ == '__main__':
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
         socketio.stop()
-        if d != None: g.go(0,0)
+        if d != None: g.go(0, 0)
         del d, nav, IMUsensor
     # finally:
     # d.go(0,0)
