@@ -1,36 +1,43 @@
-from gpiozero import AngularServo, PhaseEnableMotor, Motor, PinPWMUnsupported
+"""
+This module contains the necessary algorithms for utilizing different DC motor types in different configurations. Currently only supporting the R2D2 (AKA BiPed) & typical openRC (AKA QuadPed) configurations.
+"""
+from gpiozero import AngularServo #, PhaseEnableMotor, Motor, PinPWMUnsupported
 import time
 try:
-    from outputs.stepperMotor import Stepper
-    from outputs.Motor import BiMotor, PhasedMotor
-except ImportError: # for self exec loop
-    from stepperMotor import Stepper
-    from Motor import BiMotor, PhasedMotor
+    from outputs.stepper_motor import Stepper
+    from outputs.motor import BiMotor, PhasedMotor
+except ImportError:  # for self exec loop
+    from stepper_motor import Stepper
+    from motor import BiMotor, PhasedMotor
+
 
 class dummyMotor:
     def __init__(self, value=0):
         self.value = value
+
 
 class Drivetrain(object):
     # using BCM pins = [[18,17], [13,22], [4], [5,6,12,16]]
     # phased = "true,false" order correspnding to order of DC motor pins that are passed
     def __init__(self, pins, phased, maxSpeed):
         self.motors = []
-        self.maxSpeed = max(0, min(maxSpeed, 100)) # ensure proper range
+        self.maxSpeed = max(0, min(maxSpeed, 100))  # ensure proper range
         phased = phased.rsplit(',')
         for phased_i in range(len(phased)):
             phased[phased_i] = bool(int(phased[phased_i]))
         phased_i = 0
         for i in range(len(pins)):
             # try:
-            if len(pins[i]) == 1: # use servo
+            if len(pins[i]) == 1:  # use servo
                 print('motor', i, 'Servo @', repr(pins[i]))
                 self.motors.append(AngularServo(pins[i][0]))
-            elif len(pins[i]) == 4: # use bipolar stepper
+            elif len(pins[i]) == 4:  # use bipolar stepper
                 print('motor', i, 'Stepper @', repr(pins[i]))
-                self.motors.append(Stepper([pins[i][0], pins[i][1], pins[i][2], pins[i][3]]))
-            elif len(pins[i]) == 2: # use DC bi-directional motor
-                print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
+                self.motors.append(
+                    Stepper([pins[i][0], pins[i][1], pins[i][2], pins[i][3]]))
+            elif len(pins[i]) == 2:  # use DC bi-directional motor
+                print('motor', i, 'DC @', repr(
+                    pins[i]), 'phased:', phased[phased_i])
                 if phased_i < len(phased) and phased[phased_i]:
                     # is the flag specified and does it use a Phase control signal
                     # self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
@@ -40,25 +47,30 @@ class Drivetrain(object):
                     self.motors.append(BiMotor(pins[i]))
                 phased_i += 1
             else:
-                print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
+                print('unknown motor type from', len(
+                    pins[i]), '=', repr(pins[i]))
 
-    def gogo(self, zAux, init = 2):
+    def gogo(self, zAux, init=2):
         if len(zAux) > init:
             for i in range(init, len(zAux)):
                 if i < len(self.motors):
                     # print('motor[', i, '].value = ', zAux[i] / 100.0, sep = '')
                     self.motors[i].value = zAux[i] / 100.0
-                else: print('motor[', i, '] not declared and/or installed', sep = '')
+                else:
+                    print(
+                        'motor[', i, '] not declared and/or installed', sep='')
 
-    def print(self, start = 0):
+    def print(self, start=0):
         for i in range(start, len(self.motors)):
-            print('motor[', i, '].value = ', self.motors[i].value, sep = '')
+            print('motor[', i, '].value = ', self.motors[i].value, sep='')
+
     def __del__(self):
         while len(self.motors) > 0:
             # self.motors[len(self.motors) - 1].close()
             del self.motors[len(self.motors) - 1]
         # del self.motors
 # end Drivetrain class
+
 
 class BiPed(Drivetrain):
     """
@@ -69,8 +81,10 @@ class BiPed(Drivetrain):
       4 pin tuple = stepper motor
       NOTE:the 1st 2 tuples are used to propell and steer respectively
     """
-    def __init__(self, pins, phased = 'True,False', maxSpeed = 85, pin_factory = None):
-        super(BiPed, self).__init__(pins, phased, maxSpeed, pin_factory = pin_factory)
+
+    def __init__(self, pins, phased='True,False', maxSpeed=85, pin_factory=None):
+        super(BiPed, self).__init__(pins, phased,
+                                    maxSpeed, pin_factory=pin_factory)
         self.right = 0
         self.left = 0
 
@@ -116,6 +130,7 @@ class BiPed(Drivetrain):
 
 # end BiPed class
 
+
 class QuadPed(Drivetrain):
     """
     using BCM pins = [(18,17), (13,22), (4), (5,6,12,16)]
@@ -125,10 +140,12 @@ class QuadPed(Drivetrain):
       4 pin tuple = stepper motor
       NOTE:the 1st 2 tuples are used to propell and steer respectively
     """
-    def __init__(self, pins, phased = 'False,False', maxSpeed = 85, pin_factory = None):
-        super(QuadPed, self).__init__(pins, phased, maxSpeed, pin_factory = pin_factory)
-        self.fr = 0 # forward/reverse direction
-        self.lr = 0 # left/right direction
+
+    def __init__(self, pins, phased='False,False', maxSpeed=85, pin_factory=None):
+        super(QuadPed, self).__init__(
+            pins, phased, maxSpeed, pin_factory=pin_factory)
+        self.fr = 0  # forward/reverse direction
+        self.lr = 0  # left/right direction
 
     # pass backwards/forward (-100 to 100) as variable x
     # pass left/right (-100 to 100) as variable y
@@ -160,12 +177,17 @@ if __name__ == "__main__":
     import os
     import argparse
     # add description to program's help screen
-    parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "0" or "1"')
+    parser = argparse.ArgumentParser(
+        description='testing purposes. Please try using quotes to encompass values. ie "0" or "1"')
     d_defaults = '1'
     m_defaults = '0,0'
-    parser.add_argument('--d', default=d_defaults, help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
-    parser.add_argument('--m', default=m_defaults, help='list of dc motor phase flags. "1" = 1 PWM + 1 Dir pins per motor; "0" = 2 PWM pins per motor.')
-    parser.add_argument('--pipins', default=None, help='host address of Rpi w/ pigpiod running. Can be machine name or ip address.')
+    parser.add_argument('--d', default=d_defaults,
+                        help='Select drivetrain type. "1" = bi-ped (R2D2 - like); "0" = quad-Ped (race car setup).')
+    parser.add_argument('--m', default=m_defaults,
+                        help='list of dc motor phase flags. "1" = 1 PWM + 1 Dir pins per motor; "0" = 2 PWM pins per motor.')
+    parser.add_argument('--pipins', default=None,
+                        help='host address of Rpi w/ pigpiod running. Can be machine name or ip address.')
+
     class args():
         def __init__(self):
             parser.parse_args(namespace=self)
@@ -173,17 +195,18 @@ if __name__ == "__main__":
             # use mock pin factory
             # from gpiozero.pins.mock import MockFactory
             from gpiozero.pins.pigpio import PiGPIOFactory
-            if self.pipins != None: self.pipins = PiGPIOFactory(host=self.pipins)
+            if self.pipins != None:
+                self.pipins = PiGPIOFactory(host=self.pipins)
             # else: self.pipins = MockFactory()
     cmd = args()
     # finish get cmd line args
-    if(cmd.d == 1):
-        myPins = [[18,17], [13,22], [5,6,12,16]]
-        d = BiPed(myPins, cmd.m, pin_factory = cmd.pipins)
+    if cmd.d == 1:
+        myPins = [[18, 17], [13, 22], [5, 6, 12, 16]]
+        d = BiPed(myPins, cmd.m, pin_factory=cmd.pipins)
     else:
-        myPins = [[18,17], [13, 22]]
+        myPins = [[18, 17], [13, 22]]
         # , [4]
-        d = QuadPed(myPins, cmd.m, pin_factory = cmd.pipins)
+        d = QuadPed(myPins, cmd.m, pin_factory=cmd.pipins)
     d.go([100, 0, 50])
     time.sleep(2)
     d.go([0, 100, -25])
