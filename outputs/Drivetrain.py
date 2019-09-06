@@ -14,7 +14,7 @@ class dummyMotor:
 class Drivetrain(object):
     # using BCM pins = [[18,17], [13,22], [4], [5,6,12,16]]
     # phased = "true,false" order correspnding to order of DC motor pins that are passed
-    def __init__(self, pins, phased, maxSpeed, pin_factory):
+    def __init__(self, pins, phased, maxSpeed):
         self.motors = []
         self.maxSpeed = max(0, min(maxSpeed, 100)) # ensure proper range
         phased = phased.rsplit(',')
@@ -25,24 +25,22 @@ class Drivetrain(object):
             # try:
             if len(pins[i]) == 1: # use servo
                 print('motor', i, 'Servo @', repr(pins[i]))
-                self.motors.append(AngularServo(pins[i][0], pin_factory = pin_factory))
+                self.motors.append(AngularServo(pins[i][0]))
             elif len(pins[i]) == 4: # use bipolar stepper
                 print('motor', i, 'Stepper @', repr(pins[i]))
-                self.motors.append(Stepper([pins[i][0], pins[i][1],pins[i][2], pins[i][3]], pin_factory = pin_factory))
+                self.motors.append(Stepper([pins[i][0], pins[i][1], pins[i][2], pins[i][3]]))
             elif len(pins[i]) == 2: # use DC bi-directional motor
                 print('motor', i, 'DC @', repr(pins[i]), 'phased:', phased[phased_i])
                 if phased_i < len(phased) and phased[phased_i]:
                     # is the flag specified and does it use a Phase control signal
-                    # self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                    # self.motors.append(PhaseEnableMotor(pins[i][0], pins[i][1]))
                     self.motors.append(PhasedMotor(pins[i]))
                 else:
-                    # self.motors.append(Motor(pins[i][0], pins[i][1], pin_factory = pin_factory))
+                    # self.motors.append(Motor(pins[i][0], pins[i][1])
                     self.motors.append(BiMotor(pins[i]))
                 phased_i += 1
             else:
                 print('unknown motor type from', len(pins[i]), '=', repr(pins[i]))
-            # except PinPWMUnsupported: # except on PC during DEV mode
-            #     self.motors.append(dummyMotor())
 
     def gogo(self, zAux, init = 2):
         if len(zAux) > init:

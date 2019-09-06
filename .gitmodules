@@ -1,0 +1,3 @@
+[submodule "GPS_Serial"]
+	path = GPS_Serial
+	url = https://github.com/DVC-Viking-Robotics/GPS_Serial.git

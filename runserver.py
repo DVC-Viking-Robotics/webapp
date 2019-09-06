@@ -11,7 +11,8 @@ import time
 import base64
 import os
 from inputs.EXTnode import EXTnode, NRF24L01
-from inputs.gps_serial import GPS_SERIAL
+# from inputs.gps_serial import GPS_SERIAL
+from GPS_Serial.gps_serial import GPS_SERIAL
 from inputs.cmdArgs import args
 from flask import Flask, g, render_template
 from flask_socketio import SocketIO, emit
@@ -22,14 +23,6 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, logger=False, engineio_logger=False, async_mode='eventlet')
 cmd = args()
 if cmd.getboolean('WhoAmI', 'onRaspi'):
-    # add distance sensors here using gpiozero.mcp3008 for ADC IC and gpiozero.DistanceSensor for HC-SR04 sensors
-    if cmd['IMU']['interface'] == 'i2c':
-        if int(cmd['IMU']['dof']) == 6:
-            from inputs.IMU import MPU6050 as imu # for 6oF (GY-521)
-        elif int(cmd['IMU']['dof']) == 9:
-            from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
-        # IMUsensor = imu()
-        IMUsensor = imu(address=cmd['IMU']['address'].rsplit(','))
     #camera dependencies
     try:
         import picamera
@@ -59,7 +52,7 @@ else: # running on a PC
         print('opencv-python is not installed')
         camera = None
 
-if cmd['Drivetrain']['interface'] == 'gpio':
+if cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gpio':
     if int(cmd['Drivetrain']['motorConfig']) == 1:
         # for R2D2 configuration
         from outputs.Drivetrain import BiPed as drivetrain
@@ -67,14 +60,12 @@ if cmd['Drivetrain']['interface'] == 'gpio':
         # for race car configuration
         from outputs.Drivetrain import QuadPed as drivetrain
     pins = cmd['Drivetrain']['address'].rsplit(':')
-    for i in range(len(pins)):
-        pins[i] = pins[i].rsplit(',')
-        for j in range(len(pins[i])):
-            pins[i][j] = int(pins[i][j])
-        #     print(p, end = ',')
-        # print(':', end = '')
-    # print(repr(pins))
-    d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']), pin_factory=cmd.pipins)
+    for i, p in enumerate(pins):
+        p = p.rsplit(',')
+        for j, pin in enumerate(p):
+            pin = int(pin)
+    print('drivetrain pins:', repr(pins))
+    d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']))
 elif cmd['Drivetrain']['interface'] == 'serial':
     d = EXTnode(cmd['Drivetrain']['address'], int(cmd['Drivetrain']['baud']))
 elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'SPI':
@@ -86,6 +77,13 @@ if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
     IMUsensor = d
 elif cmd['IMU']['interface'] == 'serial':
     IMUsensor = EXTnode(cmd['IMU']['address'], int(cmd['IMU']['baud']))
+elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['IMU']['interface'] == 'i2c':
+    if int(cmd['IMU']['dof']) == 6:
+        from inputs.IMU import MPU6050 as imu # for 6oF (GY-521)
+    elif int(cmd['IMU']['dof']) == 9:
+        from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
+    # IMUsensor = imu()
+    IMUsensor = imu(address=cmd['IMU']['address'].rsplit(','))
 else: IMUsensor = None
 
 if cmd['GPS']['interface'] == 'serial':
@@ -135,7 +133,7 @@ def handle_gps_request():
     NESW = (0, 0)
     if gps != None:
         gps.getData()
-        NESW = (gps.NS, gps.EW)
+        NESW = (gps.lat, gps.lng)
     else:
         NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
@@ -171,7 +169,8 @@ def handle_DoF_request():
 def handle_remoteOut(args):
     # for debugging
     print('remote =', repr(args))
-    d.go([args[0], args[1]])
+    if d: # if there is a drivetrain connected
+        d.go([args[0], args[1]])
 
 @app.route('/')
 @app.route('/remote')
@@ -218,8 +217,6 @@ def about():
     )
 
 if __name__ == '__main__':
-    # nav.drivetoWaypoint()
-
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
