@@ -12,7 +12,7 @@ import threading
 DEFAULT_LOC = {'lat': 37.96713657090229, 'lng': -122.0712176165581}
 
 def convert2deg(nmea):
-    """VERY IMPORTANT needed to go from format 'DDHH.SS' into decimal degrees"""
+    """VERY IMPORTANT needed to go from format 'ddmm.mmmm' into decimal degrees"""
     if nmea is None or len(nmea) < 3:
         return None
     nmea = float(nmea)
