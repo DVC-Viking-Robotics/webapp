@@ -22,8 +22,9 @@ app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app, logger=False, engineio_logger=False, async_mode='eventlet')
 cmd = args()
+
+# handle camera dependencies
 if cmd.getboolean('WhoAmI', 'onRaspi'):
-    #camera dependencies
     try:
         import picamera
         camera = picamera.PiCamera()
@@ -43,7 +44,6 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
             print('opencv-python is not installed')
         finally:
             print('picamera is not installed')
-
 else: # running on a PC
     try:
         import cv2
@@ -52,6 +52,7 @@ else: # running on a PC
         print('opencv-python is not installed')
         camera = None
 
+# handle drivetrain
 if cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gpio':
     if int(cmd['Drivetrain']['motorConfig']) == 1:
         # for R2D2 configuration
