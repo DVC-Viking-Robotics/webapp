@@ -69,7 +69,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gp
     d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']))
 elif cmd['Drivetrain']['interface'] == 'serial':
     d = EXTnode(cmd['Drivetrain']['address'], int(cmd['Drivetrain']['baud']))
-elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'SPI':
+elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'spi':
     import board, digitalio as dio
     d = NRF24L01(board.SPI(), dio.DigitalInOut(board.D5), dio.DigitalInOut(board.CE0))
 else: d = None
