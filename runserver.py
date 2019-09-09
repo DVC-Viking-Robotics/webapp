@@ -7,15 +7,12 @@ try:
 except ImportError:
     import io
 
-import time
 import base64
-import os
-from inputs.EXTnode import EXTnode, NRF24L01
-# from inputs.gps_serial import GPS_SERIAL
-from GPS_Serial.gps_serial import GPS_SERIAL
-from inputs.cmdArgs import args
-from flask import Flask, g, render_template
+from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
+from inputs.cmdArgs import args
+from inputs.ext_node import EXTnode, NRF24L01
+from GPS_Serial.gps_serial import GPS_SERIAL
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -70,7 +67,8 @@ if cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gp
 elif cmd['Drivetrain']['interface'] == 'serial':
     d = EXTnode(cmd['Drivetrain']['address'], int(cmd['Drivetrain']['baud']))
 elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'spi':
-    import board, digitalio as dio
+    import board
+    import digitalio as dio
     d = NRF24L01(board.SPI(), dio.DigitalInOut(board.D5), dio.DigitalInOut(board.CE0))
 else: d = None
 
@@ -106,7 +104,7 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
-    if camera != None:
+    if camera is not None:
         if cmd.getboolean('WhoAmI', 'onRaspi'):
             sio = io.BytesIO()
             camera.capture(sio, "jpeg", use_video_port=True)
@@ -122,10 +120,11 @@ def handle_webcam_request():
 @socketio.on('WaypointList')
 def build_wapypoints(wp, clear):
     if nav is not None:
-        if clear: nav.clear()
+        if clear:
+            nav.clear()
         print('received waypoints')
-        for i in range(len(wp)):
-            nav.insert(wp[i])
+        for point in wp:
+            nav.insert(point)
         nav.printWP()
 
 @socketio.on('gps')
@@ -167,11 +166,11 @@ def handle_DoF_request():
     print('DoF sensor data sent')
 
 @socketio.on('remoteOut')
-def handle_remoteOut(args):
+def handle_remoteOut(arg):
     # for debugging
-    print('remote =', repr(args))
+    print('remote =', repr(arg))
     if d: # if there is a drivetrain connected
-        d.go([args[0], args[1]])
+        d.go([arg[0], arg[1]])
 
 @app.route('/')
 @app.route('/remote')
@@ -222,7 +221,8 @@ if __name__ == '__main__':
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
         socketio.stop()
-        if d != None: g.go(0, 0)
+        if d != None:
+            d.go(0, 0)
         del d, nav, IMUsensor
     # finally:
     # d.go(0,0)
