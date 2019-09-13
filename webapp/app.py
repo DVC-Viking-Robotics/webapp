@@ -11,9 +11,9 @@ import base64
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from routes import blueprint
-from .inputs.cmdArgs import args
-from .inputs.ext_node import EXTnode, NRF24L01
-from .GPS_Serial.gps_serial import GPS_SERIAL
+from inputs.ext_node import EXTnode, NRF24L01
+from inputs.cmdArgs import Args
+from GPS_Serial.gps_serial import GPS_SERIAL
 
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring
@@ -23,7 +23,7 @@ app.config['SECRET_KEY'] = 'secret!'
 app.register_blueprint(blueprint)
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 socketio.init_app(app)
-cmd = args()
+cmd = Args()
 
 # handle camera dependencies
 if cmd.getboolean('WhoAmI', 'onRaspi'):

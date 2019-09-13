@@ -3,7 +3,7 @@ import argparse
 import configparser
 # create an object fill it with default variables from the file 'defaults.ini'
 Config = configparser.ConfigParser()
-Config.read("./inputs/defaults.ini")
+Config.read(".webapp/inputs/defaults.ini")
 
 #add description to program's help screen
 parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R. Please try using quotes to encompass values. ie "9;i2c;0x6a,0x1e"')
@@ -36,7 +36,7 @@ parser.add_argument('--cam', default=None, help='Toggle camera. "1" = on (defaul
 # also options specific to picam and/or opencv2
 
 #use a class to store cmd args 'arg.<option name> = string <value>'
-class args:
+class Args:
     def __init__(self):
         # parse arguments using self as storage
         # each parser.add_argument() can be accessed using self.<option flag>
@@ -84,7 +84,7 @@ class args:
 
     def get_gps(self):
         # set gps variable
-        if self.gps != None:
+        if self.gps is not None:
             temp = self.gps.rsplit(':')
             # print(repr(self.gps))
             Config['GPS']['interface'] = temp[0]
@@ -94,7 +94,7 @@ class args:
             else: Config['GPS']['address'] = ' '
 
     def get_cam(self):
-        if self.cam != None:
+        if self.cam is not None:
             Config['Camera']['enabled'] = self.cam
 
     def get_whoami(self):
@@ -114,14 +114,14 @@ class args:
         # save onRaspi
         Config['WhoAmI']['onRaspi'] = self.on_raspi
         # save host and port when applicable
-        if self.port != None:
+        if self.port is not None:
             Config['WhoAmI']['port'] = self.port
-        if self.host != None:
+        if self.host is not None:
             Config['WhoAmI']['host'] = self.host
 
     def get_dof(self):
         # set DoF variable
-        if self.dof != None:
+        if self.dof is not None:
             temp = self.dof.rsplit(':')
             # print(repr(temp))
             if len(temp) >= 2:
@@ -136,7 +136,7 @@ class args:
 
     def get_drivetrain(self):
         # set drivetrain section
-        if self.d != None:
+        if self.d is not None:
             temp = self.d.rsplit(':')
             # print(repr(temp))
             Config['Drivetrain']['motorConfig'] = temp[0]
@@ -165,7 +165,7 @@ class args:
 
 if __name__ == "__main__":
     # instatiate this object to invoke the __init__() that translates the strings to usable data
-    cmd = args()
+    cmd = Args()
     print('Domain:', cmd["WhoAmI"]["host"])
     print('port #:', cmd["WhoAmI"]["port"])
     print('on_raspi:', cmd["WhoAmI"]["onRaspi"])
