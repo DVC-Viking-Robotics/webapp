@@ -8,16 +8,21 @@ except ImportError:
     import io
 
 import base64
-from flask import Flask, render_template
+from flask import Flask
 from flask_socketio import SocketIO, emit
-from inputs.cmdArgs import args
-from inputs.ext_node import EXTnode, NRF24L01
-from GPS_Serial.gps_serial import GPS_SERIAL
+from routes import blueprint
+from .inputs.cmdArgs import args
+from .inputs.ext_node import EXTnode, NRF24L01
+from .GPS_Serial.gps_serial import GPS_SERIAL
+
+# to temporarily disable non-crucial pylint errors in conformity
+# pylint: disable=invalid-name,missing-docstring
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-
-socketio = SocketIO(app, logger=False, engineio_logger=False, async_mode='eventlet')
+app.register_blueprint(blueprint)
+socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
+socketio.init_app(app)
 cmd = args()
 
 # handle camera dependencies
@@ -53,10 +58,10 @@ else: # running on a PC
 if cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gpio':
     if int(cmd['Drivetrain']['motorConfig']) == 1:
         # for R2D2 configuration
-        from Drivetrain.drivetrain import BiPed as drivetrain
+        from .Drivetrain.drivetrain import BiPed as drivetrain
     elif int(cmd['Drivetrain']['motorConfig']) == 0:
         # for race car configuration
-        from Drivetrain.drivetrain import QuadPed as drivetrain
+        from .Drivetrain.drivetrain import QuadPed as drivetrain
     pins = cmd['Drivetrain']['address'].rsplit(':')
     for i, p in enumerate(pins):
         p = p.rsplit(',')
@@ -78,9 +83,9 @@ elif cmd['IMU']['interface'] == 'serial':
     IMUsensor = EXTnode(cmd['IMU']['address'], int(cmd['IMU']['baud']))
 elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['IMU']['interface'] == 'i2c':
     if int(cmd['IMU']['dof']) == 6:
-        from inputs.IMU import MPU6050 as imu # for 6oF (GY-521)
+        from .inputs.IMU import MPU6050 as imu # for 6oF (GY-521)
     elif int(cmd['IMU']['dof']) == 9:
-        from inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
+        from .inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
     # IMUsensor = imu()
     IMUsensor = imu(address=cmd['IMU']['address'].rsplit(','))
 else: IMUsensor = None
@@ -90,7 +95,7 @@ if cmd['GPS']['interface'] == 'serial':
 else: gps = None
 
 if gps is not None and IMUsensor is not None:
-    from outputs.GPSnav import GPSnav
+    from .outputs.GPSnav import GPSnav
     nav = GPSnav(d, IMUsensor, gps)
 else: nav = None
 
@@ -131,7 +136,7 @@ def build_wapypoints(wp, clear):
 def handle_gps_request():
     print('gps data sent')
     NESW = (0, 0)
-    if gps != None:
+    if gps is not None:
         gps.getData()
         NESW = (gps.lat, gps.lng)
     else:
@@ -172,56 +177,12 @@ def handle_remoteOut(arg):
     if d: # if there is a drivetrain connected
         d.go([arg[0], arg[1]])
 
-@app.route('/')
-@app.route('/remote')
-def remote():
-    """Renders the remote control page."""
-    return render_template(
-        'remote.html',
-        title='Remote Control')
-
-@app.route('/extras')
-def extras():
-    """Renders the features page."""
-    return render_template(
-        'extras.html',
-        title='Extra Features',
-        message='Try our more advanced features!'
-    )
-
-@app.route('/vidFeed')
-def vidFeed():
-    """Renders the camera page."""
-    return render_template(
-        'vidFeed.html',
-        title='Live Camera feed',
-        message='straight from the Robot!'
-    )
-
-@app.route('/automode')
-def automode():
-    """Google maps API with coordinate selection for auto mode."""
-    return render_template(
-        'automode.html',
-        title='Autonomous Navigation',
-        message='Autonomous Nav Mode'
-    )
-
-@app.route('/about')
-def about():
-    """Renders the about page."""
-    return render_template(
-        'about.html',
-        title='About this project:',
-        message='This Web App is meant to control a robot powered by Raspberry Pi via WiFi or LAN. '
-    )
-
 if __name__ == '__main__':
     try:
         socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
     except KeyboardInterrupt:
         socketio.stop()
-        if d != None:
+        if d is not None:
             d.go(0, 0)
         del d, nav, IMUsensor
     # finally:
