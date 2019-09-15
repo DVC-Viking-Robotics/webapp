@@ -11,9 +11,9 @@ import base64
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from routes import blueprint
-from inputs.ext_node import EXTnode, NRF24L01
-from inputs.cmdArgs import Args
-from GPS_Serial.gps_serial import GPS_SERIAL
+from .inputs.ext_node import EXTnode, NRF24L01
+from .inputs.cmdArgs import Args
+from .GPS_Serial.gps_serial import GPSserial
 
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring
@@ -58,17 +58,17 @@ else: # running on a PC
 if cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'gpio':
     if int(cmd['Drivetrain']['motorConfig']) == 1:
         # for R2D2 configuration
-        from .Drivetrain.drivetrain import BiPed as drivetrain
+        from .Drivetrain.drivetrain.drivetrain import BiPed as dtrain
     elif int(cmd['Drivetrain']['motorConfig']) == 0:
         # for race car configuration
-        from .Drivetrain.drivetrain import QuadPed as drivetrain
+        from .Drivetrain.drivetrain.drivetrain import QuadPed as dtrain
     pins = cmd['Drivetrain']['address'].rsplit(':')
     for i, p in enumerate(pins):
         p = p.rsplit(',')
         for j, pin in enumerate(p):
             pin = int(pin)
     print('drivetrain pins:', repr(pins))
-    d = drivetrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']))
+    d = dtrain(pins, cmd['Drivetrain']['phasedM'], int(cmd['Drivetrain']['maxSpeed']))
 elif cmd['Drivetrain']['interface'] == 'serial':
     d = EXTnode(cmd['Drivetrain']['address'], int(cmd['Drivetrain']['baud']))
 elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == 'spi':
@@ -91,7 +91,7 @@ elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['IMU']['interface'] == 'i2c':
 else: IMUsensor = None
 
 if cmd['GPS']['interface'] == 'serial':
-    gps = GPS_SERIAL(cmd['GPS']['address'])
+    gps = GPSserial(cmd['GPS']['address'])
 else: gps = None
 
 if gps is not None and IMUsensor is not None:
@@ -137,7 +137,7 @@ def handle_gps_request():
     print('gps data sent')
     NESW = (0, 0)
     if gps is not None:
-        gps.getData()
+        gps.get_data()
         NESW = (gps.lat, gps.lng)
     else:
         NESW = (37.967135, -122.071210)
