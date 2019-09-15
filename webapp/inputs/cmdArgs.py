@@ -1,9 +1,11 @@
 import os
 import argparse
 import configparser
+
+from .check_platform import is_on_raspberry_pi
 # create an object fill it with default variables from the file 'defaults.ini'
 Config = configparser.ConfigParser()
-Config.read(".webapp/inputs/defaults.ini")
+Config.read("webapp/inputs/defaults.ini")
 
 #add description to program's help screen
 parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R. Please try using quotes to encompass values. ie "9;i2c;0x6a,0x1e"')
@@ -103,14 +105,8 @@ class Args:
         self.on_raspi = 'false'
         # print(os.environ)
         if os.name == 'posix':
-            # temp = os.system('grep Hardware /proc/cpuinfo')
-            import subprocess
-            res = subprocess.check_output(["grep", "Hardware", "/proc/cpuinfo"])
-            res = res.decode('utf-8')
-            for line in res.splitlines():
-                if line.find('BCM') > 1:
-                    self.on_raspi = 'true'
-                break
+            if is_on_raspberry_pi():
+                self.on_raspi = 'true'
         # save onRaspi
         Config['WhoAmI']['onRaspi'] = self.on_raspi
         # save host and port when applicable

@@ -3,7 +3,7 @@
 
 from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import  login_required, login_user, logout_user
-from users import users, User
+from .users import users, User
 
 blueprint = Blueprint('blueprint', __name__)
 
