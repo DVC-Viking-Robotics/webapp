@@ -1,29 +1,28 @@
 # webapp
-flask implementation of remote control via wifi for robot
+Flask webapp for interacting and remotely controlling the MASCCOT robot via WiFi.
 
-Required BEFORE Install:
-opencv2 
+[OLD] Required BEFORE Install:
+* gevent==1.4.0
+* gevent-websocket==0.10.1
 
-picamera
+## Setup instructions
+```bash
+# Clone the repository and its submodules
+git clone --recursive https://github.com/DVC-Viking-Robotics/webapp
+cd webapp
 
-Flask==1.0.2
-Flask-SocketIO==3.3.1
-gevent==1.4.0
-gevent-websocket==0.10.1
-greenlet==0.4.15
-itsdangerous==1.1.0
-Jinja2==2.10
-MarkupSafe==1.1.1
-python-engineio==3.4.3
-python-socketio==3.1.2
-six==1.12.0
+# Prepare the virtual environment
+python3 -m venv env
+source env/bin/activate
+pip3 install -r requirements.txt
+```
 
-How to install:
-git clone <this repo>
+On the Raspberry Pi, you'll need to install the `picamera` module via `apt`:
+```bash
+sudo apt-get install python3-picamera
+```
 
-How to Run:
-  on a Raspberry pi:
-  python3 runserver.py [cmd args]
-  
-  if on windows and only python V3+ is install:
-  python runserver.py
+## Running the server
+```bash
+python3 -m webapp.app [cmd args]
+```
