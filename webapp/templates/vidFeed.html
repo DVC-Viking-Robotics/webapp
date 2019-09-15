@@ -1,15 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
-<h2>{{ title }}</h2>
 <h3>{{ message }}</h3>
 <script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
-<script type="text/javascript">
-var socket = io.connect({transports: ['websocket']});
-</script>
+<script type="text/javascript">var socket = io.connect({transports: ['websocket']});</script>
 <img id="video"></img>
-
 <script type='text/javascript' src="../static/scripts/camera.js"></script>
-
 {% endblock %}
