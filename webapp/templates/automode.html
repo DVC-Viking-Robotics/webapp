@@ -1,39 +1,47 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="../static/css/maps.css" />
-<div id="floating-panel">
-  <input onclick="clearMarkers();" type=button value="Hide Markers">
-  <input onclick="showMarkers();" type=button value="Show All Markers">
-  <input onclick="deleteMarkers();" type=button value="Delete Markers">
-  <input onclick="latPlus();" type=button value="LAT++">
-  <input onclick="latMinus();" type=button value="LAT--">
-  <input onclick="lngPlus();" type=button value="LNG++">
-  <input onclick="lngMinus();" type=button value="LNG--">
-</div>
-<div id="map"></div>
-<script type="text/javascript" src="/static/scripts/libs/socket.io.min.js"></script>
-<script type="text/javascript">var socket = io.connect({transports: ['websocket']});</script>
+<link rel="stylesheet" type="text/css" href="/static/css/maps.css">
 
-<p>Click on the map to add markers.</p>
-<!-- <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script> -->
-<button type="button" id="GoButt" onclick="dumpMarkers(true);">Go go Gadget Robot</button>
-<table width = "90%" align = "center">
-  <tr width = "40%">
-    <td width = "20%">
-      <h3>Coordinates</h3>
-        <div id="gps" style="background-color: antiquewhite">1, 4, 7</div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <h3>Compass</h3>
-      <div id="compass" style="background-color: antiquewhite">3</div>
-    </td>
-  </tr>
-</table>
+<script type="text/javascript" src="/static/scripts/libs/socket.io.min.js"></script>
+<script type="text/javascript">var socket = io.connect({ transports: ['websocket'] });</script>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Autonomous Mode</h1>
+
+        <div id="floating-top-panel">
+            <button class="button is-warning" onclick="clearMarkers()">Hide Markers</button>
+            <button class="button is-success" onclick="showMarkers()">Show All Markers</button>
+            <button class="button is-danger" onclick="deleteMarkers()">Delete Markers</button>
+            <button class="button is-info" onclick="latPlus()">LAT++</button>
+            <button class="button is-info" onclick="latMinus()">LAT--</button>
+            <button class="button is-info" onclick="lngPlus()">LNG++</button>
+            <button class="button is-info" onclick="lngMinus()">LNG--</button>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="floating-bottom-panel">
+            <!-- <p>Click on the map to add markers.</p> -->
+            <button class="button is-success" onclick="dumpMarkers(true);">Go Go Gadget Robot</button>
+            <table class="table is-bordered is-narrow">
+                <tr>
+                    <td>
+                        <p class="has-text-centered">Coordinates</p>
+                        <div id="gps" class="has-text-centered">N/A</div>
+                    </td>
+                    <td>
+                        <p class="has-text-centered">Compass</p>
+                        <div id="compass" class="has-text-centered">0&deg;</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
 
 <script type='text/javascript' src="../static/scripts/maps-api.js"></script>
-<script type='text/javascript' src="../static/scripts/sensor_data.js"></script>
+<script type='text/javascript' src="../static/scripts/sensor-data.js"></script>
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script>
 {% endblock %}

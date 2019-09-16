@@ -6,8 +6,11 @@ var ground0 = { lat: 37.96713657090229, lng: -122.0712176165581 };
 var markers = [];
 var robotMarker;
 var dLat = 0.00001, dLng = 0.00001;
+var uPos, rPos;
 
 var enableSockets = false;
+
+var txtGps = document.getElementById('gps');
 
 function printMarkers() {
     for (var i = 0; i < markers.length; i++) {
@@ -25,20 +28,19 @@ function setInitialMarkers() {
 
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(showYourPosition);
     }
 }
 
-function showPosition(position) {
+function showYourPosition(position) {
     uPos = { lat: position.coords.latitude, lng: position.coords.longitude };
-    updateGPSReadout();
+    // updateGPSReadout(uPos);
     addMarker(uPos, false, "You", false);
 }
 
 // gets your GPS location and updates '#gps' element
-function updateGPSReadout() {
-    txtGps = document.getElementById('gps');
-    txtGps.innerHTML = '(' + uPos.lat.toFixed(5) + ', ' + uPos.lng.toFixed(5) + ')';
+function updateGPSReadout(pos) {
+    txtGps.innerHTML = '(' + pos.lat.toFixed(5) + ', ' + pos.lng.toFixed(5) + ')';
 }
 
 function initMap() {
