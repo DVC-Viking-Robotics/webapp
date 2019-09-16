@@ -2,7 +2,7 @@
 This script runs the flask_controller application using a development server.
 """
 from flask import Flask
-from .constants import ALL_PAGES, NUM_ROWS
+from .pages_config import ALL_PAGES, NUM_ROWS
 from .routes import blueprint
 from .users import login_manager
 from .sockets import socketio, cmd, d, nav, IMUsensor
@@ -16,7 +16,6 @@ app.register_blueprint(blueprint)
 login_manager.init_app(app)
 socketio.init_app(app)
 
-# TODO: figure out a cleaner way to inject all constants
 @app.context_processor
 def inject_constants():
     return dict(

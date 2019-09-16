@@ -38,49 +38,33 @@ def logout():
 @blueprint.route('/home')
 @login_required
 def home():
-    """Renders the home page."""
-    return render_template(
-        'home.html',
-        title='Home')
+    return render_template('home.html', title='Home')
 
 @blueprint.route('/remote')
 @login_required
 def remote():
-    """Renders the remote control page."""
-    return render_template(
-        'remote.html',
-        title='Remote Control')
+    return render_template('remote.html', title='Remote Control')
 
 @blueprint.route('/camera')
 @login_required
 def camera():
-    """Renders the camera page."""
-    return render_template(
-        'camera.html',
-        title='Live Camera feed',
-        message='straight from the Robot!'
-    )
+    return render_template('camera.html', title='Live Camera feed')
+
+@blueprint.route('/sensors')
+@login_required
+def sensors():
+    return render_template('sensors.html', title='Sensor Dashboard')
 
 @blueprint.route('/automode')
 @login_required
 def automode():
-    """Google maps API with coordinate selection for auto mode."""
-    return render_template(
-        'automode.html',
-        title='Autonomous Navigation',
-        message='Autonomous Nav Mode'
-    )
+    return render_template('automode.html', title='Autonomous Navigation')
 
 @blueprint.route('/settings')
 @login_required
 def settings_page():
-    """Renders the settings page."""
     return render_template('settings.html', title='Settings')
 
 @blueprint.route('/about')
 def about():
-    """Renders the about page."""
-    return render_template(
-        'about.html',
-        title='About this project:',
-    )
+    return render_template('about.html', title='About this project')

@@ -9,7 +9,7 @@
                 <div class="tile">
                     {% for page in ALL_PAGES %}
                     {% if not page.metapage and page.rowLocation == row %}
-                    <div class="tile is-parent" id="tile-{{page.id}}">
+                    <div class="tile is-parent" id="tile-{{page.tile_id}}" onclick="window.location.href = '/{{page.route}}'">
                         <article class="tile is-child notification is-info">
                             <p class="title">{{page.title}}</p>
                             <p class="subtitle">{{page.description}}</p>

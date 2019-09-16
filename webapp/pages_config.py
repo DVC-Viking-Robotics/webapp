@@ -1,6 +1,8 @@
+from flask import Blueprint, render_template
+
 from collections import namedtuple
 
-Page = namedtuple('Page', 'title route metapage rowLocation id description image');
+Page = namedtuple('Page', 'title route metapage rowLocation tile_id description image');
 
 # The last 4 fields don't need explicit values if 'metapage' is True
 Page.__new__.__defaults__ = ('', '', '', -1);
@@ -18,7 +20,7 @@ ALL_PAGES = [
         route="remote",
         metapage=False,
         rowLocation=0,
-        id="remote-control",
+        tile_id="remote-control",
         description="Control the robot remotely!",
         image="joystick"
     ),
@@ -27,7 +29,7 @@ ALL_PAGES = [
         route="camera",
         metapage=False,
         rowLocation=0,
-        id="camera",
+        tile_id="camera",
         description="Access the robot's camera feed!",
         image="camera"
     ),
@@ -36,7 +38,7 @@ ALL_PAGES = [
         route="sensors",
         metapage=False,
         rowLocation=0,
-        id="sensor-dashboard",
+        tile_id="sensor-dashboard",
         description="View the robot's sensor data!",
         image="dashboard"
     ),
@@ -45,7 +47,7 @@ ALL_PAGES = [
         route="automode",
         metapage=False,
         rowLocation=1,
-        id="automode",
+        tile_id="automode",
         description="Manage the robot's autonomous capabilities!",
         image="smart-brain"
     ),
@@ -54,7 +56,7 @@ ALL_PAGES = [
         route="terminal",
         metapage=False,
         rowLocation=1,
-        id="terminal-io",
+        tile_id="terminal-io",
         description="Access the robot's terminal remotely!",
         image="dev-computer"
     ),
@@ -63,12 +65,12 @@ ALL_PAGES = [
         route="settings",
         metapage=False,
         rowLocation=1,
-        id="settings",
+        tile_id="settings",
         description="Configure the robot's settings!",
         image="settings"
     ),
     Page(
-        title="About",
+        title="About this project",
         route="about",
         metapage=True
     )
