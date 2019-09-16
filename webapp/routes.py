@@ -43,12 +43,12 @@ def remote():
         'remote.html',
         title='Remote Control')
 
-@blueprint.route('/vidFeed')
+@blueprint.route('/camera')
 @login_required
-def vidFeed():
+def camera():
     """Renders the camera page."""
     return render_template(
-        'vidFeed.html',
+        'camera.html',
         title='Live Camera feed',
         message='straight from the Robot!'
     )
