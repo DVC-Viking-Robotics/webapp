@@ -3,8 +3,8 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="/static/css/maps.css">
 
-<script type="text/javascript" src="/static/scripts/libs/socket.io.min.js"></script>
-<script type="text/javascript">var socket = io.connect({ transports: ['websocket'] });</script>
+<script src="/static/scripts/libs/socket.io.min.js"></script>
+<script>var socket = io.connect({ transports: ['websocket'] });</script>
 
 <section class="section">
     <div class="container">
@@ -41,7 +41,7 @@
     </div>
 </section>
 
-<script type='text/javascript' src="../static/scripts/maps-api.js"></script>
-<script type='text/javascript' src="../static/scripts/sensor-data.js"></script>
+<script src="../static/scripts/maps-api.js"></script>
+<script src="../static/scripts/sensor-data.js"></script>
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script>
 {% endblock %}

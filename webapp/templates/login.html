@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>LIRC - Linux Infrared Remote Control</title>
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/bulma.min.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/bulma-divider.min.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/all.css">
@@ -19,7 +19,7 @@
                 {% for category, message in messages %}
                     {% set category = category.replace('message', 'info') %}
                     {% set category = category.replace('error', 'danger') %}
-                <div class="notification is-{{ category }}">
+                <div class="custom-notification is-{{ category }}">
                     <span class="icon is-pulled-left has-text-black">
                         {% if category.find('danger') >= 0 %}
                         <i class="fas fa-ban"></i>

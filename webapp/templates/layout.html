@@ -10,9 +10,8 @@
         <link rel="stylesheet" type="text/css" href="/static/css/bulma-quickview.min.css">
         <link rel="stylesheet" type="text/css" href="/static/css/site.css">
         <link rel="shortcut icon" href="/static/images/viking.png">
-        <script type="text/javascript" defer src="/static/scripts/libs/fontawesome-all.min.js"></script>
-        <!-- <link rel="stylesheet" type="text/css" href="/static/css/all.css"> -->
-        <!-- <link rel="shortcut icon" href="static/rpi-logo.ico" /> -->
+        <script defer src="/static/scripts/libs/fontawesome-all.min.js"></script>
+
         <style>
             .sidenav-button {
                 border-radius: 0px;
@@ -21,7 +20,7 @@
     </head>
 
     <body class="has-background-black-ter">
-        <div id="sidenav-bulma" class="quickview is-left">
+        <div id="sidenav" class="quickview is-left">
             <header class="quickview-header is-dark">
                 <p class="title">Main Menu</p>
                 <span class="delete has-background-danger is-outlined is-large is-pulled-right" data-dismiss="quickview"></span>
@@ -50,17 +49,17 @@
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <div class="navbar-item">
-                        <button id="ham" class="button is-success is-outlined" data-show="quickview" data-target="sidenav-bulma">&#9776;</button>
+                        <button class="button is-success is-outlined" data-show="quickview" data-target="sidenav">&#9776;</button>
                     </div>
 
-                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="webappNavbar">
+                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="top-navbar">
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                     </a>
                 </div>
 
-                <div id="webappNavbar" class="navbar-menu">
+                <div id="top-navbar" class="navbar-menu">
                     <div class="navbar-start">
                         {% for route in ALL_ROUTES %}
                         <a class="navbar-item" href="{{route.link}}">{{route.title}}</a>
@@ -86,7 +85,7 @@
                     {% for category, message in messages %}
                     {% set category = category.replace('message', 'info') %}
                     {% set category = category.replace('error', 'danger') %}
-                    <div class="notification is-{{ category }}">
+                    <div class="custom-notification is-{{ category }}">
                         <span class="icon is-pulled-left has-text-black">
                             {% if category.find('danger') >= 0 %}
                             <i class="fas fa-ban"></i>
@@ -110,7 +109,7 @@
         <script src="/static/scripts/navbar-mobile.js"></script>
         <script src="/static/scripts/libs/bulma-quickview.min.js"></script>
 
-        <script type="text/javascript">bulmaQuickview.attach();</script>
+        <script>bulmaQuickview.attach();</script>
     </body>
 
 </html>
