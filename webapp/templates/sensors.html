@@ -63,6 +63,11 @@
                 </div>
             </div>
         </div>
+
+        <div id="robot-view">
+            <!-- TODO: Implement the robot view for the sensor dashboard -->
+            <p class="title">The robot view is still a work in progress. Please be patient!</p>
+        </div>
     </div>
 </section>
 
@@ -76,50 +81,5 @@
 <script src="/static/scripts/chartjs/gyro-charts.js"></script>
 <script src="/static/scripts/chartjs/mag-charts.js"></script>
 
-<script>
-    function toggleView(viewType) {
-        var btnRobotView = document.getElementById('btn-robot-view');
-        var btnRawDataView = document.getElementById('btn-raw-data');
-
-        // var robotView = document.getElementById('');
-        var rawDataView = document.getElementById('raw-data-view');
-
-        switch (viewType) {
-            case 'robot-view':
-                btnRobotView.classList.add('is-info');
-                btnRawDataView.classList.remove('is-link');
-
-                rawDataView.style.visibility = 'hidden';
-                break;
-            case 'raw-data':
-                btnRobotView.classList.remove('is-info');
-                btnRawDataView.classList.add('is-link');
-
-                rawDataView.style.visibility = 'visible';
-                break;
-        }
-    }
-
-    toggleView('raw-data');
-</script>
-
-<script>
-    var accelLineCtx = document.getElementById('accelerometer-line-chart').getContext('2d');
-    var accelLineChart = new Chart(accelLineCtx, configAccelLineChart);
-
-    var accelBarCtx = document.getElementById('accelerometer-bar-chart').getContext('2d');
-    var accelBarChart = new Chart(accelBarCtx, configAccelBarChart);
-
-    var gyroLineCtx = document.getElementById('gyroscope-line-chart').getContext('2d');
-    var gyroLineChart = new Chart(gyroLineCtx, configGyroLineChart);
-
-    var gyroBarCtx = document.getElementById('gyroscope-bar-chart').getContext('2d');
-    var gyroBarChart = new Chart(gyroBarCtx, configGyroBarChart);
-
-    var magLineCtx = document.getElementById('magnetometer-line-chart').getContext('2d');
-    var magLineChart = new Chart(magLineCtx, configMagLineChart);
-
-    var magBarCtx = document.getElementById('magnetometer-bar-chart').getContext('2d');
-    var magBarChart = new Chart(magBarCtx, configMagBarChart);
-</script>
+<script src="/static/scripts/sensor-charts.js"></script>
 {% endblock %}
