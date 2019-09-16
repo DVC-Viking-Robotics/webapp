@@ -1,46 +1,91 @@
 ﻿<!DOCTYPE html>
 <html>
+
     <head>
-        <meta charset="utf-8" />
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Remote Control Your Robot</title>
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/all.css">
-        <link rel="shortcut icon" href="static/raspberry-pi-robot.ico" />
+        <title>{{ title }}</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/bulma.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bulmaswatch-darkly.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bulma-quickview.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/site.css">
+        <link rel="shortcut icon" href="/static/images/viking.png">
+        <script type="text/javascript" defer src="/static/scripts/libs/fontawesome-all.min.js"></script>
+        <!-- <link rel="stylesheet" type="text/css" href="/static/css/all.css"> -->
+        <!-- <link rel="shortcut icon" href="static/rpi-logo.ico" /> -->
+        <style>
+            .sidenav-button {
+                border-radius: 0px;
+            }
+        </style>
     </head>
+
     <body class="has-background-black-ter">
-        <div id="sidenav" class="sidenav">
-            <button class="delete has-background-danger is-outlined is-large is-pulled-right" onclick="closeNav()"></button>
-            <a href="/settings/user">My preferences</a>
-            <div class="favs">
-                {% for r in current_user.remotes %}
-                <a href={{r.link}}>{{r.name}}</a>
-                {% endfor %}
-                <a href="/remote"><li>Remote Control</li></a>
-                <a href="/vidFeed"><li>Camera</li></a>
-                <a href="/automode"><li>Autonomous Navigation</li></a>
+        <div id="sidenav-bulma" class="quickview is-left">
+            <header class="quickview-header is-dark">
+                <p class="title">Main Menu</p>
+                <span class="delete has-background-danger is-outlined is-large is-pulled-right" data-dismiss="quickview"></span>
+            </header>
+
+            <div class="quickview-body is-dark">
+                <div class="quickview-block">
+                    <a class="button is-medium is-fullwidth sidenav-button" href="/settings/user">My preferences</a>
+                    <div class="favs">
+                        {% for r in current_user.remotes %}
+                        <a href={{r.link}}>{{r.name}}</a>
+                        {% endfor %}
+
+                        {% for route in ALL_ROUTES %}
+                        <a class="button is-medium is-primary is-fullwidth sidenav-button" href="{{route.link}}">{{route.title}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-            <a href="/settings">Settings</a>
-            <a href="/about">About</a>
+
+            <footer class="quickview-footer"></footer>
         </div>
 
         <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
         <div id="main">
-            <nav class="navbar is-dark is-marginless is-paddingless is-fullhd">
-                <div class="navbar-menu">
-                    <!-- <button id="ham" class="button is-success is-outlined" onclick="openNav()">&#9776;</button> -->
-                    <h3 class="has-text-white" style="padding: 10px;">{{ title }}</h3>
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <div class="navbar-item">
+                        <button id="ham" class="button is-success is-outlined" data-show="quickview" data-target="sidenav-bulma">&#9776;</button>
+                    </div>
+
+                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="webappNavbar">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+
+                <div id="webappNavbar" class="navbar-menu">
+                    <div class="navbar-start">
+                        {% for route in ALL_ROUTES %}
+                        <a class="navbar-item" href="{{route.link}}">{{route.title}}</a>
+                        {% endfor %}
+                    </div>
+
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a class="button is-dark"><strong>Sign up</strong></a>
+                                <a class="button is-light">Log in</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </nav>
+
             {% block content %}{% endblock %}
             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
+            {% if messages %}
             <div class="columns is-vertical is-centered is-overlay">
                 <div class="column is-narrow">
                     {% for category, message in messages %}
-                        {% set category = category.replace('message', 'info') %}
-                        {% set category = category.replace('error', 'danger') %}
+                    {% set category = category.replace('message', 'info') %}
+                    {% set category = category.replace('error', 'danger') %}
                     <div class="notification is-{{ category }}">
                         <span class="icon is-pulled-left has-text-black">
                             {% if category.find('danger') >= 0 %}
@@ -58,10 +103,14 @@
                     {% endfor %}
                 </div>
             </div>
-                {% endif %}
+            {% endif %}
             {% endwith %}
         </div>
 
-        <!-- <script src="/static/scripts/hamburger.js"></script> -->
+        <script src="/static/scripts/navbar-mobile.js"></script>
+        <script src="/static/scripts/libs/bulma-quickview.min.js"></script>
+
+        <script type="text/javascript">bulmaQuickview.attach();</script>
     </body>
+
 </html>

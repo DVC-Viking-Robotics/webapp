@@ -1,56 +1,3 @@
-
-/* body {
-  width: 100%;
-  height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-p {
- color: #ffffff;
-} */
-
-/* .menu {
-  z-index: 1000000;
-  font-weight: bold;
-  font-size: 0.8em;
-  color: #ffffff;
-  width: 100%;
-  background: #2a2a2a;
-  position: absolute;
-  text-align: center;
-  font-size: 12px;
-} */
-
-/* The side navigation menu */
-.sidenav {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #043692;
-  overflow-x: hidden;
-  padding-top: 10px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-/* The navigation menu links */
-.sidenav a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-}
-
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover, .checkbox:hover {
-  color: #fafafa;
-}
-
 /* favorites list attributes */
 .favs {
   overflow: auto;
@@ -61,12 +8,6 @@ p {
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 #main {
   transition: margin-left .5s;
-}
-
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
 }
 
 /* Add Zoom Animation */
