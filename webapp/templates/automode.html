@@ -12,11 +12,11 @@
   <input onclick="lngMinus();" type=button value="LNG--">
 </div>
 <div id="map"></div>
-<script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
+<script type="text/javascript" src="/static/scripts/libs/socket.io.min.js"></script>
 <script type="text/javascript">var socket = io.connect({transports: ['websocket']});</script>
-<script type='text/javascript' src="../static/scripts/MapsAPI.js"></script>
+
 <p>Click on the map to add markers.</p>
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script>
+<!-- <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script> -->
 <button type="button" id="GoButt" onclick="dumpMarkers(true);">Go go Gadget Robot</button>
 <table width = "90%" align = "center">
   <tr width = "40%">
@@ -32,5 +32,8 @@
     </td>
   </tr>
 </table>
+
+<script type='text/javascript' src="../static/scripts/maps-api.js"></script>
 <script type='text/javascript' src="../static/scripts/sensor_data.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script>
 {% endblock %}

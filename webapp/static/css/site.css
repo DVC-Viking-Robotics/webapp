@@ -1,5 +1,5 @@
 
-body {
+/* body {
   width: 100%;
   height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -8,7 +8,19 @@ body {
 
 p {
  color: #ffffff;
-}
+} */
+
+/* .menu {
+  z-index: 1000000;
+  font-weight: bold;
+  font-size: 0.8em;
+  color: #ffffff;
+  width: 100%;
+  background: #2a2a2a;
+  position: absolute;
+  text-align: center;
+  font-size: 12px;
+} */
 
 /* The side navigation menu */
 .sidenav {

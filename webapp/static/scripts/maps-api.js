@@ -4,6 +4,7 @@
 var map;
 var ground0 = { lat: 37.96713657090229, lng: -122.0712176165581 };
 var markers = [];
+var robotMarker;
 var dLat = 0.00001, dLng = 0.00001;
 
 var enableSockets = false;
@@ -16,7 +17,7 @@ function printMarkers() {
 
 function setInitialMarkers() {
     // Adds a marker at the center of the map.
-    addMarker(ground0, false, "Robot", false);
+    robotMarker = addMarker(ground0, false, "Robot", false);
 
     // ask's to Add your locaction to the map
     getLocation();
@@ -57,17 +58,20 @@ function initMap() {
 
 // Adds a marker to the map and push to the array.
 function addMarker(location, canDrag, label, addToArray) {
-    if (label === null) {
+    if (label === null)
         label = String.fromCharCode(65 + markers.length);
-    }
+
     var marker = new google.maps.Marker({
         position: location,
         map: map,
         draggable: canDrag,
         label: label
     });
+
     if (addToArray === true)
         markers.push(marker);
+
+    return marker;
 }
 
 // Sets the map on all markers in the array.
