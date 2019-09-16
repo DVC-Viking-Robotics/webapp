@@ -128,7 +128,7 @@ def handle_webcam_request():
 
         b64 = base64.b64encode(buffer)
         print('webcam buffer in bytes:', len(b64))
-        emit('webcam-response', base64.b64encode(buffer))
+        emit('webcam-response', b64)
 
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):
