@@ -34,8 +34,8 @@
                         <a href={{r.link}}>{{r.name}}</a>
                         {% endfor %}
 
-                        {% for route in ALL_ROUTES %}
-                        <a class="button is-medium is-primary is-fullwidth sidenav-button" href="{{route.link}}">{{route.title}}</a>
+                        {% for page in ALL_PAGES %}
+                        <a class="button is-medium is-primary is-fullwidth sidenav-button" href="{{page.route}}">{{page.title}}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -61,8 +61,8 @@
 
                 <div id="top-navbar" class="navbar-menu">
                     <div class="navbar-start">
-                        {% for route in ALL_ROUTES %}
-                        <a class="navbar-item" href="{{route.link}}">{{route.title}}</a>
+                        {% for page in ALL_PAGES %}
+                        <a class="navbar-item" href="{{page.route}}">{{page.title}}</a>
                         {% endfor %}
                     </div>
 

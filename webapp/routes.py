@@ -35,6 +35,14 @@ def logout():
     return redirect("login")
 
 @blueprint.route('/')
+@blueprint.route('/home')
+@login_required
+def home():
+    """Renders the home page."""
+    return render_template(
+        'home.html',
+        title='Home')
+
 @blueprint.route('/remote')
 @login_required
 def remote():
