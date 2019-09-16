@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
@@ -10,8 +10,6 @@
         <link rel="shortcut icon" href="static/raspberry-pi-robot.ico" />
     </head>
     <body class="has-background-black-ter">
-        <script src="/static/scripts/hamburger.js"></script>
-
         <div id="sidenav" class="sidenav">
             <button class="delete has-background-danger is-outlined is-large is-pulled-right" onclick="closeNav()"></button>
             <a href="/settings/user">My preferences</a>
@@ -31,7 +29,7 @@
         <div id="main">
             <nav class="navbar is-dark is-marginless is-paddingless is-fullhd">
                 <div class="navbar-menu">
-                    <button id="ham" class="button is-success is-outlined" onclick="openNav()">&#9776;</button>
+                    <!-- <button id="ham" class="button is-success is-outlined" onclick="openNav()">&#9776;</button> -->
                     <h3 class="has-text-white" style="padding: 10px;">{{ title }}</h3>
                 </div>
             </nav>
@@ -63,5 +61,7 @@
                 {% endif %}
             {% endwith %}
         </div>
+
+        <!-- <script src="/static/scripts/hamburger.js"></script> -->
     </body>
 </html>
