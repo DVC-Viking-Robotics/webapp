@@ -23,15 +23,15 @@
         <div id="sidenav" class="quickview is-left">
             <header class="quickview-header is-dark">
                 <p class="title">Main Menu</p>
-                <span class="delete has-background-danger is-outlined is-large is-pulled-right" data-dismiss="quickview"></span>
+                <span class="delete has-background-danger is-outlined is-medium is-pulled-right" data-dismiss="quickview"></span>
             </header>
 
             <div class="quickview-body is-dark">
                 <div class="quickview-block">
                     <a class="button is-medium is-fullwidth sidenav-button" href="/settings/user">My preferences</a>
                     <div class="favs">
-                        {% for r in current_user.remotes %}
-                        <a href={{r.link}}>{{r.name}}</a>
+                        {% for remote in current_user.remotes %}
+                        <a href={{remote.link}}>{{remote.name}}</a>
                         {% endfor %}
 
                         {% for page in ALL_PAGES %}
