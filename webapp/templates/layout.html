@@ -19,6 +19,10 @@
             .sidenav-button {
                 border-radius: 0px;
             }
+
+            .notification:not(:last-child).dropdown-item {
+                margin-bottom: 0.5em;
+            }
         </style>
     </head>
 
@@ -100,26 +104,41 @@
                         <div class="navbar-item">
                             <div class="buttons">
                                 {% if current_user.is_authenticated %}
+
+                                <!-- Connect notifications with 'robot events' via a list-->
                                 <!-- NOTE: Use '[data-badge]::after' to control badge visibility -->
-                                <a class="button is-medium is-primary has-badge-rounded has-badge-danger has-badge-right" data-badge='3'>
-                                    <span class="icon">
-                                        <i class="fas fa-bell fa-lg"></i>
-                                    </span>
-                                </a>
+                                <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
+                                    <div class="dropdown-trigger">
+                                        <a class="button is-medium is-primary has-badge-rounded has-badge-danger has-badge-right" data-badge="3" aria-haspopup="true" aria-controls="notif-dropdown-menu">
+                                            <span class="icon">
+                                                <i class="fas fa-bell fa-lg"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <div class="dropdown-menu" id="notif-dropdown-menu" role="menu">
+                                        <div class="dropdown-content" id="notification-stack">
+                                            <div class="notification dropdown-item"><button class="delete"></button>Example Notification 1</div>
+                                            <div class="notification dropdown-item"><button class="delete"></button>Example Notification 2</div>
+                                            <div class="notification dropdown-item"><button class="delete"></button>Example Notification 3</div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
                                     <div class="dropdown-trigger">
-                                        <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="dropdown-menu">
+                                        <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="user-dropdown-menu">
                                             <span class="icon">
                                                 <i class="fas fa-user fa-lg"></i>
                                             </span>
                                         </a>
                                     </div>
 
-                                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                    <!-- TODO: Connect user object with dropdown menu -->
+                                    <div class="dropdown-menu" id="user-dropdown-menu" role="menu">
                                         <div class="dropdown-content">
                                             <a class="dropdown-item">View Profile</a>
-                                            <a class="dropdown-item is-dark">Edit Preferences</a>
+                                            <a class="dropdown-item">Edit Preferences</a>
                                             <hr class="dropdown-divider">
                                             <a href="/logout" class="dropdown-item">Log Out</a>
                                         </div>
@@ -139,6 +158,7 @@
         </div>
 
         <script src="/static/scripts/navbar-mobile.js"></script>
+        <script src="/static/scripts/delete-notif.js"></script>
         <script src="/static/scripts/libs/bulma-quickview.min.js"></script>
 
         <script>
