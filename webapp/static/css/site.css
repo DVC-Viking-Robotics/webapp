@@ -21,7 +21,7 @@
   to {-webkit-transform: scale(1)}
 }
 
-.custom-notification {
+.fading-notification {
   animation: fadeout 3s ease-in;
   animation-delay: 2s;
   -webkit-animation: fadeout 3s ease-in;

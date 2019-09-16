@@ -25,7 +25,7 @@ def login():
                     flash('Logged in successfully.', 'success')
                     return redirect('remote')
             else:
-                flash('username, {}, does not exist!'.format(user_name), 'error')
+                flash('Username "{}" does not exist!'.format(user_name), 'error')
     return render_template('login.html')
 
 @blueprint.route("/logout")

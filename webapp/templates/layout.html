@@ -22,7 +22,34 @@
         </style>
     </head>
 
-    <body class="has-background-black-ter">
+    <body>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="columns is-vertical is-centered is-overlay">
+            <div class="column is-narrow">
+                {% for category, message in messages %}
+                {% set category = category.replace('message', 'info') %}
+                {% set category = category.replace('error', 'danger') %}
+                <div class="notification fading-notification is-{{ category }}">
+                    <span class="icon is-pulled-left has-text-black">
+                        {% if category.find('danger') >= 0 %}
+                        <i class="fas fa-ban"></i>
+                        {% elif category.find('warning') >= 0 %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% elif category.find('info') >= 0 %}
+                        <i class="fas fa-info-circle"></i>
+                        {% elif category.find('success') >= 0 %}
+                        <i class="fas fa-thumbs-up"></i>
+                        {% endif %}
+                    </span>
+                    <p class="has-text-black"><strong>{{ message }}</strong></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <div id="sidenav" class="quickview is-left">
             <header class="quickview-header is-dark">
                 <p class="title">Main Menu</p>
@@ -109,49 +136,22 @@
             </nav>
 
             {% block content %}{% endblock %}
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class="columns is-vertical is-centered is-overlay">
-                <div class="column is-narrow">
-                    {% for category, message in messages %}
-                    {% set category = category.replace('message', 'info') %}
-                    {% set category = category.replace('error', 'danger') %}
-                    <div class="custom-notification is-{{ category }}">
-                        <span class="icon is-pulled-left has-text-black">
-                            {% if category.find('danger') >= 0 %}
-                            <i class="fas fa-ban"></i>
-                            {% elif category.find('warning') >= 0 %}
-                            <i class="fas fa-exclamation-triangle"></i>
-                            {% elif category.find('info') >= 0 %}
-                            <i class="fas fa-info-circle"></i>
-                            {% elif category.find('success') >= 0 %}
-                            <i class="fas fa-thumbs-up"></i>
-                            {% endif %}
-                        </span>
-                        <p class="has-text-black"><strong>{{ message }}</strong></p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-            {% endwith %}
         </div>
 
         <script src="/static/scripts/navbar-mobile.js"></script>
         <script src="/static/scripts/libs/bulma-quickview.min.js"></script>
 
         <script>
-        var dropdownItems = document.getElementsByClassName('dropdown-item');
-        for (var dItem of dropdownItems) {
-            dItem.onmouseenter = function() {
-                this.classList.add('is-active');
-            }
+            var dropdownItems = document.getElementsByClassName('dropdown-item');
+            for (var dItem of dropdownItems) {
+                dItem.onmouseenter = function () {
+                    this.classList.add('is-active');
+                }
 
-            dItem.onmouseleave = function() {
-                this.classList.remove('is-active');
+                dItem.onmouseleave = function () {
+                    this.classList.remove('is-active');
+                }
             }
-        }
         </script>
 
         <script>bulmaQuickview.attach();</script>
