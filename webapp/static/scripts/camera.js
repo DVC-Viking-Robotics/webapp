@@ -1,4 +1,4 @@
-var video = document.getElementById("video");
+var stream = document.getElementById("camera-stream");
 
 socket.on('error', (error) => {
     console.log('Socket error:', error)
@@ -13,7 +13,7 @@ socket.on('disconnect', function() {
 // Used to receive the live feed from the raspberry pi
 socket.on('webcam-response', function(img_data) {
     var dec = new TextDecoder("utf-8");
-    video.src = "data:image/jpeg;base64," + dec.decode(img_data);
+    stream.src = "data:image/jpeg;base64," + dec.decode(img_data);
 });
 
 // Webcam request loop

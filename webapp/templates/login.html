@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>LIRC - Linux Infrared Remote Control</title>
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma-divider.min.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/site.css" />
-        <link rel="stylesheet" type="text/css" href="/static/css/all.css">
-        <link rel="shortcut icon" href="static/raspberry-pi-robot.ico" />
 
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+
+        <link rel="stylesheet" type="text/css" href="/static/css/bulma.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bulmaswatch-darkly.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bulma-divider.min.css">
+
+        <link rel="stylesheet" type="text/css" href="/static/css/site.css">
+        <link rel="shortcut icon" href="/static/images/viking.png">
+        <script defer src="/static/scripts/libs/fontawesome-all.min.js"></script>
     </head>
-    <body class="has-background-black-ter">
+
+    <!-- TODO: Add more content to login page -->
+    <body>
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
+        {% if messages %}
         <div class="columns is-vertical is-centered is-overlay">
             <div class="column is-narrow">
                 {% for category, message in messages %}
-                    {% set category = category.replace('message', 'info') %}
-                    {% set category = category.replace('error', 'danger') %}
-                <div class="notification is-{{ category }}">
+                {% set category = category.replace('message', 'info') %}
+                {% set category = category.replace('error', 'danger') %}
+                <div class="notification fading-notification is-{{ category }}">
                     <span class="icon is-pulled-left has-text-black">
                         {% if category.find('danger') >= 0 %}
                         <i class="fas fa-ban"></i>
@@ -36,30 +41,32 @@
                 {% endfor %}
             </div>
         </div>
-            {% endif %}
+        {% endif %}
         {% endwith %}
+
         <p style="text-align:center; padding-top:15px;">An account is needed to save your remotes and preferences. No personal information is used online.</p>
         <div class="columns is-vcentered">
             <div class="column" style="text-align:center;">
-                <button class="button is-info is-medium is-outlined is-rounded" onclick="document.getElementById('getID').style.display='block'">Login</button>
+                <button class="button is-info is-medium is-outlined is-rounded" onclick="showView('login-user')">Login</button>
             </div>
             <div class="column">
                 <div class="is-divider-vertical is-white-ter" data-content="OR"></div>
             </div>
             <div class="column" style="text-align:center;">
-                <button class="button is-success is-medium is-outlined is-rounded" onclick="document.getElementById('makeID').style.display='block'">Create an account</button>
+                <button class="button is-success is-medium is-outlined is-rounded" onclick="showView('signup-user')">Create an account</button>
             </div>
         </div>
 
         <!-- The Modal -->
-        <div id="getID" class="modal">
-            <div onclick="document.getElementById('getID').style.display='none'" class="modal-background"></div>
+        <div id="login-user" class="modal">
+            <div onclick="hideView('login-user')" class="modal-background"></div>
             <div class="modal-card animate">
                 <form method="post">
                     <header class="modal-card-head has-background-grey-darker">
                         <h1 class="modal-card-title has-text-white">Sign In</h1>
-                        <button class="delete has-background-danger is-large" aria-label="close" onclick="document.getElementById('getID').style.display='none'"></button>
+                        <button class="delete is-danger is-large" aria-label="close" onclick="hideView('login-user')"></button>
                     </header>
+
                     <section class="modal-card-body has-background-black-ter has-text-white">
                         <label for="username"><b>Username</b></label>
                         <div class="control has-text-white has-icons-left">
@@ -69,8 +76,9 @@
                             </span>
                         </div>
                     </section>
+
                     <footer class="modal-card-foot has-background-grey-darker">
-                        <button type="button" onclick="document.getElementById('getID').style.display='none'" class="button is-danger is-rounded has-text-black">
+                        <button type="button" onclick="hideView('login-user')" class="button is-danger is-rounded has-text-black">
                             <strong>Cancel</strong>
                         </button>
                         <button type="submit" class="button is-success is-rounded has-text-black">
@@ -86,14 +94,15 @@
         </div>
 
         <!-- The Modal (contains the Sign Up form) -->
-        <div id="makeID" class="modal">
-            <div onclick="document.getElementById('makeID').style.display='none'" class="modal-background"></div>
+        <div id="signup-user" class="modal">
+            <div onclick="hideView('signup-user')" class="modal-background"></div>
             <div class="modal-card animate">
                 <form method="post">
                     <header class="modal-card-head has-background-grey-darker">
                         <h1 class="modal-card-title has-text-white">Sign Up</h1>
-                        <button class="delete has-background-danger is-large" aria-label="close" onclick="document.getElementById('makeID').style.display='none'"></button>
+                        <button class="delete has-background-danger is-large" aria-label="close" onclick="hideView('signup-user')"></button>
                     </header>
+
                     <section class="modal-card-body has-background-black-ter has-text-white">
                         <p>Please enter your unique name (nicknames are best).</p>
                         <label for="username"><b>Username</b></label>
@@ -105,8 +114,9 @@
                         </div>
                         <input type=hidden name="register" value="True">
                     </section>
+
                     <footer class="modal-card-foot has-background-grey-darker">
-                        <button type="button" onclick="document.getElementById('getID').style.display='none'" class="button is-danger is-rounded has-text-black">
+                        <button type="button" onclick="hideView('login-user')" class="button is-danger is-rounded has-text-black">
                             <strong>Cancel</strong>
                         </button>
                         <button type="submit" class="button is-success is-rounded has-text-black">
@@ -119,5 +129,16 @@
                 </form>
             </div>
         </div>
+
+        <script>
+            function showView(id) {
+                document.getElementById(id).style.display = 'block';
+            }
+
+            function hideView(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+        </script>
     </body>
+
 </html>

@@ -3,16 +3,17 @@ var ctx;
 var W;
 var H;
 var controller;
-var moving = [ false, false ];
+var moving = [false, false];
 var gamepads = {};
 
+var enableSockets = true;
 
 // socket.on('connect', function() {
 //     console.log('socket connected', socket.connected)
 // });
 
 // gather data from the controller object
-function getArgs(){
+function getArgs() {
     let result = [];
     /*
     // following comment block WAS used to return x,y in cartesian coordinates
@@ -50,20 +51,26 @@ function loop() {
     controller.draw();
     let args = getArgs();
     // establish a base case when there is no input event
-    if (moving[0] || moving[1]){
-        if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]){
-            socket.emit('remoteOut', args);
+    if (moving[0] || moving[1]) {
+        if (args[0] != prevArgs[0] || args[1] != prevArgs[1] || args[2] != prevArgs[2]) {
+            if (enableSockets)
+                socket.emit('remoteOut', args);
+            else
+                console.log('remoteOut', args);
         }
         prevArgs = args;
         window.requestAnimationFrame(loop);
     }
-    else{ // no input: set output data to idle
-        socket.emit('remoteOut', [0, 0, args[2]]);
-        prevArgs = [0, 0, args[2]];
+    else { // no input: set output data to idle
+        if (enableSockets)
+            socket.emit('remoteOut', [0, 0, 0]);
+        else
+            console.log('remoteOut', [0, 0, 0]);
+        prevArgs = [0, 0, 0];
     }
 }
 
-function resize(){
+function resize() {
     updateDimensions();
     ctx.clearRect(0, 0, W, H);
     controller.draw();
@@ -82,12 +89,12 @@ function initRemote() {
     controller = new Control();
     window.addEventListener("gamepadconnected", function (e) {
         console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-        e.gamepad.index, e.gamepad.id,
-        e.gamepad.buttons.length, e.gamepad.axes.length);
+            e.gamepad.index, e.gamepad.id,
+            e.gamepad.buttons.length, e.gamepad.axes.length);
     });
     window.addEventListener("gamepaddisconnected", function (e) {
         console.log("Gamepad disconnected from index %d: %s",
-        e.gamepad.index, e.gamepad.id);
+            e.gamepad.index, e.gamepad.id);
     });
     window.addEventListener('resize', resize);// when window is resized
     window.requestAnimationFrame(loop);
@@ -127,13 +134,10 @@ class Control {
             }
         }
         this.slider = {
-            x: (W > H ? W / 2 : 0) + 10,
-            y: 0,
-            height: 0,
-            length: W - (W > H ? W / 2 : 0),
+            x: 0, y: 0, height: 0, length: 0,
             color: "grey",
             stick: {
-                x: ((W > H ? W / 2 : 0) + 10) + (W - (W > H ? W / 2 : 0)) / 2,
+                x: 0, y: 0, radius: 0,
                 y: 0, radius: 0,
                 color: "#FF4500",
             },
@@ -141,7 +145,7 @@ class Control {
                 this.stick.x = Math.max(this.x, Math.min(this.stick.x, this.x + this.length));
                 ctx.strokeStyle = this.color;
                 ctx.beginPath();
-                ctx.lineCap = "round";
+                ctx.lineCap = "square";
                 ctx.lineWidth = this.height;
                 ctx.moveTo(this.x + this.height / 2, this.y);
                 ctx.lineTo(this.x + this.length - this.height / 2, this.y);
@@ -161,15 +165,15 @@ class Control {
         this.slider.x = (W > H ? W / 2 : 0) + 10;
         this.slider.y = W > H ? H / 2 : H * 3 / 4;
         this.slider.height = (W > H ? H : W) / 16;
-        this.slider.length = W - this.slider.x - 10;
+        this.slider.length = W - this.slider.x - 20;
         this.slider.stick.radius = this.slider.height * 0.75;
         if (!moving[0] && !moving[1]) {// when in idle only
-            // Move all joysticks and sliders back to idle position
-            this.joystick.stick.x = this.joystick.x;// move to 0
-            this.joystick.stick.y = this.joystick.y;// move to 0
-            this.slider.stick.x = this.slider.stick.x// move nowhere
-            // this.slider.stick.x = this.slider.x + this.slider.length / 2;// move to 0
-            this.slider.stick.y = this.slider.y;// move nowhere
+
+            //WHAT THE FUCK IS THIS MOVING ARRAY
+            this.joystick.stick.x = this.joystick.x;
+            this.joystick.stick.y = this.joystick.y;
+            this.slider.stick.x = this.slider.x + this.slider.length / 2;
+            this.slider.stick.y = this.slider.y;
         }
     }
     draw() {
@@ -188,7 +192,7 @@ function touchStart(e) {
 }
 
 function touchMove(e) {
-    if(moving[0]) getTouchPos(e);
+    if (moving[0]) getTouchPos(e);
     e.preventDefault();
 }
 
@@ -210,7 +214,7 @@ function getTouchPos(e) {
                     controller.joystick.stick.y = touchY;
                 }
                 else {
-                    controller.slider.stick.x = touchX;
+                    controller.slider.stick.x = touch.pageX - touch.target.offsetLeft
                 }
             }
         }
@@ -269,20 +273,20 @@ function getAxis() {
                 hasMovement = true;
 
             }
-/*             // show axes data
-            for (j = 0; j < gamepads[i].axes.length; j++) {
-                var temp = gamepads[i].axes[j];
-                if (temp > 0.025 || temp < -0.025) {
-                    console.log("gamepad[" + i + "], axis[" + j + "] = " + temp);
-                }
-            }
-            //show button presses (analog triggers have preset threshold)
-            for (j = 0; j < gamepads[i].buttons.length; j++) {
-                var temp = gamepads[i].buttons[j].pressed;
-                if (temp)
-                    console.log("gamepad[" + i + "], button[" + j + "] = " + temp);
-            }
-*/
+            /*             // show axes data
+                        for (j = 0; j < gamepads[i].axes.length; j++) {
+                            var temp = gamepads[i].axes[j];
+                            if (temp > 0.025 || temp < -0.025) {
+                                console.log("gamepad[" + i + "], axis[" + j + "] = " + temp);
+                            }
+                        }
+                        //show button presses (analog triggers have preset threshold)
+                        for (j = 0; j < gamepads[i].buttons.length; j++) {
+                            var temp = gamepads[i].buttons[j].pressed;
+                            if (temp)
+                                console.log("gamepad[" + i + "], button[" + j + "] = " + temp);
+                        }
+            */
         }
         if (hasMovement) {
             moving[1] = true;

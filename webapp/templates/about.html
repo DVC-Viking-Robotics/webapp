@@ -1,18 +1,19 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h3>{{ message }}</h3>
-<p>
-    Required python modules to install: <ul>flask</ul> <ul>flask-websocket</ul> <ul>eventlet (or gevent + gevent-websocket)</ul><br>All other code we wrote can be found on <a href="https://github.com/DVC-Viking-Robotics/webapp">GitHub</a>
-</p>
-<br>
-<p>
-    This website's Support: <a href="https://github.com/DVC-Viking-Robotics/webapp/issues">DVC Viking Robotics</a>
-    <br />
-    Marketing: Contact us! <a href="mailto:dvcrobotics@gmail.com">Diablo Valley Community College - Robotics Club</a>
-</p>
-<br>
-<p>
-    More information can be found at the <a href="dvcrobotics.tech">Project Website</a>
-</p>
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">About this project</h1>
+        <h4 class="subtitle is-4">This web app is designed to control Viking Robotics's MASCCOT robot.</h4>
+        <p>
+            This website's support: <a href="https://github.com/DVC-Viking-Robotics/webapp">DVC Viking Robotics</a>
+            <br />
+            Marketing: Contact us! <a href="mailto:dvcrobotics@gmail.com">Diablo Valley Community College - Robotics Club</a>
+        </p>
+
+        <p>
+            More information can be found at the <a href="dvcrobotics.tech">Project Website</a>
+        </p>
+    </div>
+</section>
 {% endblock %}

@@ -1,16 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
-<script type="text/javascript">var socket = io.connect({transports: ['websocket']});</script>
+<script src="/static/scripts/libs/socket.io.min.js"></script>
+<script>var socket = io.connect({ transports: ['websocket'] });</script>
 <div id="canvasContainer">
     <canvas id="canvas" width="200"></canvas>
 </div>
+
 <script src="/static/scripts/controller.js"></script>
-<!--
-<div id="printresults">
-    <p id="x-value">{{xvalue}}</p>
-</div>
--->
 <script>initRemote();</script>
 {% endblock %}

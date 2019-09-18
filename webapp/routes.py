@@ -25,7 +25,7 @@ def login():
                     flash('Logged in successfully.', 'success')
                     return redirect('remote')
             else:
-                flash('username, {}, does not exist!'.format(user_name), 'error')
+                flash('Username "{}" does not exist!'.format(user_name), 'error')
     return render_template('login.html')
 
 @blueprint.route("/logout")
@@ -35,44 +35,36 @@ def logout():
     return redirect("login")
 
 @blueprint.route('/')
+@blueprint.route('/home')
+@login_required
+def home():
+    return render_template('home.html', title='Home')
+
 @blueprint.route('/remote')
 @login_required
 def remote():
-    """Renders the remote control page."""
-    return render_template(
-        'remote.html',
-        title='Remote Control')
+    return render_template('remote.html', title='Remote Control')
 
-@blueprint.route('/vidFeed')
+@blueprint.route('/camera')
 @login_required
-def vidFeed():
-    """Renders the camera page."""
-    return render_template(
-        'vidFeed.html',
-        title='Live Camera feed',
-        message='straight from the Robot!'
-    )
+def camera():
+    return render_template('camera.html', title='Live Camera feed')
+
+@blueprint.route('/sensors')
+@login_required
+def sensors():
+    return render_template('sensors.html', title='Sensor Dashboard')
 
 @blueprint.route('/automode')
 @login_required
 def automode():
-    """Google maps API with coordinate selection for auto mode."""
-    return render_template(
-        'automode.html',
-        title='Autonomous Navigation',
-        message='Autonomous Nav Mode'
-    )
+    return render_template('automode.html', title='Autonomous Navigation')
 
 @blueprint.route('/settings')
 @login_required
 def settings_page():
-    """Renders the settings page."""
     return render_template('settings.html', title='Settings')
 
 @blueprint.route('/about')
 def about():
-    """Renders the about page."""
-    return render_template(
-        'about.html',
-        title='About this project:',
-    )
+    return render_template('about.html', title='About this project')

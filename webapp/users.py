@@ -38,7 +38,7 @@ class AnonUser(AnonymousUserMixin):
         return self.id
 
 users = {'admin': User(u'admin'), 'anonymous': AnonUser()}
-users['admin'].remotes.append(Remote('dummy remote'))
+# users['admin'].remotes.append(Remote('dummy remote'))
 
 @login_manager.user_loader
 def load_user(user_id):
