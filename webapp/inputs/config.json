@@ -1,0 +1,47 @@
+{
+    "Drivetrains":[
+        {
+            "motors":[
+                {
+                    "driver":"BiMotor",
+                    "address":"22,13"
+                },
+                {
+                    "driver":"BiMotor",
+                    "address":"17,18"
+                }
+            ],
+            "type":"BiPed",
+            "max speed":"85"
+        },
+        {
+            "motors":[
+                {
+                    "driver":"NRF24L01",
+                    "address":"5,8",
+                    "name":"rfpi0"
+                }
+            ],
+            "type":"External"
+        }
+    ],
+    "IMU":[
+            {
+                "driver":"LSM9DS1",
+                "address":"0x6a,0x1c"
+            },
+            {
+                "driver":"MPU6050",
+                "type":"6 DoF",
+                "address":"0x68"
+            },
+            {
+                "driver":"MAG3110",
+                "address":"/dev/ttyUSB0"
+            }
+    ],
+    "GPS":{
+        "interface":"serial",
+        "address":"/dev/ttyS0"
+    }
+}
