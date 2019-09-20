@@ -243,5 +243,6 @@ def read_and_forward_pty_output():
             timeout_sec = 0
             (data_ready, _, _) = select.select([fd], [], [], timeout_sec)
             if data_ready:
-                output = os.read(fd, max_read_bytes).decode()
+                # for invalid characters, print out the hex representation
+                output = os.read(fd, max_read_bytes).decode(encoding='utf-8', errors='backslashreplace')
                 socketio.emit("terminal-output", {"output": output}, namespace="/pty")
