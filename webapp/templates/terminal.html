@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/css/xterm.css">
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Terminal I/O</h1>
+
+        <span style="font-size: 1.4em;">pyxterm.js</span>&nbsp;&nbsp;&nbsp;
+        <span style="font-size: small;">status: <span style="font-size: small;" id="status">connecting...</span></span>
+
+        <div style="width: 100%; height: calc(100% - 50px);" id="terminal"></div>
+
+        <div id="terminal"></div>
+    </div>
+</section>
+
+<script src="/static/scripts/libs/xterm/xterm.js"></script>
+<script src="/static/scripts/libs/xterm/xterm-fit.js"></script>
+<script src="/static/scripts/libs/xterm/xterm-webLinks.js"></script>
+
+<script src="/static/scripts/libs/socket.io.min.js"></script>
+
+<script>
+    Terminal.applyAddon(fit);
+    Terminal.applyAddon(webLinks);
+
+    var term = new Terminal({
+        cursorBlink: true,
+        macOptionIsMeta: true,
+        scrollback: 1000,
+    });
+
+    term.open(document.getElementById('terminal'));
+
+    term.fit();
+    term.resize(15, 35);
+    console.log(`size: ${term.cols} columns, ${term.rows} rows`);
+    term.fit()
+
+    term.on('key', (key, ev) => {
+        console.log("pressed key", key);
+        console.log("event", ev);
+        socket.emit("terminal-input", { "input": key });
+    });
+
+    var socket = io.connect('/pty', { transports: ['websocket'] });
+
+    var status = document.getElementById("status");
+
+    socket.on("terminal-output", function (data) {
+        console.log("new output", data)
+        term.write(data.output)
+    });
+
+    socket.on("connect", () => {
+        fitToscreen()
+        status.innerHTML = '<span style="background-color: lightgreen;">connected</span>'
+    });
+
+    socket.on("disconnect", () => {
+        status.innerHTML = '<span style="background-color: #ff8383;">disconnected</span>'
+    });
+
+    function fitToscreen() {
+        term.fit()
+        socket.emit("terminal-resize", { "cols": term.cols, "rows": term.rows })
+    }
+
+    function debounce(func, wait_ms) {
+        let timeout
+        return function (...args) {
+            var context = this
+            clearTimeout(timeout)
+            timeout = setTimeout(() => func.apply(context, args), wait_ms)
+        }
+    }
+
+
+
+    var wait_ms = 50;
+    window.onresize = debounce(fitToscreen, wait_ms)
+</script>
+{% endblock %}
