@@ -1,9 +1,9 @@
 function toggleView(viewType) {
-    var btnRobotView = document.getElementById('btn-robot-view');
-    var btnRawDataView = document.getElementById('btn-raw-data');
+    const btnRobotView = document.getElementById('btn-robot-view');
+    const btnRawDataView = document.getElementById('btn-raw-data');
 
-    var robotView = document.getElementById('robot-view');
-    var rawDataView = document.getElementById('raw-data-view');
+    const robotView = document.getElementById('robot-view');
+    const rawDataView = document.getElementById('raw-data-view');
 
     switch (viewType) {
         case 'robot-view':
@@ -25,20 +25,20 @@ function toggleView(viewType) {
 
 toggleView('raw-data');
 
-var accelLineCtx = document.getElementById('accelerometer-line-chart').getContext('2d');
-var accelLineChart = new Chart(accelLineCtx, configAccelLineChart);
+const accelLineCtx = document.getElementById('accelerometer-line-chart').getContext('2d');
+const accelLineChart = new Chart(accelLineCtx, configAccelLineChart);
 
-var accelBarCtx = document.getElementById('accelerometer-bar-chart').getContext('2d');
-var accelBarChart = new Chart(accelBarCtx, configAccelBarChart);
+const accelBarCtx = document.getElementById('accelerometer-bar-chart').getContext('2d');
+const accelBarChart = new Chart(accelBarCtx, configAccelBarChart);
 
-var gyroLineCtx = document.getElementById('gyroscope-line-chart').getContext('2d');
-var gyroLineChart = new Chart(gyroLineCtx, configGyroLineChart);
+const gyroLineCtx = document.getElementById('gyroscope-line-chart').getContext('2d');
+const gyroLineChart = new Chart(gyroLineCtx, configGyroLineChart);
 
-var gyroBarCtx = document.getElementById('gyroscope-bar-chart').getContext('2d');
-var gyroBarChart = new Chart(gyroBarCtx, configGyroBarChart);
+const gyroBarCtx = document.getElementById('gyroscope-bar-chart').getContext('2d');
+const gyroBarChart = new Chart(gyroBarCtx, configGyroBarChart);
 
-var magLineCtx = document.getElementById('magnetometer-line-chart').getContext('2d');
-var magLineChart = new Chart(magLineCtx, configMagLineChart);
+const magLineCtx = document.getElementById('magnetometer-line-chart').getContext('2d');
+const magLineChart = new Chart(magLineCtx, configMagLineChart);
 
-var magBarCtx = document.getElementById('magnetometer-bar-chart').getContext('2d');
-var magBarChart = new Chart(magBarCtx, configMagBarChart);
+const magBarCtx = document.getElementById('magnetometer-bar-chart').getContext('2d');
+const magBarChart = new Chart(magBarCtx, configMagBarChart);

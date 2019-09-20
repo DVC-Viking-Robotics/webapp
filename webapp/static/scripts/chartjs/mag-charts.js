@@ -1,6 +1,4 @@
-var NUM_POINTS = 21;
-
-var configMagLineChart = {
+const configMagLineChart = {
     type: 'line',
     data: {
         labels: [...range(1, NUM_POINTS)].map(i => -(NUM_POINTS - i)),
@@ -53,7 +51,7 @@ var configMagLineChart = {
     }
 };
 
-var configMagBarChart = {
+const configMagBarChart = {
     type: 'bar',
     data: {
         datasets: [{

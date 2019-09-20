@@ -1,4 +1,4 @@
-var chartColors = {
+const chartColors = {
     red: 'rgb(255, 99, 132)',
     orange: 'rgb(255, 159, 64)',
     yellow: 'rgb(255, 205, 86)',
@@ -20,8 +20,8 @@ function* range(start, end) {
 }
 
 function randData(length) {
-    var data = [];
-    for (var i of range(1, length))
+    const data = [];
+    for (let i of range(1, length))
         data.push(randInt(-100, 100));
 
     return data;
