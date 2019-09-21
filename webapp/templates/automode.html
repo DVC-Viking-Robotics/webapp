@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/static/css/maps.css">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/maps.css') }}">
 
-<script src="/static/scripts/libs/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
 <script>const socket = io.connect({ transports: ['websocket'] });</script>
 
 <section class="section">

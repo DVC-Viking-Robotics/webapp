@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login</title>
 
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bulmaswatch-darkly.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma-divider.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}"aswatch-darkly.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-divider.min.css') }}">
 
-        <link rel="stylesheet" type="text/css" href="/static/css/site.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
         <link rel="shortcut icon" href="/static/images/viking.png">
-        <script defer src="/static/scripts/libs/fontawesome-all.min.js"></script>
     </head>
 
     <!-- TODO: Add more content to login page -->
@@ -129,6 +128,8 @@
                 </form>
             </div>
         </div>
+
+        <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"fontawesome-all.min.js') }}"></script>
 
         <script>
             function showView(id) {

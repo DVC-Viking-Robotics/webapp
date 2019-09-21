@@ -1,19 +1,18 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ title }}</title>
 
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bulmaswatch-darkly.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma-quickview.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/bulma-badge.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-quickview.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-badge.min.css') }}">
 
-        <link rel="stylesheet" type="text/css" href="/static/css/site.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
         <link rel="shortcut icon" href="/static/images/viking.png">
-        <script defer src="/static/scripts/libs/fontawesome-all.min.js"></script>
 
         <style>
             .sidenav-button {
@@ -157,9 +156,11 @@
             {% block content %}{% endblock %}
         </div>
 
-        <script src="/static/scripts/navbar-mobile.js"></script>
-        <script src="/static/scripts/delete-notif.js"></script>
-        <script src="/static/scripts/libs/bulma-quickview.min.js"></script>
+        <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/libs/bulma-quickview.min.js') }}"></script>
+
+        <script src="{{ url_for('static', filename='scripts/navbar-mobile.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/delete-notif.js') }}"></script>
 
         <script>
             const dropdownItems = document.getElementsByClassName('dropdown-item');

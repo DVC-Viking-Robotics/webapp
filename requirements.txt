@@ -11,6 +11,8 @@ colorzero==1.1
 dnspython==1.16.0
 eventlet==0.24.1
 Flask==1.0.2
+Flask-CacheBuster==1.0.0
+Flask-Compress==1.4.0
 Flask-Login==0.4.1
 Flask-SocketIO==3.3.2
 gpiozero==1.5.1
