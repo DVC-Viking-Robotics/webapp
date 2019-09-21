@@ -50,57 +50,62 @@ if has_gpio_pins:
 d_train = []
 IMUs = []
 gps = []
+nav = None
 
-# handle drivetrain
-for d in SYSTEM_CONF['Drivetrains']:
-    if d['type'] in ('BiPed', 'QuadPed', 'External'):
-        # instantiate motors
-        motors = []
-        for m in d['motors']:
-            # detirmine driver class
+if SYSTEM_CONF is not None and len(SYSTEM_CONF['Check-Hardware']) > 0:
+    if 'Drivetrains' in SYSTEM_CONF['Check-Hardware']:
+        # handle drivetrain
+        for d in SYSTEM_CONF['Drivetrains']:
+            if d['type'] in ('BiPed', 'QuadPed', 'External'):
+                # instantiate motors
+                motors = []
+                for m in d['motors']:
+                    # detirmine driver class
+                    pins = []
+                    # be sure its not a serial port address
+                    if m['address'].find(',') > 0 and has_gpio_pins:
+                        for p in m['address'].rsplit(','):
+                            pins.append(RPI_PIN_ALIAS[p])
+                    if m['driver'].startswith('Solonoid') and len(pins) >= 1 and has_gpio_pins:
+                        motors.append(Solonoid(pins))
+                    elif m['driver'].startswith('BiMotor') and len(pins) >= 1 and has_gpio_pins:
+                        motors.append(BiMotor(pins))
+                    elif m['driver'].startswith('PhasedMotor') and len(pins) == 2 and has_gpio_pins:
+                        motors.append(PhasedMotor(pins))
+                    elif m['driver'].startswith('NRF24L01') and has_gpio_pins:
+                        motors.append(
+                            NRF24L01(SPI_BUS, pins, bytes(m['name'].encode('utf-8'))))
+                    elif m['driver'].startswith('USB'):
+                        motors.append(USB(m['address']))
+                if d['type'].startswith('BiPed') and has_gpio_pins:
+                    d_train.append(BiPed(motors, d['max speed']))
+                elif d['type'].startswith('QuadPed') and has_gpio_pins:
+                    d_train.append(QuadPed(motors, d['max speed']))
+                elif d['type'].startswith('External'):
+                    if motors:
+                        d_train.append(External(motors[0]))
+
+    if 'IMU' in SYSTEM_CONF['Check-Hardware']:
+        for imu in SYSTEM_CONF['IMU']:
             pins = []
             # be sure its not a serial port address
-            if m['address'].find(',') > 0 and has_gpio_pins:
-                for p in m['address'].rsplit(','):
-                    pins.append(RPI_PIN_ALIAS[p])
-            if m['driver'].startswith('Solonoid') and len(pins) >= 1 and has_gpio_pins:
-                motors.append(Solonoid(pins))
-            elif m['driver'].startswith('BiMotor') and len(pins) >= 1 and has_gpio_pins:
-                motors.append(BiMotor(pins))
-            elif m['driver'].startswith('PhasedMotor') and len(pins) == 2 and has_gpio_pins:
-                motors.append(PhasedMotor(pins))
-            elif m['driver'].startswith('NRF24L01') and has_gpio_pins:
-                motors.append(
-                    NRF24L01(SPI_BUS, pins, bytes(m['name'].encode('utf-8'))))
-            elif m['driver'].startswith('USB'):
-                motors.append(USB(m['address']))
-        if d['type'].startswith('BiPed') and has_gpio_pins:
-            d_train.append(BiPed(motors, d['max speed']))
-        elif d['type'].startswith('QuadPed') and has_gpio_pins:
-            d_train.append(QuadPed(motors, d['max speed']))
-        elif d['type'].startswith('External'):
-            if motors:
-                d_train.append(External(motors[0]))
+            if imu['address'].find(',') > 0 and has_gpio_pins:
+                for p in imu['address'].rsplit(','):
+                    pins.append(int(p, 16))
+            if imu['driver'].startswith('LSM9DS1') and has_gpio_pins:
+                IMUs.append(LSM9DS1_I2c(I2C_BUS, pins[0], pins[1]))
+            elif imu['driver'].startswith('MPU6050') and has_gpio_pins:
+                IMUs.append(MPU6050(I2C_BUS))
+            elif imu['driver'].startswith('MAG3110'):
+                IMUs.append(MAG3110(imu['address']))
 
-for imu in SYSTEM_CONF['IMU']:
-    pins = []
-    # be sure its not a serial port address
-    if imu['address'].find(',') > 0 and has_gpio_pins:
-        for p in imu['address'].rsplit(','):
-            pins.append(int(p, 16))
-    if imu['driver'].startswith('LSM9DS1') and has_gpio_pins:
-        IMUs.append(LSM9DS1_I2c(I2C_BUS, pins[0], pins[1]))
-    elif imu['driver'].startswith('MPU6050') and has_gpio_pins:
-        IMUs.append(MPU6050(I2C_BUS))
-    elif imu['driver'].startswith('MAG3110'):
-        IMUs.append(MAG3110(imu['address']))
+    if 'GPS' in SYSTEM_CONF['Check-Hardware']:
+        for g in SYSTEM_CONF['GPS']:
+            if g['interface'].startswith('GPSserial'):
+                gps.append(GPSserial(g['address']))
 
-for g in SYSTEM_CONF['GPS']:
-    if g['interface'].startswith('GPSserial'):
-        gps.append(GPSserial(g['address']))
-
-if gps and IMUs and d_train:
-    from ..outputs.GPSnav import GPSnav
-    nav = GPSnav(d_train[0], IMUs, gps)
-else:
-    nav = None
+    if gps and IMUs and d_train:
+        from ..outputs.GPSnav import GPSnav
+        nav = GPSnav(d_train[0], IMUs, gps)
+    else:
+        nav = None
