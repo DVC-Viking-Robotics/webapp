@@ -2,7 +2,7 @@
 
 {% block content %}
 <script src="/static/scripts/libs/socket.io.min.js"></script>
-<script>var socket = io.connect({ transports: ['websocket'] });</script>
+<script>const socket = io.connect({ transports: ['websocket'] });</script>
 <div id="canvasContainer">
     <canvas id="canvas" width="200"></canvas>
 </div>

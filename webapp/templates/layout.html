@@ -162,8 +162,8 @@
         <script src="/static/scripts/libs/bulma-quickview.min.js"></script>
 
         <script>
-            var dropdownItems = document.getElementsByClassName('dropdown-item');
-            for (var dItem of dropdownItems) {
+            const dropdownItems = document.getElementsByClassName('dropdown-item');
+            for (let dItem of dropdownItems) {
                 dItem.onmouseenter = function () {
                     this.classList.add('is-active');
                 }

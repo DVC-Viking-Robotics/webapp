@@ -2,10 +2,10 @@ from flask import Blueprint, render_template
 
 from collections import namedtuple
 
-Page = namedtuple('Page', 'title route metapage rowLocation tile_id description image');
+Page = namedtuple('Page', 'title route metapage rowLocation tile_id description image')
 
 # The last 4 fields don't need explicit values if 'metapage' is True
-Page.__new__.__defaults__ = ('', '', '', -1);
+Page.__new__.__defaults__ = ('', '', '', -1)
 
 NUM_ROWS = 2
 

@@ -1,5 +1,6 @@
 import io
 
+
 def is_on_raspberry_pi(raise_on_errors=False):
     try:
         with io.open('/proc/cpuinfo', 'r') as cpuinfo:

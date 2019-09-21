@@ -1,6 +1,4 @@
-var NUM_POINTS = 21;
-
-var configAccelLineChart = {
+const configAccelLineChart = {
     type: 'line',
     data: {
         labels: [...range(1, NUM_POINTS)].map(i => -(NUM_POINTS - i)),
@@ -53,7 +51,7 @@ var configAccelLineChart = {
     }
 };
 
-var configAccelBarChart = {
+const configAccelBarChart = {
     type: 'bar',
     data: {
         datasets: [{

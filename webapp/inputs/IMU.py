@@ -110,8 +110,9 @@ const_MPU6050 = {
     "GYRO_CONFIG"   : 0x1B,
 }
 
+
 class IMU(object):
-    def __init__(self, address = (0x6a, 0x1C), bus = 1):
+    def __init__(self, address=(0x6a, 0x1C), bus=1):
         # Class-level buffer for reading and writing data with the sensor.
         # This reduces memory allocations but means the code is not re-entrant or
         # thread safe!
@@ -137,10 +138,11 @@ class IMU(object):
         self.yaw = self.gyro[2]
         return (self.yaw, self.pitch, self.roll)
 
+
 class LSM9DS1(IMU):
     """Driver for the LSM9DS1 accelerometer, magnetometer, gyroscope."""
 
-    def __init__(self, address = ['0x6a', '0x1C'], bus = 1):
+    def __init__(self, address=['0x6a', '0x1C'], bus=1):
         super(LSM9DS1, self).__init__()
         try:
             # Check ID registers.
@@ -148,27 +150,35 @@ class LSM9DS1(IMU):
                 const_LSM9DS1["ADDRESS_XLG"] = int(address[0], 16)
                 const_LSM9DS1["ADDRESS_MAG"] = int(address[1], 16)
         except IOError:
-            raise RuntimeError('Could not find LSM9DS1 @ address', ','.join(address),', check wiring!')
+            raise RuntimeError('Could not find LSM9DS1 @ address',
+                               ','.join(address), ', check wiring!')
 
         # soft reset & reboot accel/gyro
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG8"], 0x05)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG8"], 0x05)
         # soft reset & reboot magnetometer
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], 0x0C)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], 0x0C)
         time.sleep(0.01)
         # enable gyro continuous
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"], 0xC0) # on XYZ
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"], 0xC0)  # on XYZ
         # Enable the accelerometer continous
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG5_XL"], 0x38)
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], 0xC0)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG5_XL"], 0x38)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], 0xC0)
         # enable mag continuous
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG3_M"], 0x00)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG3_M"], 0x00)
         # read biases and store ranges accordingly
         self.get_gyro_range()
         self.get_accel_range()
         self.get_mag_gain()
 
     def get_accel_range(self):
-        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"])
+        reg = self.bus.read_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"])
         val = reg & 0b00011000
         if val == const_LSM9DS1["XL_RANGE_2G"]:
             self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_2G"]
@@ -188,15 +198,17 @@ class LSM9DS1(IMU):
         if const_LSM9DS1.get('XL_RANGE_' + val + 'G') != None:
             self._accel_mg_lsb = const_LSM9DS1.get('ACCEL_MG_LSB_' + val + 'G')
             val = const_LSM9DS1.get('XL_RANGE_' + val + 'G')
-        else: 
-            print('range ', val, 'G is undefined. using 2', sep = '')
+        else:
+            print('range ', val, 'G is undefined. using 2', sep='')
             val = const_LSM9DS1["XL_RANGE_2G"]
             self._accel_mg_lsb = const_LSM9DS1["ACCEL_MG_LSB_2G"]
         reg |= val
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], reg)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG6_XL"], reg)
 
     def get_mag_gain(self):
-        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"])
+        reg = self.bus.read_byte_data(
+            const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"])
         val = reg & 0b01100000
         if val == const_LSM9DS1["M_GAIN_4GAUSS"]:
             self._mag_mgauss_lsb = const_LSM9DS1["MAG_MGAUSS_4GAUSS"]
@@ -214,20 +226,24 @@ class LSM9DS1(IMU):
         """
         reg = self.get_mag_gain()
         if const_LSM9DS1.get('M_GAIN_' + val + 'GAUSS') != None:
-            self._mag_mgauss_lsb = const_LSM9DS1.get("MAG_MGAUSS_" + val + "GAUSS")
+            self._mag_mgauss_lsb = const_LSM9DS1.get(
+                "MAG_MGAUSS_" + val + "GAUSS")
             val = const_LSM9DS1.get('M_GAIN_' + val + 'GAUSS')
-        else: 
+        else:
             print('gain:', val, 'GAUSS is undefined. using 4')
-            self._mag_mgauss_lsb = const_LSM9DS1.get("MAG_MGAUSS_" + val + "GAUSS")
+            self._mag_mgauss_lsb = const_LSM9DS1.get(
+                "MAG_MGAUSS_" + val + "GAUSS")
             val = const_LSM9DS1.get('M_GAIN_4GAUSS')
             return
         reg |= val
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], reg)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], reg)
         # self.bus.write_byte_data(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["CTRL_REG2_M"], 0x0C)
         # time.sleep(0.01)
-        
+
     def get_gyro_range(self):
-        reg = self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"])
+        reg = self.bus.read_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"])
         val = reg & 0b00011000
         if val == const_LSM9DS1["G_SCALE_245DPS"]:
             self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_245DPS"]
@@ -244,18 +260,20 @@ class LSM9DS1(IMU):
         reg = self.get_gyro_range()
         if const_LSM9DS1.get('G_SCALE_' + val + 'DPS') != None:
             val = const_LSM9DS1.get('G_SCALE_' + val + 'DPS')
-        else: 
-            print('scale: ', val, 'Deg/s is undefined. using 245', sep = '')
+        else:
+            print('scale: ', val, 'Deg/s is undefined. using 245', sep='')
             val = const_LSM9DS1.get('G_SCALE_245DPS')
             self._gyro_dps_digit = const_LSM9DS1["GYRO_DPS_DIGIT_245DPS"]
         reg |= val
-        self.bus.write_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"], reg)
+        self.bus.write_byte_data(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["CTRL_REG1_G"], reg)
 
     def read_accel_raw(self):
         """Read the raw accelerometer sensor values and return it as a
         3-tuple of X, Y, Z axis values that are 16-bit unsigned values"""
         # Read the accelerometer
-        self.buf = self.readRaw(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["OUT_X_L_XL"])
+        self.buf = self.readRaw(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["OUT_X_L_XL"])
         return self.axisTuple(self.buf[0:6])
 
     def get_accel_data(self):
@@ -263,14 +281,16 @@ class LSM9DS1(IMU):
         m/s^2 values.
         """
         self.accel = self.read_accel_raw()
-        self.accel = (self.accel[0] * self._accel_mg_lsb / 1000.0 * Gravity, self.accel[1] * self._accel_mg_lsb / 1000.0 * Gravity, self.accel[2] * self._accel_mg_lsb / 1000.0 * Gravity)
+        self.accel = (self.accel[0] * self._accel_mg_lsb / 1000.0 * Gravity, self.accel[1] *
+                      self._accel_mg_lsb / 1000.0 * Gravity, self.accel[2] * self._accel_mg_lsb / 1000.0 * Gravity)
         return self.accel
 
     def read_mag_raw(self):
         """Read the raw magnetometer sensor values and return it as a
         3-tuple of X, Y, Z axis values that are 16-bit unsigned values"""
         # Read the magnetometer
-        self.buf = self.readRaw(const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["OUT_X_L_M"])
+        self.buf = self.readRaw(
+            const_LSM9DS1["ADDRESS_MAG"], const_LSM9DS1["OUT_X_L_M"])
         return self.axisTuple(self.buf[0:6])
 
     def get_mag_data(self):
@@ -278,14 +298,16 @@ class LSM9DS1(IMU):
         gauss values.
         """
         self.mag = self.read_mag_raw()
-        self.mag = (self.mag[0] * self._mag_mgauss_lsb / 1000.0, self.mag[1] * self._mag_mgauss_lsb / 1000.0, self.mag[2] * self._mag_mgauss_lsb / 1000.0)
+        self.mag = (self.mag[0] * self._mag_mgauss_lsb / 1000.0, self.mag[1] *
+                    self._mag_mgauss_lsb / 1000.0, self.mag[2] * self._mag_mgauss_lsb / 1000.0)
         return self.mag
 
     def read_gyro_raw(self):
         """Read the raw gyroscope sensor values and return it as a
         3-tuple of X, Y, Z axis values that are 16-bit unsigned values"""
         # Read the gyroscope
-        self.buf = self.readRaw(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["OUT_X_L_G"])
+        self.buf = self.readRaw(
+            const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["OUT_X_L_G"])
         return self.axisTuple(self.buf[0:6])
 
     def get_gyro_data(self):
@@ -293,7 +315,8 @@ class LSM9DS1(IMU):
         degrees/second values.
         """
         self.gyro = self.read_gyro_raw()
-        self.gyro = (self.gyro[0] * self._gyro_dps_digit, self.gyro[1] * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
+        self.gyro = (self.gyro[0] * self._gyro_dps_digit, self.gyro[1]
+                     * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
         return self.gyro
 
     def read_temp_raw(self):
@@ -302,7 +325,7 @@ class LSM9DS1(IMU):
         want to use the temperature property!
         """
         # Read temp sensor
-        return self._twos_comp(self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["TEMP_OUT_L"]) | ( (self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["TEMP_OUT_H"]) & 0x0F) << 8 ), 12)
+        return self._twos_comp(self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["TEMP_OUT_L"]) | ((self.bus.read_byte_data(const_LSM9DS1["ADDRESS_XLG"], const_LSM9DS1["TEMP_OUT_H"]) & 0x0F) << 8), 12)
 
     def get_temp(self):
         """The temperature of the sensor in degrees Celsius."""
@@ -310,7 +333,7 @@ class LSM9DS1(IMU):
         # See discussion from:
         #  https://github.com/kriswiner/LSM9DS1/issues/3
         return 27.5 + self.read_temp_raw() / 16
- 
+
     def get_all_data(self):
         """Reads and returns all the available data."""
         self.temp = self.get_temp()
@@ -325,23 +348,25 @@ class LSM9DS1(IMU):
         z = (buff[5] << 8) | buff[4]
         return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
 
-    def calcHeading(self, declination = 0):
+    def calcHeading(self, declination=0):
         self.heading = 0
         if self.mag[0] == 0 and self.mag[1] < 0:
             self.heading = math.pi / 2
-        else: self.heading = math.atan2(self.mag[1], self.mag[0])
+        else:
+            self.heading = math.atan2(self.mag[1], self.mag[0])
 
         # Convert everything from radians to degrees:
         self.heading = math.degrees(self.heading)
         self.heading -= declination
 
         # ensure proper range of [0, 360]
-        if (self.heading > 360): self.heading -= 360
-        elif (self.heading < 0): self.heading += 360
+        if (self.heading > 360):
+            self.heading -= 360
+        elif (self.heading < 0):
+            self.heading += 360
         return self.heading
-        
-        
-        """ 
+
+        """
         if 337.25 < heading < 22.5 == North
         if 292.5 < heading < 337.25 == North-West
         if 247.5 < heading < 292.5 == West
@@ -352,26 +377,29 @@ class LSM9DS1(IMU):
         if 22.5 < heading < 67.5 == North-East
         """
 
+
 class MPU6050(IMU):
-    def __init__(self, address = ['0x68'], bus=1):
+    def __init__(self, address=['0x68'], bus=1):
         super(MPU6050, self).__init__(bus)
         self.address = int(address[0], 16)
         # Wake up the MPU-6050 since it starts in sleep mode
         try:
-            self.bus.write_byte_data(self.address, const_MPU6050["PWR_MGMT_1"], 0x00)
+            self.bus.write_byte_data(
+                self.address, const_MPU6050["PWR_MGMT_1"], 0x00)
         except IOError:
-            raise RuntimeError('Could not find the GY-521 @ address', address[0], ', check your wiring')
+            raise RuntimeError(
+                'Could not find the GY-521 @ address', address[0], ', check your wiring')
         self.get_accel_range()
         self.get_gyro_range()
-            
+
     def read_temp_raw(self):
-        return self._twos_comp(self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"] + 1) | (self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"]) << 8 ), 16)
+        return self._twos_comp(self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"] + 1) | (self.bus.read_byte_data(self.address, const_MPU6050["TEMP_OUT0"]) << 8), 16)
 
     def get_temp(self):
         """Reads the temperature from the onboard temperature sensor of the MPU-6050.
 
         Returns the temperature in degrees Celcius.
-        
+
         Get the actual temperature using the formule given in the
         MPU-6050 Register Map and Descriptions revision 4.2, page 30
         raw_temp = self.read_temp_raw()
@@ -381,7 +409,8 @@ class MPU6050(IMU):
 
     def get_accel_range(self):
         """Reads the range the accelerometer is set to"""
-        raw = self.bus.read_byte_data(self.address, const_MPU6050["ACCEL_CONFIG"]) & 0x18
+        raw = self.bus.read_byte_data(
+            self.address, const_MPU6050["ACCEL_CONFIG"]) & 0x18
         if raw == const_MPU6050["ACCEL_RANGE_2G"]:
             self.accel_scale_modifier = const_MPU6050["ACCEL_SCALE_MODIFIER_2G"]
         elif raw == const_MPU6050["ACCEL_RANGE_4G"]:
@@ -397,17 +426,19 @@ class MPU6050(IMU):
         """
         if const_MPU6050.get('ACCEL_RANGE_' + val + 'G') != None:
             self.gyro_scale_modifier = const_MPU6050["ACCEL_SCALE_MODIFIER_" + val + "G"]
-            val =  const_MPU6050.get('ACCEL_RANGE_' + val + 'G')
+            val = const_MPU6050.get('ACCEL_RANGE_' + val + 'G')
         else:
             print('range:', val, 'G undefined. using 2')
             self.gyro_scale_modifier = const_MPU6050["ACCEL_SCALE_MODIFIER_2G"]
-            val =  const_MPU6050.get('ACCEL_RANGE_2G')
+            val = const_MPU6050.get('ACCEL_RANGE_2G')
         # Write the new range to the ACCEL_CONFIG register
-        self.bus.write_byte_data(self.address, const_MPU6050["ACCEL_CONFIG"], val)
+        self.bus.write_byte_data(
+            self.address, const_MPU6050["ACCEL_CONFIG"], val)
 
     def get_gyro_range(self):
         """Reads the range the gyroscope is set to"""
-        raw = self.bus.read_byte_data(self.address, const_MPU6050["GYRO_CONFIG"]) & 0x18
+        raw = self.bus.read_byte_data(
+            self.address, const_MPU6050["GYRO_CONFIG"]) & 0x18
         if raw == const_MPU6050["GYRO_RANGE_250DEG"]:
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_250DEG"]
         elif raw == const_MPU6050["GYRO_RANGE_500DEG"]:
@@ -416,20 +447,21 @@ class MPU6050(IMU):
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_1000DEG"]
         elif raw == const_MPU6050["GYRO_RANGE_2000DEG"]:
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_2000DEG"]
-        
+
     def set_gyro_range(self, val):
         """Sets the range of the gyroscope to range.
         val must be = 250, 500, 1000, 2000 (units: DEG/sec)
         """
         if const_MPU6050.get('GYRO_RANGE_' + val + 'DEG') != None:
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_" + val + "DEG"]
-            val =  const_MPU6050.get('GYRO_RANGE_' + val + 'DEG')
+            val = const_MPU6050.get('GYRO_RANGE_' + val + 'DEG')
         else:
             print('range:', val, 'Deg/s undefined. using 250')
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_250DEG"]
-            val =  const_MPU6050.get('GYRO_RANGE_250DEG')
+            val = const_MPU6050.get('GYRO_RANGE_250DEG')
         # Write the new range to the ACCEL_CONFIG register
-        self.bus.write_byte_data(self.address, const_MPU6050["GYRO_CONFIG"], val)
+        self.bus.write_byte_data(
+            self.address, const_MPU6050["GYRO_CONFIG"], val)
 
     def read_accel_raw(self):
         """Read the raw accelerometer sensor values and return it as a
@@ -437,17 +469,19 @@ class MPU6050(IMU):
         self.buf = self.readRaw(self.address, const_MPU6050['ACCEL_XOUT0'])
         return self.axisTuple(self.buf[0:6])
 
-    def get_accel_data(self, g = False):
+    def get_accel_data(self, g=False):
         """Gets and returns the X, Y and Z values from the accelerometer.
         If g is True, it will return the data in g
         If g is False, it will return the data in m/s^2
         """
         self.get_accel_range()
         self.accel = self.read_accel_raw()
-        self.accel = (self.accel[0] / self.accel_scale_modifier, self.accel[1] / self.accel_scale_modifier, self.accel[2] / self.accel_scale_modifier)
+        self.accel = (self.accel[0] / self.accel_scale_modifier, self.accel[1] /
+                      self.accel_scale_modifier, self.accel[2] / self.accel_scale_modifier)
 
         if not g:
-            self.accel = (self.accel[0] * Gravity, self.accel[1] * Gravity, self.accel[2] * Gravity)
+            self.accel = (self.accel[0] * Gravity, self.accel[1]
+                          * Gravity, self.accel[2] * Gravity)
         return self.accel
 
     def read_gyro_raw(self):
@@ -460,7 +494,8 @@ class MPU6050(IMU):
         """Gets and returns the X, Y and Z values from the gyroscope"""
         self.get_gyro_range()
         self.gyro = self.read_gyro_raw()
-        self.gyro = (self.gyro[0] / self.gyro_scale_modifier, self.gyro[1] / self.gyro_scale_modifier, self.gyro[2] / self.gyro_scale_modifier)
+        self.gyro = (self.gyro[0] / self.gyro_scale_modifier, self.gyro[1] /
+                     self.gyro_scale_modifier, self.gyro[2] / self.gyro_scale_modifier)
         return self.gyro
 
     def get_all_data(self):
@@ -477,22 +512,27 @@ class MPU6050(IMU):
         z = (buff[4] << 8) | buff[5]
         return (self._twos_comp(x, 16), self._twos_comp(y, 16), self._twos_comp(z, 16))
 
+
 if __name__ == "__main__":
     import os
     import argparse
     #add description to program's help screen
-    parser = argparse.ArgumentParser(description='testing purposes. Please try using quotes to encompass values. ie "COM5" or "/dev/ttyS0"')
+    parser = argparse.ArgumentParser(
+        description='testing purposes. Please try using quotes to encompass values. ie "COM5" or "/dev/ttyS0"')
     parser.add_argument('--dof', default='6', help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6b,0x1e"')
+
     class args():
         def __init__(self):
             parser.parse_args(namespace=self)
             self.DoF = []
             self.getDoF()
+
         def is_valid_i2c(self, n):
             if n < 0x03 or n > 0x77:
                 print(n, 'is not a valid i2c address')
                 return False
-            else: return True
+            else:
+                return True
 
         def getDoF(self):
             #set DoF variable
@@ -505,7 +545,8 @@ if __name__ == "__main__":
                     self.DoF.append(num)
                 elif not self.is_valid_i2c(num):
                     pass
-                else: self.DoF.append(num)
+                else:
+                    self.DoF.append(num)
 
     cmd = args()
     #finish get cmd line args

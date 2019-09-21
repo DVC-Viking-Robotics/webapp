@@ -7,17 +7,21 @@ from .check_platform import is_on_raspberry_pi
 Config = configparser.ConfigParser()
 Config.read("webapp/inputs/defaults.ini")
 
-#add description to program's help screen
-parser = argparse.ArgumentParser(description='Firmware For a Robot = F^2R. Please try using quotes to encompass values. ie "9;i2c;0x6a,0x1e"')
+# add description to program's help screen
+parser = argparse.ArgumentParser(
+    description='Firmware For a Robot = F^2R. Please try using quotes to encompass values. ie "9;i2c;0x6a,0x1e"')
 
 # add option '--host' for domain name address
-parser.add_argument('--host', default=None, help='Type IP address (domain). "0.0.0.0" is for localhost domain.')
+parser.add_argument('--host', default=None,
+                    help='Type IP address (domain). "0.0.0.0" is for localhost domain.')
 
 # add option '--pipins' for domain name address of pi running pigpiod EXPERIMENTAL!!!
-parser.add_argument('--pipins', default=None, help='Type IP address hostname of pi rynning "pigpiod"')
+parser.add_argument('--pipins', default=None,
+                    help='Type IP address hostname of pi rynning "pigpiod"')
 
 # add option '--port' for domain name address
-parser.add_argument('--port', default=None, help='Type port number for the server. "5555" is default.')
+parser.add_argument('--port', default=None,
+                    help='Type port number for the server. "5555" is default.')
 
 # add option '--d' for drivetrain and pin #s
 parser.add_argument('--d', default=None, help='Select drivetrain type. "2" = usb+arduino. "1" = bi-ped (R2D2 - like). "0" = quad-Ped (race car setup). Specify the interface in text (ie "gpio", "serial", or "i2c"). Any comma seperated list of numbers delimited by a colon that follow the <type>:<interface>: will be taken as the address of GPIO pins for each motor. ie "1:gpio:18,17:13,22"')
@@ -32,13 +36,14 @@ parser.add_argument('--dof', default=None, help='Select # Degrees Of Freedom. 6 
 parser.add_argument('--gps', default=None, help='Select type of connection to gps module. Default = "serial", but can also be "i2c" or "spi". Any additionally comma separated items that follow the <interface>: will be used as interface address(es). ie "i2c:0x6a,0x1c" or "serial:comm3". The "spi: flag ignores additional address arguments.')
 
 # add option '--d' for drivetrain and pin #s
-parser.add_argument('--cam', default=None, help='Toggle camera. "1" = on (default); "0" = off.')
+parser.add_argument('--cam', default=None,
+                    help='Toggle camera. "1" = on (default); "0" = off.')
 
 # thinking of making a '--dev' option to escape the exception hunting
 # also options specific to picam and/or opencv2
 
-#use a class to store cmd args 'arg.<option name> = string <value>'
-class Args:
+
+class Args:  # use a class to store cmd args 'arg.<option name> = string <value>'
     def __init__(self):
         # parse arguments using self as storage
         # each parser.add_argument() can be accessed using self.<option flag>
@@ -53,21 +58,20 @@ class Args:
         self.get_Phased()
 
     def getPiPins(self):
-        if self.pipins != None:
+        if self.pipins is not None:
             from gpiozero.pins.pigpio import PiGPIOFactory
-            #set host to hostname or ip address of rPi w/ pigpiod running
+            # set host to hostname or ip address of rPi w/ pigpiod running
             try:
                 self.pipins = PiGPIOFactory(host=self.pipins)
             except OSError:
                 self.pipins = None
 
     def get_Phased(self):
-        if self.m != None:
+        if self.m is not None:
             temp = self.m.rsplit(',')
             for i in range(len(temp)):
                 temp[i] = str(int(temp[i]))
             Config['Drivetrain']['phasedM'] = ','.join(temp)
-
 
     # override [] operators to return the Config dictionaries
     def __getitem__(self, key):
@@ -93,7 +97,8 @@ class Args:
             if len(temp) > 1:
                 del temp[0]
                 Config['GPS']['address'] = ','.join(temp)
-            else: Config['GPS']['address'] = ' '
+            else:
+                Config['GPS']['address'] = ' '
 
     def get_cam(self):
         if self.cam is not None:
@@ -142,21 +147,22 @@ class Args:
                 del temp[0]
                 if len(temp) > 0:
                     Config['Drivetrain']['address'] = ':'.join(temp)
-                else: Config['Drivetrain']['address'] = ' '
-
+                else:
+                    Config['Drivetrain']['address'] = ' '
 
     def is_valid_BCM(self, n):
         if n < 0 or n > 27:
             print(n, 'is not a valid BCM pin #')
             return False
-        else: return True
+        else:
+            return True
 
     def is_valid_i2c(self, n):
         if n < 0x03 or n > 0x77:
             print(n, 'is not a valid i2c address')
             return False
-        else: return True
-
+        else:
+            return True
 
 
 if __name__ == "__main__":
@@ -166,7 +172,7 @@ if __name__ == "__main__":
     print('port #:', cmd["WhoAmI"]["port"])
     print('on_raspi:', cmd["WhoAmI"]["onRaspi"])
     print('Degrees of Freedom:', cmd["IMU"]["dof"])
-    print('\t',cmd['IMU']['interface'], cmd["IMU"]["address"])
+    print('\t', cmd['IMU']['interface'], cmd["IMU"]["address"])
     print('drivetrain type:', cmd['Drivetrain']['motorConfig'])
     print('\t', cmd["Drivetrain"]["interface"], cmd["Drivetrain"]["address"])
     print('motor direction pin:', cmd.getboolean("Drivetrain", "phasedM"))

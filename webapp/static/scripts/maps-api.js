@@ -1,19 +1,18 @@
 // In the following example, markers appear when the user clicks on the map.
 // The markers are stored in an array.
 // The user can then click an option to hide, show or delete the markers.
-var map;
-var ground0 = { lat: 37.96713657090229, lng: -122.0712176165581 };
-var markers = [];
-var robotMarker;
-var dLat = 0.00001, dLng = 0.00001;
-var uPos, rPos;
+let map;
+const ground0 = { lat: 37.96713657090229, lng: -122.0712176165581 };
+let markers = [];
+let robotMarker;
+const dLat = 0.00001, dLng = 0.00001;
+let uPos, rPos;
 
-var enableSockets = false;
-
-var txtGps = document.getElementById('gps');
+const enableSockets = true;
+const txtGps = document.getElementById('gps');
 
 function printMarkers() {
-    for (var i = 0; i < markers.length; i++) {
+    for (let i = 0; i < markers.length; i++) {
         console.log(markers[i].label + ': ' + markers[i].getPosition())
     }
 }
@@ -63,7 +62,7 @@ function addMarker(location, canDrag, label, addToArray) {
     if (label === null)
         label = String.fromCharCode(65 + markers.length);
 
-    var marker = new google.maps.Marker({
+    const marker = new google.maps.Marker({
         position: location,
         map: map,
         draggable: canDrag,
@@ -78,7 +77,7 @@ function addMarker(location, canDrag, label, addToArray) {
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
+    for (let i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
         console.log(markers[i].label + ': ' + markers[i].getPosition())
     }
@@ -103,23 +102,26 @@ function deleteMarkers() {
 }
 
 function latPlus() {
-    var tempLen = markers.length - 1;
-    var temp = { lat: markers[tempLen].getPosition().lat() + dLat, lng: markers[tempLen].getPosition().lng() };
+    const tempLen = markers.length - 1;
+    const temp = { lat: markers[tempLen].getPosition().lat() + dLat, lng: markers[tempLen].getPosition().lng() };
     markers[tempLen].setPosition(temp);
 }
+
 function latMinus() {
-    var tempLen = markers.length - 1;
-    var temp = { lat: markers[tempLen].getPosition().lat() - dLat, lng: markers[tempLen].getPosition().lng() };
+    const tempLen = markers.length - 1;
+    const temp = { lat: markers[tempLen].getPosition().lat() - dLat, lng: markers[tempLen].getPosition().lng() };
     markers[tempLen].setPosition(temp);
 }
+
 function lngPlus() {
-    var tempLen = markers.length - 1;
-    var temp = { lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() + dLng };
+    const tempLen = markers.length - 1;
+    const temp = { lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() + dLng };
     markers[tempLen].setPosition(temp);
 }
+
 function lngMinus() {
-    var tempLen = markers.length - 1;
-    var temp = { lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() - dLng };
+    const tempLen = markers.length - 1;
+    const temp = { lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() - dLng };
     markers[tempLen].setPosition(temp);
 }
 
