@@ -48,6 +48,8 @@ if has_gpio_pins:
     }
 
 d_train = []
+IMUs = []
+gps = []
 
 # handle drivetrain
 for d in SYSTEM_CONF['Drivetrains']:
@@ -78,8 +80,6 @@ for d in SYSTEM_CONF['Drivetrains']:
             if motors:
                 d_train.append(External(motors[0]))
 
-
-IMUs = []
 for imu in SYSTEM_CONF['IMU']:
     pins = []
     if imu['address'].find(',') > 0 and has_gpio_pins: # be sure its not a serial port address
@@ -92,11 +92,11 @@ for imu in SYSTEM_CONF['IMU']:
     elif imu['driver'].startswith('MAG3110'):
         IMUs.append(MAG3110(imu['address']))
 
-if SYSTEM_CONF['GPS']['interface'].startswith('serial'):
-    gps = GPSserial(SYSTEM_CONF['GPS']['address'])
-else: gps = None
+for g in SYSTEM_CONF['GPS']:
+    if g['interface'].startswith('GPSserial'):
+        gps.append(GPSserial(g['address']))
 
-if gps is not None and IMUs and d_train:
+if gps and IMUs and d_train:
     from ..outputs.GPSnav import GPSnav
     nav = GPSnav(d_train[0], IMUs, gps)
 else: nav = None

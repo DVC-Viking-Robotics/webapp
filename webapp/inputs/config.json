@@ -40,8 +40,14 @@
                 "address":"/dev/ttyUSB0"
             }
     ],
-    "GPS":{
-        "interface":"serial",
-        "address":"/dev/ttyS0"
-    }
+    "GPS":[
+        {
+            "driver":"GPSserial",
+            "address":"/dev/ttyS0"
+        },
+        {
+            "driver":"GPSserial",
+            "address":"/dev/ttyACM0"
+        }
+    ]
 }
