@@ -1,10 +1,10 @@
+const btnRobotView = document.getElementById('btn-robot-view');
+const btnRawDataView = document.getElementById('btn-raw-data');
+
+const robotView = document.getElementById('robot-view');
+const rawDataView = document.getElementById('raw-data-view');
+
 function toggleView(viewType) {
-    const btnRobotView = document.getElementById('btn-robot-view');
-    const btnRawDataView = document.getElementById('btn-raw-data');
-
-    const robotView = document.getElementById('robot-view');
-    const rawDataView = document.getElementById('raw-data-view');
-
     switch (viewType) {
         case 'robot-view':
             btnRobotView.classList.add('is-info');

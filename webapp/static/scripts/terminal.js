@@ -21,7 +21,6 @@ term.on('key', (key, ev) => {
 });
 
 const termSocket = io.connect('/pty', { transports: ['websocket'] });
-
 const status = document.getElementById("status");
 
 termSocket.on("terminal-output", function (data) {

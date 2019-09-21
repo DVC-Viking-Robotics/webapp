@@ -20,4 +20,3 @@ socket.on('webcam-response', function(img_data) {
 const webcamRequestLock = setInterval(function() {
     socket.emit('webcam');
 }, 100);
-

@@ -9,7 +9,6 @@ const dLat = 0.00001, dLng = 0.00001;
 let uPos, rPos;
 
 const enableSockets = true;
-
 const txtGps = document.getElementById('gps');
 
 function printMarkers() {
@@ -107,16 +106,19 @@ function latPlus() {
     const temp = { lat: markers[tempLen].getPosition().lat() + dLat, lng: markers[tempLen].getPosition().lng() };
     markers[tempLen].setPosition(temp);
 }
+
 function latMinus() {
     const tempLen = markers.length - 1;
     const temp = { lat: markers[tempLen].getPosition().lat() - dLat, lng: markers[tempLen].getPosition().lng() };
     markers[tempLen].setPosition(temp);
 }
+
 function lngPlus() {
     const tempLen = markers.length - 1;
     const temp = { lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() + dLng };
     markers[tempLen].setPosition(temp);
 }
+
 function lngMinus() {
     const tempLen = markers.length - 1;
     const temp = { lat: markers[tempLen].getPosition().lat(), lng: markers[tempLen].getPosition().lng() - dLng };

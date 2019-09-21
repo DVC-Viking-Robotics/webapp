@@ -43,8 +43,7 @@
     -webkit-user-select: none;
 }
 
-.xterm.focus,
-.xterm:focus {
+.xterm.focus, .xterm:focus {
     outline: none;
 }
 
@@ -143,8 +142,7 @@
     cursor: crosshair;
 }
 
-.xterm .xterm-accessibility,
-.xterm .xterm-message {
+.xterm .xterm-accessibility, .xterm .xterm-message {
     position: absolute;
     left: 0;
     top: 0;
