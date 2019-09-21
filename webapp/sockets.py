@@ -14,7 +14,23 @@ from .inputs.check_platform import is_on_raspberry_pi
 from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import LSM9DS1_I2c, MAG3110, calc_heading, calc_yaw_pitch_roll
 
+# for virtual terminal access
+import pty
+import os
+import subprocess
+import select       # async I/O for file descriptors; used for retrieving terminal output
+import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
+import struct       # struct library used for packing data for setting terminal window size
+import fcntl        # I/O for file descriptors; used for setting terminal window size
+import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
+
+fd = None
+child_pid = None
+term_cmd = ["bash"]
+cmd = Args()
+
 on_raspi = is_on_raspberry_pi()
+
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # handle camera dependencies
@@ -135,3 +151,70 @@ def handle_remoteOut(arg):
     print('remote =', repr(arg))
     if d_train: # if there is a drivetrain connected
         d_train[0].go([arg[0], arg[1]])
+
+# NOTE: Source for virtual terminal functions: https://github.com/cs01/pyxterm.js
+
+# virtual terminal handlers
+@socketio.on("terminal-input", namespace="/pty")
+def on_terminal_input(data):
+    global child_pid, fd, term_cmd
+    """write to the child pty. The pty sees this as if you are typing in a real terminal."""
+    if fd:
+        # print("writing to ptd: %s" % data["input"])
+        os.write(fd, data["input"].encode())
+
+
+@socketio.on("terminal-resize", namespace="/pty")
+def on_terminal_resize(data):
+    global fd
+    if fd:
+        set_winsize(fd, data["rows"], data["cols"])
+
+
+@socketio.on("connect", namespace="/pty")
+def on_terminal_connect():
+    global child_pid, fd, term_cmd
+    """new client connected"""
+
+    if child_pid:
+        # already started child process, don't start another
+        return
+
+    # create child process attached to a pty we can read from and write to
+    (child_pid, fd) = pty.fork()
+    if child_pid == 0:
+        # this is the child process fork.
+        # anything printed here will show up in the pty, including the output
+        # of this subprocess
+        subprocess.run(term_cmd)
+    else:
+        # this is the parent process fork.
+        set_winsize(fd, 50, 50)
+        term_cmd = " ".join(shlex.quote(c) for c in term_cmd)
+        print("child pid is", child_pid)
+        print(
+            f"starting background task with command `{term_cmd}` to continously read "
+            "and forward pty output to client"
+        )
+        socketio.start_background_task(target=read_and_forward_pty_output)
+        print("task started")
+
+
+# virtual terminal helper functions
+def set_winsize(fd, row, col, xpix=0, ypix=0):
+    winsize = struct.pack("HHHH", row, col, xpix, ypix)
+    fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+
+
+def read_and_forward_pty_output():
+    global fd
+    max_read_bytes = 1024 * 20
+    while True:
+        socketio.sleep(0.01)
+        if fd:
+            timeout_sec = 0
+            (data_ready, _, _) = select.select([fd], [], [], timeout_sec)
+            if data_ready:
+                # for invalid characters, print out the hex representation
+                output = os.read(fd, max_read_bytes).decode(encoding='utf-8', errors='backslashreplace')
+                socketio.emit("terminal-output", {"output": output}, namespace="/pty")

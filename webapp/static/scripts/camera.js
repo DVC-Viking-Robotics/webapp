@@ -1,4 +1,4 @@
-var stream = document.getElementById("camera-stream");
+const stream = document.getElementById("camera-stream");
 
 socket.on('error', (error) => {
     console.log('Socket error:', error)
@@ -12,12 +12,12 @@ socket.on('disconnect', function() {
 
 // Used to receive the live feed from the raspberry pi
 socket.on('webcam-response', function(img_data) {
-    var dec = new TextDecoder("utf-8");
+    const dec = new TextDecoder("utf-8");
     stream.src = "data:image/jpeg;base64," + dec.decode(img_data);
 });
 
 // Webcam request loop
-var webcamRequestLock = setInterval(function() {
+const webcamRequestLock = setInterval(function() {
     socket.emit('webcam');
 }, 100);
 

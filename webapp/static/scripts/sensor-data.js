@@ -1,17 +1,17 @@
 // TODO: uncomment receiving sensor data
 
-var el_gps = document.getElementById('gps');
-// var el_compass = document.getElementById('compass');
+const el_gps = document.getElementById('gps');
+// const el_compass = document.getElementById('compass');
 
 // Sensor data request loop
-var dataRequestLock = setInterval(function () {
+const dataRequestLock = setInterval(function () {
     socket.emit('gps');
     // socket.emit('sensorDoF');
 }, 1000);
 
 // Used to receive gps data from the raspberry pi
 socket.on('gps-response', function (gps) {
-    var robotPos = { lat: gps[0], lng: gps[1] };
+    const robotPos = { lat: gps[0], lng: gps[1] };
     updateGPSReadout(robotPos);
 
     if (robotMarker)

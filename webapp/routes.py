@@ -60,6 +60,11 @@ def sensors():
 def automode():
     return render_template('automode.html', title='Autonomous Navigation')
 
+@blueprint.route('/terminal')
+@login_required
+def terminal():
+    return render_template('terminal.html', title='Terminal I/O')
+
 @blueprint.route('/settings')
 @login_required
 def settings_page():

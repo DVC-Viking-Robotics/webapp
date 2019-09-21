@@ -1,12 +1,12 @@
-var canvas;
-var ctx;
-var W;
-var H;
-var controller;
-var moving = [false, false];
-var gamepads = {};
+let canvas;
+let ctx;
+let W;
+let H;
+let controller;
+let moving = [false, false];
+let gamepads = {};
 
-var enableSockets = true;
+const enableSockets = true;
 
 // socket.on('connect', function() {
 //     console.log('socket connected', socket.connected)
@@ -37,7 +37,7 @@ function getArgs() {
     return result;
 }
 // for edge detecting changes in controller class
-var prevArgs = [0, 0, 0];
+let prevArgs = [0, 0, 0];
 
 function updateDimensions() {
     W = window.innerWidth - 5;
@@ -205,10 +205,10 @@ function touchEnd(e) {
 function getTouchPos(e) {
     if (e.touches) {
         if (e.touches.length >= 1) {
-            var touch = e.touches[0];
+            const touch = e.touches[0];
             for (let touch of e.touches) {
-                var touchX = touch.pageX - touch.target.offsetLeft;
-                var touchY = touch.pageY - touch.target.offsetTop;
+                const touchX = touch.pageX - touch.target.offsetLeft;
+                const touchY = touch.pageY - touch.target.offsetTop;
                 if ((W > H ? touchX : touchY) < (W > H ? W : H) / 2) {
                     controller.joystick.stick.x = touchX;
                     controller.joystick.stick.y = touchY;
@@ -239,8 +239,8 @@ function mouseEnd(e) {
 }
 
 function getMousePos(e) {
-    var mouseX = e.pageX - e.target.offsetLeft;
-    var mouseY = e.pageY - e.target.offsetTop;
+    const mouseX = e.pageX - e.target.offsetLeft;
+    const mouseY = e.pageY - e.target.offsetTop;
     if ((W > H ? mouseX : mouseY) < (W > H ? W : H) / 2) {
         controller.joystick.stick.x = mouseX;
         controller.joystick.stick.y = mouseY;
@@ -275,14 +275,14 @@ function getAxis() {
             }
             /*             // show axes data
                         for (j = 0; j < gamepads[i].axes.length; j++) {
-                            var temp = gamepads[i].axes[j];
+                            let temp = gamepads[i].axes[j];
                             if (temp > 0.025 || temp < -0.025) {
                                 console.log("gamepad[" + i + "], axis[" + j + "] = " + temp);
                             }
                         }
                         //show button presses (analog triggers have preset threshold)
                         for (j = 0; j < gamepads[i].buttons.length; j++) {
-                            var temp = gamepads[i].buttons[j].pressed;
+                            let temp = gamepads[i].buttons[j].pressed;
                             if (temp)
                                 console.log("gamepad[" + i + "], button[" + j + "] = " + temp);
                         }
