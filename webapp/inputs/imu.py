@@ -20,7 +20,7 @@ const_LSM9DS1 = {
     "GYRO_DPS_DIGIT_245DPS"  : 0.00875,
     "GYRO_DPS_DIGIT_500DPS"  : 0.01750,
     "GYRO_DPS_DIGIT_2000DPS" : 0.07000,
-    "TEMP_LSB_DEGREE_CELSIUS": 8, # 1°C = 8, 25° = 200, etc.
+    "TEMP_LSB_DEGREE_CELSIUS": 8,  # 1°C = 8, 25° = 200, etc.
     "WHO_AM_I_XG"   : 0x0F,
     "CTRL_REG1_G"   : 0x10,
     "CTRL_REG2_G"   : 0x11,
@@ -133,8 +133,9 @@ class IMU(object):
     def calcYawPitchRoll(self):
         # calculate the orientation of the accelerometer and convert the output of atan2 from radians to degrees
         # this data is used to correct any cumulative errors in the orientation that the gyroscope develops.
-        self.roll = math.degrees(math.atan2(self.accel[1],self.accel[2]))
-        self.pitch = math.degrees(math.atan2(self.accel[0],math.sqrt(self.accel[1]*self.accel[1]+self.accel[2]*self.accel[2])))
+        self.roll = math.degrees(math.atan2(self.accel[1], self.accel[2]))
+        self.pitch = math.degrees(math.atan2(self.accel[0], math.sqrt(
+            self.accel[1] * self.accel[1] + self.accel[2] * self.accel[2])))
         self.yaw = self.gyro[2]
         return (self.yaw, self.pitch, self.roll)
 
@@ -195,7 +196,7 @@ class LSM9DS1(IMU):
           val must be = 2,4,8, or 16 (units: G)
         """
         reg = self.get_accel_range()
-        if const_LSM9DS1.get('XL_RANGE_' + val + 'G') != None:
+        if const_LSM9DS1.get('XL_RANGE_' + val + 'G') is not None:
             self._accel_mg_lsb = const_LSM9DS1.get('ACCEL_MG_LSB_' + val + 'G')
             val = const_LSM9DS1.get('XL_RANGE_' + val + 'G')
         else:
@@ -225,7 +226,7 @@ class LSM9DS1(IMU):
           val must be = 4,8,12, or 16 (units: GAUSS)
         """
         reg = self.get_mag_gain()
-        if const_LSM9DS1.get('M_GAIN_' + val + 'GAUSS') != None:
+        if const_LSM9DS1.get('M_GAIN_' + val + 'GAUSS') is not None:
             self._mag_mgauss_lsb = const_LSM9DS1.get(
                 "MAG_MGAUSS_" + val + "GAUSS")
             val = const_LSM9DS1.get('M_GAIN_' + val + 'GAUSS')
@@ -258,7 +259,7 @@ class LSM9DS1(IMU):
           val must be = 245, 500, or 2000 (units: DPS)
         """
         reg = self.get_gyro_range()
-        if const_LSM9DS1.get('G_SCALE_' + val + 'DPS') != None:
+        if const_LSM9DS1.get('G_SCALE_' + val + 'DPS') is not None:
             val = const_LSM9DS1.get('G_SCALE_' + val + 'DPS')
         else:
             print('scale: ', val, 'Deg/s is undefined. using 245', sep='')
@@ -315,8 +316,7 @@ class LSM9DS1(IMU):
         degrees/second values.
         """
         self.gyro = self.read_gyro_raw()
-        self.gyro = (self.gyro[0] * self._gyro_dps_digit, self.gyro[1]
-                     * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
+        self.gyro = (self.gyro[0] * self._gyro_dps_digit, self.gyro[1] * self._gyro_dps_digit, self.gyro[2] * self._gyro_dps_digit)
         return self.gyro
 
     def read_temp_raw(self):
@@ -424,7 +424,7 @@ class MPU6050(IMU):
         """Sets the range of the accelerometer to range.
         val must be = 2, 4, 8, or 16 (units: Gauss)
         """
-        if const_MPU6050.get('ACCEL_RANGE_' + val + 'G') != None:
+        if const_MPU6050.get('ACCEL_RANGE_' + val + 'G') is not None:
             self.gyro_scale_modifier = const_MPU6050["ACCEL_SCALE_MODIFIER_" + val + "G"]
             val = const_MPU6050.get('ACCEL_RANGE_' + val + 'G')
         else:
@@ -452,7 +452,7 @@ class MPU6050(IMU):
         """Sets the range of the gyroscope to range.
         val must be = 250, 500, 1000, 2000 (units: DEG/sec)
         """
-        if const_MPU6050.get('GYRO_RANGE_' + val + 'DEG') != None:
+        if const_MPU6050.get('GYRO_RANGE_' + val + 'DEG') is not None:
             self.gyro_scale_modifier = const_MPU6050["GYRO_SCALE_MODIFIER_" + val + "DEG"]
             val = const_MPU6050.get('GYRO_RANGE_' + val + 'DEG')
         else:
@@ -480,8 +480,7 @@ class MPU6050(IMU):
                       self.accel_scale_modifier, self.accel[2] / self.accel_scale_modifier)
 
         if not g:
-            self.accel = (self.accel[0] * Gravity, self.accel[1]
-                          * Gravity, self.accel[2] * Gravity)
+            self.accel = (self.accel[0] * Gravity, self.accel[1] * Gravity, self.accel[2] * Gravity)
         return self.accel
 
     def read_gyro_raw(self):
@@ -516,7 +515,7 @@ class MPU6050(IMU):
 if __name__ == "__main__":
     import os
     import argparse
-    #add description to program's help screen
+    # add description to program's help screen
     parser = argparse.ArgumentParser(
         description='testing purposes. Please try using quotes to encompass values. ie "COM5" or "/dev/ttyS0"')
     parser.add_argument('--dof', default='6', help='Select # Degrees Of Freedom. 6 = the GY-521 board. 9 = the LSM9DS1 board. Any additionally comma separated hexadecimal numbers that follow will be used as i2c addresses. ie "9,0x6b,0x1e"')
@@ -535,7 +534,7 @@ if __name__ == "__main__":
                 return True
 
         def getDoF(self):
-            #set DoF variable
+            # set DoF variable
             temp = self.dof.rsplit(',')
             # print(repr(temp))
             for i in range(len(temp)):
@@ -549,7 +548,7 @@ if __name__ == "__main__":
                     self.DoF.append(num)
 
     cmd = args()
-    #finish get cmd line args
+    # finish get cmd line args
     if cmd.DoF[0] == 6:
         IMUsensor = MPU6050()
     elif cmd.DoF[0] == 9:
