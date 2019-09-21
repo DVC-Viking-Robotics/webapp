@@ -16,6 +16,7 @@ app.register_blueprint(blueprint)
 login_manager.init_app(app)
 socketio.init_app(app)
 
+
 @app.context_processor
 def inject_constants():
     return dict(
@@ -23,9 +24,15 @@ def inject_constants():
         NUM_ROWS=NUM_ROWS
     )
 
+
 if __name__ == '__main__':
     try:
-        socketio.run(app, host=cmd['WhoAmI']['host'], port=int(cmd['WhoAmI']['port']), debug=False)
+        socketio.run(
+            app,
+            host=cmd['WhoAmI']['host'],
+            port=int(cmd['WhoAmI']['port']),
+            debug=False
+        )
     except KeyboardInterrupt:
         socketio.stop()
         if d is not None:
@@ -33,6 +40,6 @@ if __name__ == '__main__':
         del d, nav, IMUsensor
     # finally:
     # d.go(0,0)
-    #nav.alignHeading(0)
+    # nav.alignHeading(0)
     # input("Press Enter to continue...")
-    #nav.alignHeading(180)
+    # nav.alignHeading(180)

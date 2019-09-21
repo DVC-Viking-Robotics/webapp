@@ -36,8 +36,8 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
         camera = picamera.PiCamera()
         camera.resolution = (256, 144)
         camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
-        #sleep(1)
-        #camera.stop_preview()
+        # sleep(1)
+        # camera.stop_preview()
     except picamera.exc.PiCameraError:
         camera = None
         print('picamera is not connected')
@@ -50,7 +50,7 @@ if cmd.getboolean('WhoAmI', 'onRaspi'):
             print('opencv-python is not installed')
         finally:
             print('picamera is not installed')
-else: # running on a PC
+else:  # running on a PC
     try:
         import cv2
         camera = cv2.VideoCapture(0)
@@ -79,7 +79,8 @@ elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['Drivetrain']['interface'] == '
     import board
     import digitalio as dio
     d = NRF24L01(board.SPI(), dio.DigitalInOut(board.D5), dio.DigitalInOut(board.CE0))
-else: d = None
+else:
+    d = None
 
 if cmd['IMU']['interface'] == cmd['Drivetrain']['interface']:
     IMUsensor = d
@@ -87,27 +88,32 @@ elif cmd['IMU']['interface'] == 'serial':
     IMUsensor = EXTnode(cmd['IMU']['address'], int(cmd['IMU']['baud']))
 elif cmd.getboolean('WhoAmI', 'onRaspi') and cmd['IMU']['interface'] == 'i2c':
     if int(cmd['IMU']['dof']) == 6:
-        from .inputs.IMU import MPU6050 as imu # for 6oF (GY-521)
+        from .inputs.IMU import MPU6050 as imu  # for 6oF (GY-521)
     elif int(cmd['IMU']['dof']) == 9:
-        from .inputs.IMU import LSM9DS1 as imu # for 9oF (LSM9DS1)
+        from .inputs.IMU import LSM9DS1 as imu  # for 9oF (LSM9DS1)
     # IMUsensor = imu()
     IMUsensor = imu(address=cmd['IMU']['address'].rsplit(','))
-else: IMUsensor = None
+else:
+    IMUsensor = None
 
 if cmd['GPS']['interface'] == 'serial':
     gps = GPSserial(cmd['GPS']['address'])
-else: gps = None
+else:
+    gps = None
 
 if gps is not None and IMUsensor is not None:
     from .outputs.GPSnav import GPSnav
     nav = GPSnav(d, IMUsensor, gps)
-else: nav = None
+else:
+    nav = None
+
 
 def getHYPR():
     heading = IMUsensor.calcHeading()
     YPR = IMUsensor.calcYawPitchRoll()
     print('heading:', heading, 'yaw:', YPR[0], 'pitch:', YPR[1], 'roll:', YPR[2])
     return [heading, YPR[0], YPR[1], YPR[2]]
+
 
 def getIMU():
     '''
@@ -120,13 +126,16 @@ def getIMU():
     else:
         return [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
+
 @socketio.on('connect')
 def handle_connect():
     print('websocket Client connected!')
 
+
 @socketio.on('disconnect')
 def handle_disconnect():
     print('websocket Client disconnected')
+
 
 @socketio.on('webcam')
 def handle_webcam_request():
@@ -143,6 +152,7 @@ def handle_webcam_request():
         print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', b64)
 
+
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):
     if nav is not None:
@@ -152,6 +162,7 @@ def build_wapypoints(waypoints, clear):
         for point in waypoints:
             nav.insert(point)
         nav.printWP()
+
 
 @socketio.on('gps')
 def handle_gps_request():
@@ -164,6 +175,7 @@ def handle_gps_request():
         NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
 
+
 @socketio.on('sensorDoF')
 def handle_DoF_request():
     senses = getIMU()
@@ -173,16 +185,18 @@ def handle_DoF_request():
         emit('sensorDoF-response', senses)
     print('DoF sensor data sent')
 
+
 @socketio.on('remoteOut')
 def handle_remoteOut(arg):
     # for debugging
     print('remote =', repr(arg))
-    if d: # if there is a drivetrain connected
+    if d:  # if there is a drivetrain connected
         d.go([arg[0], arg[1]])
 
 # NOTE: Source for virtual terminal functions: https://github.com/cs01/pyxterm.js
-
 # virtual terminal handlers
+
+
 @socketio.on("terminal-input", namespace="/pty")
 def on_terminal_input(data):
     global child_pid, fd, term_cmd
