@@ -131,8 +131,9 @@ def build_wapypoints(waypoints, clear):
 def handle_gps_request():
     print('gps data sent')
     NESW = (0, 0)
-    if gps is not None:
-        gps.get_data()
+    if len(gps) > 0:
+        # TODO: Figure out how to handle multiple GPS readings
+        gps[0].get_data()
         NESW = (gps.lat, gps.lng)
     else:
         NESW = (37.967135, -122.071210)
