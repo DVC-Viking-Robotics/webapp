@@ -9,7 +9,6 @@ eventlet==0.24.1
 Flask==1.0.2
 Flask-Login==0.4.1
 Flask-SocketIO==3.3.2
-greenlet==0.4.15
 itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
@@ -21,7 +20,7 @@ python-engineio==3.9.0
 python-socketio==3.1.2
 pyxtermjs==0.4.0.1
 six==1.12.0
-spidev==3.4
 sysv-ipc==1.0.0
 Werkzeug==0.15.2
-circuitpython-mpu6050
+https://github.com/2bndy5/CircuitPython_MPU6050/archive/master.zip
+https://github.com/2bndy5/Adafruit_CircuitPython_LSM9DS1/archive/master.zip
