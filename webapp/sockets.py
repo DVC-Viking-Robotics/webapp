@@ -27,7 +27,6 @@ import shlex        # used to shell-escape commands to prevent unsafe multi-comm
 fd = None
 child_pid = None
 term_cmd = ["bash"]
-cmd = Args()
 
 on_raspi = is_on_raspberry_pi()
 
