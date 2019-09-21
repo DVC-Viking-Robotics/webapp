@@ -1,5 +1,5 @@
 {
-    "Check-Hardware": [],
+    "Check-Hardware": ["Drivetrains", "IMU", "GPS"],
     "Drivetrains":[
         {
             "motors":[
