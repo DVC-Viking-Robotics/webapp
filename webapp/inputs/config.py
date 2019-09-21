@@ -11,8 +11,14 @@ from ..Drivetrain.drivetrain.drivetrain import BiPed, QuadPed, External
 from ..inputs.imu import LSM9DS1_I2c, MAG3110
 from ..GPS_Serial.gps_serial import GPSserial
 
-with open(u'webapp/inputs/config.json', 'r') as conf_file:
-    SYSTEM_CONF = json.load(conf_file)
+CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
+SYSTEM_CONF = None
+
+try:
+    with open(CONFIG_FILE_LOCATION, 'r') as conf_file:
+        SYSTEM_CONF = json.load(conf_file)
+except FileNotFoundError:
+    print(f'Unable to find config file @ {CONFIG_FILE_LOCATION}. Skipping hardware check...')
 
 has_gpio_pins = is_on_raspberry_pi()
 if has_gpio_pins:
