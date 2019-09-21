@@ -1,15 +1,13 @@
 # webapp
 Flask webapp for interacting and remotely controlling the MASCCOT robot via WiFi.
 
-[OLD] Required BEFORE Install:
-* gevent==1.4.0
-* gevent-websocket==0.10.1
-
 ## Setup instructions
 ```bash
 # Clone the repository and its submodules
-git clone --recursive https://github.com/DVC-Viking-Robotics/webapp
+git clone https://github.com/DVC-Viking-Robotics/webapp
 cd webapp
+git checkout nondrive-R2D2
+git submodule update --init --recursive
 
 # Prepare the virtual environment
 python3 -m venv env
