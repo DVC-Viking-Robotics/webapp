@@ -1,6 +1,0 @@
-[submodule "GPS_Serial"]
-	path = webapp/GPS_Serial
-	url = https://github.com/DVC-Viking-Robotics/GPS_Serial.git
-[submodule "Drivetrain"]
-	path = webapp/Drivetrain
-	url = https://github.com/DVC-Viking-Robotics/Drivetrain.git
