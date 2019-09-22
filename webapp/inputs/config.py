@@ -58,7 +58,7 @@ IMUs = []
 gps = []
 nav = None
 
-if SYSTEM_CONF is not None and len(SYSTEM_CONF['Check-Hardware']) > 0:
+if SYSTEM_CONF is not None:
     if 'Drivetrains' in SYSTEM_CONF['Check-Hardware']:
         # handle drivetrain
         for d in SYSTEM_CONF['Drivetrains']:
@@ -107,11 +107,9 @@ if SYSTEM_CONF is not None and len(SYSTEM_CONF['Check-Hardware']) > 0:
 
     if 'GPS' in SYSTEM_CONF['Check-Hardware']:
         for g in SYSTEM_CONF['GPS']:
-            if g['interface'].startswith('GPSserial'):
+            if g['driver'].startswith('GPSserial'):
                 gps.append(GPSserial(g['address']))
 
-    if gps and IMUs and d_train:
+    if len(gps) > 0 and len(IMUs) > 0 and len(d_train) > 0:
         from ..outputs.GPSnav import GPSnav
         nav = GPSnav(d_train[0], IMUs, gps)
-    else:
-        nav = None
