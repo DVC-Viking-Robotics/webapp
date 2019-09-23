@@ -6,10 +6,10 @@ except NotImplementedError:
     pass  # addressed by has_gpio_pins variable
 from circuitpython_mpu6050 import MPU6050
 from .check_platform import is_on_raspberry_pi
-from ..Drivetrain.drivetrain.motor import Solonoid, BiMotor, PhasedMotor, NRF24L01, USB
-from ..Drivetrain.drivetrain.drivetrain import BiPed, QuadPed, External
+from drivetrain.motor import Solonoid, BiMotor, PhasedMotor, NRF24L01, USB
+from drivetrain.drivetrain import BiPed, QuadPed, External
 from ..inputs.imu import LSM9DS1_I2c, MAG3110
-from ..GPS_Serial.gps_serial import GPSserial
+from gps_serial import GPSserial
 
 CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
 SYSTEM_CONF = None
