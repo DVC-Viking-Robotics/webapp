@@ -1,7 +1,7 @@
--e git+https://github.com/2bndy5/Adafruit_CircuitPython_LSM9DS1.git
--e git+https://github.com/2bndy5/CircuitPython_MPU6050.git
--e git+https://github.com/DVC-Viking-Robotics/Drivetrain.git
--e git+https://github.com/DVC-Viking-Robotics/GPS_Serial.git
+git+https://github.com/2bndy5/Adafruit_CircuitPython_LSM9DS1.git
+git+https://github.com/2bndy5/CircuitPython_MPU6050.git
+git+https://github.com/DVC-Viking-Robotics/Drivetrain.git
+git+https://github.com/DVC-Viking-Robotics/GPS_Serial.git
 circuitpython-nrf24l01==1.1.0
 opencv-python==4.1.1.26
 pyserial==3.4
