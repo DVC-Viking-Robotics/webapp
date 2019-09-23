@@ -4,12 +4,14 @@ try:
     import board
 except NotImplementedError:
     pass  # addressed by has_gpio_pins variable
-from circuitpython_mpu6050 import MPU6050
-from .check_platform import is_on_raspberry_pi
-from drivetrain.motor import Solonoid, BiMotor, PhasedMotor, NRF24L01, USB
-from drivetrain.drivetrain import BiPed, QuadPed, External
-from ..inputs.imu import LSM9DS1_I2c, MAG3110
 from gps_serial import GPSserial
+from circuitpython_mpu6050 import MPU6050
+from drivetrain.drivetrain import BiPed, QuadPed, External
+from drivetrain.motor import Solonoid, BiMotor, PhasedMotor, NRF24L01, USB
+from adafruit_lsm9ds1 import LSM9DS1_I2C
+from gps_serial import GPSserial
+from .check_platform import is_on_raspberry_pi
+from ..inputs.imu import MAG3110
 
 CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
 SYSTEM_CONF = None
@@ -99,7 +101,7 @@ if SYSTEM_CONF is not None:
                 for p in imu['address'].rsplit(','):
                     pins.append(int(p, 16))
             if imu['driver'].startswith('LSM9DS1') and has_gpio_pins:
-                IMUs.append(LSM9DS1_I2c(I2C_BUS, pins[0], pins[1]))
+                IMUs.append(LSM9DS1_I2C(I2C_BUS, pins[0], pins[1]))
             elif imu['driver'].startswith('MPU6050') and has_gpio_pins:
                 IMUs.append(MPU6050(I2C_BUS))
             elif imu['driver'].startswith('MAG3110'):
@@ -110,6 +112,6 @@ if SYSTEM_CONF is not None:
             if g['driver'].startswith('GPSserial'):
                 gps.append(GPSserial(g['address']))
 
-    if len(gps) > 0 and len(IMUs) > 0 and len(d_train) > 0:
+    if gps and IMUs and d_train:
         from ..outputs.GPSnav import GPSnav
         nav = GPSnav(d_train[0], IMUs, gps)

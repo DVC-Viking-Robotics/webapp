@@ -6,15 +6,6 @@ try:
     import cStringIO as io
 except ImportError:
     import io
-
-import base64
-from flask_socketio import SocketIO, emit
-from circuitpython_mpu6050 import MPU6050
-from .inputs.check_platform import is_on_raspberry_pi
-from .inputs.config import d_train, IMUs, gps, nav
-from .inputs.imu import LSM9DS1_I2c, MAG3110, calc_heading, calc_yaw_pitch_roll
-
-# for virtual terminal access
 import pty
 import os
 import subprocess
@@ -23,6 +14,15 @@ import termios      # used to set the window size (look up "TIOCSWINSZ" in https
 import struct       # struct library used for packing data for setting terminal window size
 import fcntl        # I/O for file descriptors; used for setting terminal window size
 import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
+import base64
+from flask_socketio import SocketIO, emit
+from circuitpython_mpu6050 import MPU6050
+from adafruit_lsm9ds1 import LSM9DS1_I2C
+from .inputs.check_platform import is_on_raspberry_pi
+from .inputs.config import d_train, IMUs, gps, nav
+from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
+
+# for virtual terminal access
 
 fd = None
 child_pid = None
@@ -67,7 +67,7 @@ def getHYPR():
     pitch = 0
     roll = 0
     for imu in IMUs:
-        if type(imu, LSM9DS1_I2c):
+        if type(imu, LSM9DS1_I2C):
             heading.append(calc_heading(imu.magnetic))
             yaw, pitch, roll = calc_yaw_pitch_roll(imu.acceleration, imu.gyro)
         elif type(imu, MAG3110):
@@ -85,7 +85,7 @@ def get_imu_data():
     '''
     senses = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     for imu in IMUs:
-        if type(imu, LSM9DS1_I2c):
+        if type(imu, LSM9DS1_I2C):
             senses[0] = imu.acceleration
             senses[1] = imu.gyro
             senses[2] = imu.magnetic
@@ -131,10 +131,9 @@ def build_wapypoints(waypoints, clear):
 def handle_gps_request():
     print('gps data sent')
     NESW = (0, 0)
-    if gps is not None:
-        # TODO: Figure out how to handle multiple GPS readings
+    if gps:
         gps[0].get_data()
-        NESW = (gps.lat, gps.lng)
+        NESW = (gps[0].lat, gps[0].lng)
     else:
         NESW = (37.967135, -122.071210)
     emit('gps-response', [NESW[0], NESW[1]])
@@ -157,8 +156,8 @@ def handle_remoteOut(arg):
 # virtual terminal handlers
 @socketio.on("terminal-input", namespace="/pty")
 def on_terminal_input(data):
-    global child_pid, fd, term_cmd
     """write to the child pty. The pty sees this as if you are typing in a real terminal."""
+    global child_pid, fd, term_cmd
     if fd:
         # print("writing to ptd: %s" % data["input"])
         os.write(fd, data["input"].encode())
@@ -173,8 +172,8 @@ def on_terminal_resize(data):
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
-    global child_pid, fd, term_cmd
     """new client connected"""
+    global child_pid, fd, term_cmd
 
     if child_pid:
         # already started child process, don't start another
