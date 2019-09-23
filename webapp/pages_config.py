@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+"""REPLACE THIS DOCSTRING"""
 
 from collections import namedtuple
 

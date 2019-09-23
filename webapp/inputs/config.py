@@ -10,7 +10,7 @@ from drivetrain.drivetrain import Tank, Automotive, External
 from drivetrain.motor import Solenoid, BiMotor, PhasedMotor, NRF24L01, USB
 from adafruit_lsm9ds1 import LSM9DS1_I2C
 from .check_platform import ON_RASPI, ON_JETSON
-from ..inputs.imu import MAG3110
+from .imu import MAG3110
 
 CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
 SYSTEM_CONF = None
