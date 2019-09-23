@@ -6,10 +6,9 @@ except NotImplementedError:
     pass  # addressed by has_gpio_pins variable
 from gps_serial import GPSserial
 from circuitpython_mpu6050 import MPU6050
-from drivetrain.drivetrain import BiPed, QuadPed, External
-from drivetrain.motor import Solonoid, BiMotor, PhasedMotor, NRF24L01, USB
+from drivetrain.drivetrain import Tank, Automotive, External
+from drivetrain.motor import Solenoid, BiMotor, PhasedMotor, NRF24L01, USB
 from adafruit_lsm9ds1 import LSM9DS1_I2C
-from gps_serial import GPSserial
 from .check_platform import is_on_raspberry_pi
 from ..inputs.imu import MAG3110
 
@@ -64,7 +63,7 @@ if SYSTEM_CONF is not None:
     if 'Drivetrains' in SYSTEM_CONF['Check-Hardware']:
         # handle drivetrain
         for d in SYSTEM_CONF['Drivetrains']:
-            if d['type'] in ('BiPed', 'QuadPed', 'External'):
+            if d['type'] in ('Tank', 'Automotive', 'External'):
                 # instantiate motors
                 motors = []
                 for m in d['motors']:
@@ -74,8 +73,8 @@ if SYSTEM_CONF is not None:
                     if m['address'].find(',') > 0 and has_gpio_pins:
                         for p in m['address'].rsplit(','):
                             pins.append(RPI_PIN_ALIAS[p])
-                    if m['driver'].startswith('Solonoid') and len(pins) >= 1 and has_gpio_pins:
-                        motors.append(Solonoid(pins))
+                    if m['driver'].startswith('Solenoid') and len(pins) >= 1 and has_gpio_pins:
+                        motors.append(Solenoid(pins))
                     elif m['driver'].startswith('BiMotor') and len(pins) >= 1 and has_gpio_pins:
                         motors.append(BiMotor(pins))
                     elif m['driver'].startswith('PhasedMotor') and len(pins) == 2 and has_gpio_pins:
@@ -85,10 +84,10 @@ if SYSTEM_CONF is not None:
                             NRF24L01(SPI_BUS, pins, bytes(m['name'].encode('utf-8'))))
                     elif m['driver'].startswith('USB'):
                         motors.append(USB(m['address']))
-                if d['type'].startswith('BiPed') and has_gpio_pins:
-                    d_train.append(BiPed(motors, d['max speed']))
-                elif d['type'].startswith('QuadPed') and has_gpio_pins:
-                    d_train.append(QuadPed(motors, d['max speed']))
+                if d['type'].startswith('Tank') and has_gpio_pins:
+                    d_train.append(Tank(motors, d['max speed']))
+                elif d['type'].startswith('Automotive') and has_gpio_pins:
+                    d_train.append(Automotive(motors, d['max speed']))
                 elif d['type'].startswith('External'):
                     if motors:
                         d_train.append(External(motors[0]))

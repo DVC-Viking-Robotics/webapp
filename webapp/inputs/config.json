@@ -12,7 +12,7 @@
                     "address":"17,18"
                 }
             ],
-            "type":"BiPed",
+            "type":"Tank",
             "max speed":"85"
         },
         {
