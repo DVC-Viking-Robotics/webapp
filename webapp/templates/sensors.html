@@ -72,15 +72,15 @@
     </div>
 </section>
 
-<script src="/static/scripts/libs/moment.min.js"></script>
-<script src="/static/scripts/libs/Chart.min.js"></script>
+<script src="{{ url_for('static', filename='scripts/libs/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/libs/Chart.min.js') }}"></script>
 
-<script src="/static/scripts/chartjs/sensor-utils.js"></script>
-<script src="/static/scripts/chartjs/chart-config.js"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/sensor-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/chart-config.js') }}"></script>
 
-<script src="/static/scripts/chartjs/accel-charts.js"></script>
-<script src="/static/scripts/chartjs/gyro-charts.js"></script>
-<script src="/static/scripts/chartjs/mag-charts.js"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/accel-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/gyro-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/mag-charts.js') }}"></script>
 
-<script src="/static/scripts/sensor-charts.js"></script>
+<script src="{{ url_for('static', filename='scripts/sensor-charts.js') }}"></script>
 {% endblock %}

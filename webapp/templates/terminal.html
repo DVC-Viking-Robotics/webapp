@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/static/css/xterm.css">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/xterm.css') }}">
 
 <section class="section">
     <div class="container">
@@ -11,10 +11,10 @@
     </div>
 </section>
 
-<script src="/static/scripts/libs/xterm/xterm.js"></script>
-<script src="/static/scripts/libs/xterm/xterm-fit.js"></script>
-<script src="/static/scripts/libs/xterm/xterm-webLinks.js"></script>
+<script src="{{ url_for('static', filename='scripts/libs/xterm/xterm.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/libs/xterm/xterm-fit.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/libs/xterm/xterm-webLinks.js') }}"></script>
 
-<script src="/static/scripts/libs/socket.io.min.js"></script>
-<script src="/static/scripts/terminal.js"></script>
+<script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/terminal.js') }}"></script>
 {% endblock %}

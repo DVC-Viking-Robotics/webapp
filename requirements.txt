@@ -6,6 +6,8 @@ circuitpython-nrf24l01==1.1.0
 opencv-python==4.1.1.26
 pyserial==3.4
 Flask==1.0.2
+Flask-CacheBuster==1.0.0
+Flask-Compress==1.4.0
 Flask-Login==0.4.1
 Flask-SocketIO==3.3.2
 eventlet==0.24.1
