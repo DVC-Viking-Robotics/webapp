@@ -9,7 +9,7 @@ from circuitpython_mpu6050 import MPU6050
 from drivetrain.drivetrain import Tank, Automotive, External
 from drivetrain.motor import Solenoid, BiMotor, PhasedMotor, NRF24L01, USB
 from adafruit_lsm9ds1 import LSM9DS1_I2C
-from .check_platform import is_on_raspberry_pi
+from .check_platform import ON_RASPI, ON_JETSON
 from ..inputs.imu import MAG3110
 
 CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
@@ -21,7 +21,8 @@ try:
 except FileNotFoundError:
     print(f'Unable to find config file @ {CONFIG_FILE_LOCATION}. Skipping hardware check...')
 
-has_gpio_pins = is_on_raspberry_pi()
+has_gpio_pins = ON_RASPI or ON_JETSON
+
 if has_gpio_pins:
     SPI_BUS = board.SPI()
     I2C_BUS = board.I2C()

@@ -37,17 +37,17 @@
                 "address":"0x68"
             },
             {
-                "driver":"MAG3110",
+                "driver":"0 MAG3110",
                 "address":"/dev/ttyUSB0"
             }
     ],
     "GPS":[
         {
-            "driver":"GPSserial",
+            "driver":"0 GPSserial",
             "address":"/dev/ttyS0"
         },
         {
-            "driver":"GPSserial",
+            "driver":"0 GPSserial",
             "address":"/dev/ttyACM0"
         }
     ]

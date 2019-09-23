@@ -6,34 +6,34 @@ try:
     import cStringIO as io
 except ImportError:
     import io
-import pty
 import os
 import subprocess
-import select       # async I/O for file descriptors; used for retrieving terminal output
-import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
-import struct       # struct library used for packing data for setting terminal window size
-import fcntl        # I/O for file descriptors; used for setting terminal window size
-import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
 import base64
+import struct       # struct library to pack data into bytearrays for setting terminal window size
+import select       # async I/O for file descriptors; used for retrieving terminal output
+import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
 from flask_socketio import SocketIO, emit
 from circuitpython_mpu6050 import MPU6050
 from adafruit_lsm9ds1 import LSM9DS1_I2C
-from .inputs.check_platform import is_on_raspberry_pi
+# pylint: disable=import-error,wrong-import-position
+from .inputs.check_platform import ON_RASPI, ON_WINDOWS # , ON_JETSON
+if not ON_WINDOWS:
+    import pty
+    import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
+    import fcntl        # I/O for file descriptors; used for setting terminal window size
+# pylint: enable=import-error
 from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 
 # for virtual terminal access
-
 fd = None
 child_pid = None
 term_cmd = ["bash"]
 
-on_raspi = is_on_raspberry_pi()
-
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # handle camera dependencies
-if on_raspi:
+if ON_RASPI:
     try:
         import picamera
         camera = picamera.PiCamera()
@@ -105,7 +105,7 @@ def handle_disconnect():
 @socketio.on('webcam')
 def handle_webcam_request():
     if camera is not None:
-        if on_raspi:
+        if ON_RASPI:
             sio = io.BytesIO()
             camera.capture(sio, "jpeg", use_video_port=True)
             buffer = sio.getvalue()
@@ -157,52 +157,54 @@ def handle_remoteOut(arg):
 @socketio.on("terminal-input", namespace="/pty")
 def on_terminal_input(data):
     """write to the child pty. The pty sees this as if you are typing in a real terminal."""
-    global child_pid, fd, term_cmd
-    if fd:
-        # print("writing to ptd: %s" % data["input"])
-        os.write(fd, data["input"].encode())
-
+    if not ON_WINDOWS:
+        global child_pid, fd, term_cmd
+        if fd:
+            # print("writing to ptd: %s" % data["input"])
+            os.write(fd, data["input"].encode())
 
 @socketio.on("terminal-resize", namespace="/pty")
 def on_terminal_resize(data):
-    global fd
-    if fd:
-        set_winsize(fd, data["rows"], data["cols"])
-
+    if not ON_WINDOWS:
+        global fd
+        if fd:
+            set_winsize(fd, data["rows"], data["cols"])
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
     """new client connected"""
-    global child_pid, fd, term_cmd
+    if not ON_WINDOWS:
+        global child_pid, fd, term_cmd
 
-    if child_pid:
-        # already started child process, don't start another
-        return
+        if child_pid:
+            # already started child process, don't start another
+            return
 
-    # create child process attached to a pty we can read from and write to
-    (child_pid, fd) = pty.fork()
-    if child_pid == 0:
-        # this is the child process fork.
-        # anything printed here will show up in the pty, including the output
-        # of this subprocess
-        subprocess.run(term_cmd)
-    else:
-        # this is the parent process fork.
-        set_winsize(fd, 50, 50)
-        term_cmd = " ".join(shlex.quote(c) for c in term_cmd)
-        print("child pid is", child_pid)
-        print(
-            f"starting background task with command `{term_cmd}` to continously read "
-            "and forward pty output to client"
-        )
-        socketio.start_background_task(target=read_and_forward_pty_output)
-        print("task started")
+        # create child process attached to a pty we can read from and write to
+        (child_pid, fd) = pty.fork()
+        if child_pid == 0:
+            # this is the child process fork.
+            # anything printed here will show up in the pty, including the output
+            # of this subprocess
+            subprocess.run(term_cmd)
+        else:
+            # this is the parent process fork.
+            set_winsize(fd, 50, 50)
+            term_cmd = " ".join(shlex.quote(c) for c in term_cmd)
+            print("child pid is", child_pid)
+            print(
+                f"starting background task with command `{term_cmd}` to continously read "
+                "and forward pty output to client"
+            )
+            socketio.start_background_task(target=read_and_forward_pty_output)
+            print("task started")
 
 
 # virtual terminal helper functions
 def set_winsize(fd, row, col, xpix=0, ypix=0):
     winsize = struct.pack("HHHH", row, col, xpix, ypix)
-    fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+    if not ON_WINDOWS:
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
 
 
 def read_and_forward_pty_output():

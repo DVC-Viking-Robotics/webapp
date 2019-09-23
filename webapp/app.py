@@ -1,8 +1,8 @@
 """
 This script runs the flask_controller application using a development server.
 """
-from flask import Flask
 import click
+from flask import Flask
 from .pages_config import ALL_PAGES, NUM_ROWS
 from .routes import blueprint
 from .users import login_manager
@@ -13,7 +13,7 @@ from .static_optimizer import cache_buster, compress
 # pylint: disable=invalid-name,missing-docstring,no-value-for-parameter
 
 app = Flask(__name__)
-
+app.secret_key = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\xea\xac\x15.'
 # Cache all static files for 1 year by default
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
 
