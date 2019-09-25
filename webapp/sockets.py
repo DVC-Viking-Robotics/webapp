@@ -18,7 +18,7 @@ from adafruit_lsm9ds1 import LSM9DS1_I2C
 # pylint: disable=import-error,wrong-import-position
 from .inputs.check_platform import ON_RASPI, ON_WINDOWS # , ON_JETSON
 if not ON_WINDOWS:
-    import pty
+    import pty          # docs @ https://docs.python.org/3/library/pty.html
     import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
     import fcntl        # I/O for file descriptors; used for setting terminal window size
 # pylint: enable=import-error
@@ -26,8 +26,8 @@ from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 
 # for virtual terminal access
-fd = None
-child_pid = None
+fd = None # I think this stands for "file descriptor" used as an I/O handle
+child_pid = None # the child process ID; used to avoid starting multiple processes for the same task
 term_cmd = ["bash"]
 
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
@@ -178,34 +178,45 @@ def on_terminal_connect():
 
         if child_pid:
             # already started child process, don't start another
-            return
+            return # maybe needed to manage multiple client sessions across 1 server
 
         # create child process attached to a pty we can read from and write to
-        (child_pid, fd) = pty.fork()
+        (child_pid, fd) = pty.fork() # read docs for this https://docs.python.org/3/library/pty.html#pty.fork
+        # now child_pid == 0, and fd == 'invalid'
         if child_pid == 0:
-            # this is the child process fork.
-            # anything printed here will show up in the pty, including the output
-            # of this subprocess
-            subprocess.run(term_cmd)
+            # this is the child process fork. Anything printed here will show up in the pty,
+            # including the output of this subprocess
+            # docs for subprocess.run @ https://docs.python.org/3/library/subprocess.html#subprocess.run
+            subprocess.run(term_cmd) # term_cmd is a list of arguments that (in our case) get passed to
+            # subprocess.Popen(); docs @ https://docs.python.org/3/library/subprocess.html#subprocess.Popen
+            # docs say term_cmd can be a simple string which (in our case) would be a little easier as long as
+            # we don't need to add more args to the `bash` program's starting call
+
+            # NOTE `multiprocessing` module has subprocess.run() functionality abstracted into their `Process` class
         else:
             # this is the parent process fork.
             set_winsize(fd, 50, 50)
+            # now concatenate the term_cmd list into a " " delimited string for
+            # outputting in the debugging print() cmds. See also previous comment after Popen() docs link
             term_cmd = " ".join(shlex.quote(c) for c in term_cmd)
-            print("child pid is", child_pid)
+            print("terminal thread's Process ID is", child_pid)
             print(
                 f"starting background task with command `{term_cmd}` to continously read "
                 "and forward pty output to client"
             )
+            # docs for start_background_task @ https://flask-socketio.readthedocs.io/en/latest/#flask_socketio.SocketIO.start_background_task
             socketio.start_background_task(target=read_and_forward_pty_output)
-            print("task started")
-
+            # since this method returns a `threading.Thread` object that is already start()-ed, we can
+            # simply capture the thread's instance for the multiprocessing module, but not until I know how
+            print("thread for terminal started")
 
 # virtual terminal helper functions
 def set_winsize(fd, row, col, xpix=0, ypix=0):
-    winsize = struct.pack("HHHH", row, col, xpix, ypix)
+    # ioctl will only accept window size parameters as a bytearray
+    winsize = struct.pack("HHHH", row, col, xpix, ypix) # contruct the bytearray
     if not ON_WINDOWS:
-        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
-
+        fcntl.ioctl(fd, request=termios.TIOCSWINSZ, arg=winsize)
+        # docs for this @ https://docs.python.org/3/library/fcntl.html#fcntl.ioctl
 
 def read_and_forward_pty_output():
     global fd
