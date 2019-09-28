@@ -10,8 +10,16 @@ git checkout nondrive-R2D2
 git submodule update --init --recursive
 
 # Prepare the virtual environment
-python3 -m venv env
+pip install virtualenv
+python -m venv env
+
+# Activate the virtual environment
+FOR WINDOWS
+env\Scripts\activate.bat
+
+FOR LINUX
 source env/bin/activate
+
 pip3 install -r requirements.txt
 ```
 
@@ -22,5 +30,5 @@ sudo apt-get install python3-picamera
 
 ## Running the server
 ```bash
-python3 -m webapp.app [cmd args]
+python -m webapp.app [cmd args]
 ```
