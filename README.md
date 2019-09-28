@@ -21,7 +21,7 @@ env\Scripts\activate.bat
 # FOR LINUX
 source env/bin/activate
 
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 On the Raspberry Pi, you'll need to install the `picamera` module via `apt`:
