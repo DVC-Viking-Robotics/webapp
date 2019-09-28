@@ -13,7 +13,7 @@ git submodule update --init --recursive
 pip install virtualenv
 python -m venv env
 ```
-```
+```bash
 # Activate the virtual environment
 # FOR WINDOWS
 env\Scripts\activate.bat
