@@ -33,6 +33,8 @@ term_cmd = ["bash"]
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # handle camera dependencies
+# NOTE Module 'cv2' has no 'VideoCapture' member -- pylint(no-member)
+# pylint: disable=no-member
 if ON_RASPI:
     try:
         import picamera
@@ -60,6 +62,7 @@ else: # running on a PC
     except ImportError:
         print('opencv-python is not installed')
         camera = None
+# pylint: enable=no-member
 
 def getHYPR():
     heading = []
@@ -104,6 +107,8 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
+    # NOTE Module 'cv2' has no 'imencode' member -- pylint(no-member)
+    # pylint: disable=no-member
     if camera is not None:
         if ON_RASPI:
             sio = io.BytesIO()
@@ -116,6 +121,7 @@ def handle_webcam_request():
         b64 = base64.b64encode(buffer)
         print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', b64)
+    # pylint: enable=no-member
 
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):
