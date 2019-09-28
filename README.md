@@ -12,12 +12,13 @@ git submodule update --init --recursive
 # Prepare the virtual environment
 pip install virtualenv
 python -m venv env
-
+```
+```
 # Activate the virtual environment
-FOR WINDOWS
+# FOR WINDOWS
 env\Scripts\activate.bat
 
-FOR LINUX
+# FOR LINUX
 source env/bin/activate
 
 pip3 install -r requirements.txt
