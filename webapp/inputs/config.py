@@ -5,11 +5,14 @@ try:
 except NotImplementedError:
     pass  # addressed by has_gpio_pins variable
 from gps_serial import GPSserial
-from circuitpython_mpu6050 import MPU6050
-from drivetrain.drivetrain import Tank, Automotive, External
-from drivetrain.motor import Solenoid, BiMotor, PhasedMotor, NRF24L01, USB
-from adafruit_lsm9ds1 import LSM9DS1_I2C
 from .check_platform import ON_RASPI, ON_JETSON
+
+if ON_RASPI:
+    from drivetrain.drivetrain import Tank, Automotive, External
+    from drivetrain.motor import Solenoid, BiMotor, PhasedMotor, NRF24L01, USB
+    from adafruit_lsm9ds1 import LSM9DS1_I2C
+    from circuitpython_mpu6050 import MPU6050
+
 from .imu import MAG3110
 
 CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
