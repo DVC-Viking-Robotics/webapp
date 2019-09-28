@@ -32,4 +32,6 @@ sudo apt-get install python3-picamera
 ## Running the server
 ```bash
 python -m webapp.app [cmd args]
+# cmd args currently not supported
 ```
+
