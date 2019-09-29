@@ -15,7 +15,7 @@ if ON_RASPI:
 
 from .imu import MAG3110
 
-CONFIG_FILE_LOCATION = u'webapp/inputs/config.json'
+CONFIG_FILE_LOCATION = u'webapp/inputs/HWconfig.json'
 SYSTEM_CONF = None
 
 try:
