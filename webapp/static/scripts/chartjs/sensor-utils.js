@@ -26,3 +26,13 @@ function randData(length) {
 
     return data;
 }
+
+// Sensor data request loop
+const dataRequestLock = setInterval(function () {
+    socket.emit('sensorDoF'); // used to request sensor data from server
+}, 1000);
+
+// Used to receive IMU's sensor(s) data from the raspberry pi
+socket.on('sensorDoF-response', function (imuSenses) {
+    console.log('imu sensors = ' + imuSenses);
+});

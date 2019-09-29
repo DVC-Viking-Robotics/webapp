@@ -6,7 +6,6 @@ const el_gps = document.getElementById('gps');
 // Sensor data request loop
 const dataRequestLock = setInterval(function () {
     socket.emit('gps');
-    // socket.emit('sensorDoF');
 }, 1000);
 
 // Used to receive gps data from the raspberry pi
