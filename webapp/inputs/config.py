@@ -89,9 +89,9 @@ if SYSTEM_CONF is not None:
                     elif m['driver'].startswith('USB'):
                         motors.append(USB(m['address']))
                 if d['type'].startswith('Tank') and has_gpio_pins:
-                    d_train.append(Tank(motors, d['max speed']))
+                    d_train.append(Tank(motors, int(d['max speed'])))
                 elif d['type'].startswith('Automotive') and has_gpio_pins:
-                    d_train.append(Automotive(motors, d['max speed']))
+                    d_train.append(Automotive(motors, int(d['max speed'])))
                 elif d['type'].startswith('External'):
                     if motors:
                         d_train.append(External(motors[0]))
