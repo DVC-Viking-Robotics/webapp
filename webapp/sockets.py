@@ -88,11 +88,11 @@ def get_imu_data():
     '''
     senses = [[100, 50, 25], [-100, -50, -25], [100, -50, 25]]
     for imu in IMUs:
-        if type(imu, LSM9DS1_I2C):
+        if isinstance(imu, LSM9DS1_I2C):
             senses[0] = imu.acceleration
             senses[1] = imu.gyro
             senses[2] = imu.magnetic
-        elif type(imu, MPU6050):
+        elif isinstance(imu, MPU6050):
             senses[0] = imu.acceleration
             senses[1] = imu.gryo
     return senses
