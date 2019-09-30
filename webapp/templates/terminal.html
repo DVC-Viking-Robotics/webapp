@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/xterm.css') }}">
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Terminal I/O</h1>
+        <h5 class="title is-5">Status: <span id="status">connecting...</span></h5>
+        <div style="width: 100%; height: calc(100% - 50px);" id="terminal"></div>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='scripts/libs/xterm/xterm.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/libs/xterm/xterm-fit.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/libs/xterm/xterm-webLinks.js') }}"></script>
+
+<script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/terminal.js') }}"></script>
+{% endblock %}

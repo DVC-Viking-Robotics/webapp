@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style>
+    .sensor-chart {
+        max-width: 100%;
+        max-height: 100%;
+    }
+</style>
+
+<script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
+<script>const socket = io.connect({ transports: ['websocket'] });</script>
+
+<!-- TODO: Connect sensors with charts -->
+<section class="section">
+    <div class="container">
+        <div class="buttons has-addons are-medium is-centered">
+            <a class="button is-rounded" id="btn-raw-data" onclick="toggleView('raw-data')">Raw Data</a>
+            <a class="button is-rounded" id="btn-robot-view" onclick="toggleView('robot-view')">Robot View</a>
+        </div>
+
+        <div class="tile is-ancestor" id="raw-data-view">
+            <div class="tile is-vertical is-12">
+                <div class="tile">
+                    <div class="tile is-parent is-8">
+                        <article class="tile is-child notification">
+                            <p class="title">Accelerometer Data</p>
+                            <canvas class="sensor-chart" id="accelerometer-line-chart"></canvas>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification">
+                            <p class="title">Accelerometer Values</p>
+                            <canvas class="sensor-chart" id="accelerometer-bar-chart"></canvas>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile is-parent is-8">
+                        <article class="tile is-child notification">
+                            <p class="title">Gyroscope Data</p>
+                            <canvas class="sensor-chart" id="gyroscope-line-chart"></canvas>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification">
+                            <p class="title">Gyroscope Values</p>
+                            <canvas class="sensor-chart" id="gyroscope-bar-chart"></canvas>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile is-parent is-8">
+                        <article class="tile is-child notification">
+                            <p class="title">Magnetometer Data</p>
+                            <canvas class="sensor-chart" id="magnetometer-line-chart"></canvas>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child notification">
+                            <p class="title">Magnetometer Values</p>
+                            <canvas class="sensor-chart" id="magnetometer-bar-chart"></canvas>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="robot-view">
+            <!-- TODO: Implement the robot view for the sensor dashboard -->
+            <p class="title">The robot view is still a work in progress. Please be patient!</p>
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='scripts/libs/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/libs/Chart.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='scripts/chartjs/sensor-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/chart-config.js') }}"></script>
+
+<script src="{{ url_for('static', filename='scripts/chartjs/accel-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/gyro-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/mag-charts.js') }}"></script>
+
+<script src="{{ url_for('static', filename='scripts/sensor-charts.js') }}"></script>
+{% endblock %}

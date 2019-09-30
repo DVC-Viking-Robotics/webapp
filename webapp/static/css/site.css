@@ -1,0 +1,64 @@
+/* favorites list attributes */
+.favs {
+  overflow: auto;
+  overflow-clip-box: 50px, 0, 50px, 0;
+  height: 70%;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+  transition: margin-left .5s;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)}
+  to {-webkit-transform: scale(1)}
+}
+
+.fading-notification {
+  animation: fadeout 3s ease-in;
+  animation-delay: 2s;
+  -webkit-animation: fadeout 3s ease-in;
+  -moz-animation: fadeout 3s ease-in;
+  -ms-animation: fadeout 3s ease-in;
+  -o-animation: fadeout 3s ease-in;
+  z-index: 99;
+  text-align: center;
+  opacity: 0;
+}
+
+@keyframes animatezoom {
+  from {transform: scale(0)}
+  to {transform: scale(1)}
+}
+
+@keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@-moz-keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@-webkit-keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@-ms-keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@-o-keyframes fadeout {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}

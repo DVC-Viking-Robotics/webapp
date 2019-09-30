@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/maps.css') }}">
+
+<script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
+<script>const socket = io.connect({ transports: ['websocket'] });</script>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Autonomous Mode</h1>
+
+        <div id="floating-top-panel">
+            <button class="button is-warning" onclick="clearMarkers()">Hide Markers</button>
+            <button class="button is-success" onclick="showMarkers()">Show All Markers</button>
+            <button class="button is-danger" onclick="deleteMarkers()">Delete Markers</button>
+            <button class="button is-info" onclick="latPlus()">LAT++</button>
+            <button class="button is-info" onclick="latMinus()">LAT--</button>
+            <button class="button is-info" onclick="lngPlus()">LNG++</button>
+            <button class="button is-info" onclick="lngMinus()">LNG--</button>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="floating-bottom-panel">
+            <!-- <p>Click on the map to add markers.</p> -->
+            <button class="button is-success" onclick="dumpMarkers(true);">Go Go Gadget Robot</button>
+            <table class="table is-bordered is-narrow">
+                <tr>
+                    <td>
+                        <p class="has-text-centered">Coordinates</p>
+                        <div id="gps" class="has-text-centered">N/A</div>
+                    </td>
+                    <td>
+                        <p class="has-text-centered">Compass</p>
+                        <div id="compass" class="has-text-centered">0&deg;</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script src="../static/scripts/maps-api.js"></script>
+<script src="../static/scripts/location-data.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBq4kjidV-vDjoT9jzbwzNlbnGhYvIe5v8 &callback=initMap" async defer></script>
+{% endblock %}

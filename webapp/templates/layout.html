@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ title }}</title>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-quickview.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-badge.min.css') }}">
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
+        <link rel="shortcut icon" href="/static/images/viking.png">
+
+        <style>
+            .sidenav-button {
+                border-radius: 0px;
+            }
+
+            .notification:not(:last-child).dropdown-item {
+                margin-bottom: 0.5em;
+            }
+        </style>
+    </head>
+
+    <body>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="columns is-vertical is-centered is-overlay">
+            <div class="column is-narrow">
+                {% for category, message in messages %}
+                {% set category = category.replace('message', 'info') %}
+                {% set category = category.replace('error', 'danger') %}
+                <div class="notification fading-notification is-{{ category }}">
+                    <span class="icon is-pulled-left has-text-black">
+                        {% if category.find('danger') >= 0 %}
+                        <i class="fas fa-ban"></i>
+                        {% elif category.find('warning') >= 0 %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% elif category.find('info') >= 0 %}
+                        <i class="fas fa-info-circle"></i>
+                        {% elif category.find('success') >= 0 %}
+                        <i class="fas fa-thumbs-up"></i>
+                        {% endif %}
+                    </span>
+                    <p class="has-text-black"><strong>{{ message }}</strong></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div id="sidenav" class="quickview is-left">
+            <header class="quickview-header is-dark">
+                <p class="title">Main Menu</p>
+                <span class="delete has-background-danger is-outlined is-medium is-pulled-right" data-dismiss="quickview"></span>
+            </header>
+
+            <div class="quickview-body is-dark">
+                <div class="quickview-block">
+                    <a class="button is-medium is-fullwidth sidenav-button" href="/settings/user">My preferences</a>
+                    <div class="favs">
+                        <!-- {% for remote in current_user.remotes %}
+                        <a href={{remote.link}}>{{remote.name}}</a>
+                        {% endfor %} -->
+
+                        {% for page in ALL_PAGES %}
+                        <a class="button is-medium is-primary is-fullwidth sidenav-button" href="{{page.route}}">{{page.title}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <footer class="quickview-footer"></footer>
+        </div>
+
+        <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+        <div id="main">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <div class="navbar-item">
+                        <button class="button is-success is-outlined" data-show="quickview" data-target="sidenav">&#9776;</button>
+                    </div>
+
+                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="top-navbar">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+
+                <div id="top-navbar" class="navbar-menu">
+                    <div class="navbar-start">
+                        {% for page in ALL_PAGES %}
+                        <a class="navbar-item" href="{{page.route}}">{{page.title}}</a>
+                        {% endfor %}
+                    </div>
+
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                {% if current_user.is_authenticated %}
+
+                                <!-- Connect notifications with 'robot events' via a list-->
+                                <!-- NOTE: Use '[data-badge]::after' to control badge visibility -->
+                                <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
+                                    <div class="dropdown-trigger">
+                                        <a class="button is-medium is-primary has-badge-rounded has-badge-danger has-badge-right" data-badge="3" aria-haspopup="true" aria-controls="notif-dropdown-menu">
+                                            <span class="icon">
+                                                <i class="fas fa-bell fa-lg"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <div class="dropdown-menu" id="notif-dropdown-menu" role="menu">
+                                        <div class="dropdown-content" id="notification-stack">
+                                            <div class="notification dropdown-item"><button class="delete"></button>Example Notification 1</div>
+                                            <div class="notification dropdown-item"><button class="delete"></button>Example Notification 2</div>
+                                            <div class="notification dropdown-item"><button class="delete"></button>Example Notification 3</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
+                                    <div class="dropdown-trigger">
+                                        <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="user-dropdown-menu">
+                                            <span class="icon">
+                                                <i class="fas fa-user fa-lg"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <!-- TODO: Connect user object with dropdown menu -->
+                                    <div class="dropdown-menu" id="user-dropdown-menu" role="menu">
+                                        <div class="dropdown-content">
+                                            <a class="dropdown-item">View Profile</a>
+                                            <a class="dropdown-item">Edit Preferences</a>
+                                            <hr class="dropdown-divider">
+                                            <a href="/logout" class="dropdown-item">Log Out</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <a class="button is-dark"><strong>Sign up</strong></a>
+                                <a class="button is-light">Log in</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            {% block content %}{% endblock %}
+        </div>
+
+        <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/libs/bulma-quickview.min.js') }}"></script>
+
+        <script src="{{ url_for('static', filename='scripts/navbar-mobile.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/delete-notif.js') }}"></script>
+
+        <script>
+            const dropdownItems = document.getElementsByClassName('dropdown-item');
+            for (let dItem of dropdownItems) {
+                dItem.onmouseenter = function () {
+                    this.classList.add('is-active');
+                }
+
+                dItem.onmouseleave = function () {
+                    this.classList.remove('is-active');
+                }
+            }
+        </script>
+
+        <script>bulmaQuickview.attach();</script>
+    </body>
+
+</html>

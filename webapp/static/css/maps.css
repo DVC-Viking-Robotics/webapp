@@ -1,0 +1,27 @@
+#map {
+    height: 600px;
+}
+
+#floating-top-panel {
+    position: absolute;
+    top: 80px;
+    left: 23%;
+    z-index: 5;
+    padding: 5px;
+    text-align: center;
+    font-family: 'Roboto', 'sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+}
+
+#floating-bottom-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 43%;
+    z-index: 5;
+    padding: 5px;
+    text-align: center;
+    font-family: 'Roboto', 'sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+}
