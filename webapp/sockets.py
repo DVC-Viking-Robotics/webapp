@@ -221,7 +221,8 @@ def set_winsize(fd, row, col, xpix=0, ypix=0):
     # ioctl will only accept window size parameters as a bytearray
     winsize = struct.pack("HHHH", row, col, xpix, ypix) # contruct the bytearray
     if not ON_WINDOWS:
-        fcntl.ioctl(fd, request=termios.TIOCSWINSZ, arg=winsize)
+        # NOTE: This method does *not* take keyword arguments!
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, arg=winsize)
         # docs for this @ https://docs.python.org/3/library/fcntl.html#fcntl.ioctl
 
 def read_and_forward_pty_output():
