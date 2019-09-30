@@ -1,9 +1,9 @@
 function toggleView(viewType) {
     const btnRobotView = document.getElementById('btn-robot-view');
-    const btnRawDataView = document.getElementById('btn-raw-data');
+    const btnRawDataView = document.getElementById('btn-imu-data');
 
     const robotView = document.getElementById('robot-view');
-    const rawDataView = document.getElementById('raw-data-view');
+    const rawDataView = document.getElementById('imu-data-view');
 
     switch (viewType) {
         case 'robot-view':
@@ -13,7 +13,7 @@ function toggleView(viewType) {
             rawDataView.style.display = 'none';
             robotView.style.display = 'initial';
             break;
-        case 'raw-data':
+        case 'imu-data':
             btnRobotView.classList.remove('is-info');
             btnRawDataView.classList.add('is-link');
 
@@ -23,7 +23,7 @@ function toggleView(viewType) {
     }
 }
 
-toggleView('raw-data');
+toggleView('imu-data');
 
 const accelLineCtx = document.getElementById('accelerometer-line-chart').getContext('2d');
 const accelLineChart = new Chart(accelLineCtx, configAccelLineChart);

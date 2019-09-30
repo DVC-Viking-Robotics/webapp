@@ -6,20 +6,20 @@ const configMagLineChart = {
             label: 'X Axis',
             backgroundColor: chartColors.red,
             borderColor: chartColors.red,
-            data: randData(NUM_POINTS),
+            data: extractAxis(mag_data, 0),
             fill: false,
         }, {
             label: 'Y Axis',
             fill: false,
             backgroundColor: chartColors.blue,
             borderColor: chartColors.blue,
-            data: randData(NUM_POINTS),
+            data: extractAxis(mag_data, 1),
         }, {
             label: 'Z Axis',
             fill: false,
             backgroundColor: chartColors.green,
             borderColor: chartColors.green,
-            data: randData(NUM_POINTS),
+            data: extractAxis(mag_data, 2),
         }]
     },
     options: {
@@ -58,20 +58,20 @@ const configMagBarChart = {
             label: 'X Axis',
             backgroundColor: chartColors.red,
             borderColor: chartColors.red,
-            data: randData(1),
+            data: (mag_data.length ? mag_data[mag_data.length - 1] : 0),
             fill: false,
         }, {
             label: 'Y Axis',
             fill: false,
             backgroundColor: chartColors.blue,
             borderColor: chartColors.blue,
-            data: randData(1),
+            data: (mag_data.length ? mag_data[mag_data.length - 1] : 0),
         }, {
             label: 'Z Axis',
             fill: false,
             backgroundColor: chartColors.green,
             borderColor: chartColors.green,
-            data: randData(1),
+            data: (mag_data.length ? mag_data[mag_data.length - 1] : 0),
         }]
     },
     options: {

@@ -8,22 +8,12 @@ const chartColors = {
     grey: 'rgb(201, 203, 207)'
 };
 
-function randInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function* range(start, end) {
-    for (let i = start; i <= end; i++)
-        yield i;
-}
-
-function randData(length) {
-    const data = [];
-    for (let i of range(1, length))
-        data.push(randInt(-100, 100));
-
+// extract axis element from 2D array IMU data
+function extractAxis(arr, axis) {
+    data = [];
+    for (let i = 0; i < arr.length; i++){
+        data.push(arr[i][axis]);
+    }
     return data;
 }
 
@@ -35,4 +25,25 @@ const dataRequestLock = setInterval(function () {
 // Used to receive IMU's sensor(s) data from the raspberry pi
 socket.on('sensorDoF-response', function (imuSenses) {
     console.log('imu sensors = ' + imuSenses);
+    // imuSenses[0 - 2] = accel[x,y,z]
+    // imuSenses[3 - 5] = gyro[x,y,z]
+    // imuSenses[6 - 8] = mag[x,y,z]
+    while (accel_data.length >= NUM_POINTS){
+        // remove first element & rebase index accordingly
+        accel_data.shift();
+    }
+    // add accelerometer data as array of [x, y, z]
+    accel_data.push([imuSenses[0], imuSenses[1], imuSenses[2]])
+    while (gyro_data.length >= NUM_POINTS){
+        // remove first element & rebase index accordingly
+        gyro_data.shift();
+    }
+    // add gyroscope data as array of [x, y, z]
+    gyro_data.push([imuSenses[3], imuSenses[4], imuSenses[5]])
+    while (mag_data.length >= NUM_POINTS){
+        // remove first element & rebase index accordingly
+        mag_data.shift();
+    }
+    // add magnetometer data as array of [x, y, z]
+    mag_data.push([imuSenses[6], imuSenses[7], imuSenses[8]])
 });
