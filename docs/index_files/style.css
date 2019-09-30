@@ -1,0 +1,158 @@
+/**
+ * Frontend Stylesheet
+ *
+ */ 
+
+/* ------------------------------------------------------------------
+Preloader
+------------------------------------------------------------------- */
+
+#ple-loader-wraps99, #ple-loader-wraps1, #ple-loader-wraps2, #ple-loader-wraps3, #ple-loader-wraps4 {
+    background: #fff;
+    color: transparent;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    text-indent: -9999px;
+    z-index: 99991;
+}
+#ple-animates {
+	display: inline-block;
+	position: absolute;
+	left: 50%;
+    top: 50%;
+}
+
+/* Preloader Effect (default) */ 
+#ple-loader-wraps99 #ple-animates {
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+    margin: -20px 0 0 -20px;
+    text-indent: -9999em;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation: ple-ball-scale 1s 0s ease-in-out infinite;
+    animation: ple-ball-scale 1s 0s ease-in-out infinite;
+}
+@-webkit-keyframes ple-ball-scale {
+    0% {
+        -webkit-transform: scale(0);
+        -moz-transform: scale(0);
+        -ms-transform: scale(0);
+        -o-transform: scale(0);
+        transform: scale(0);
+    }
+    100% {
+        opacity: 0;
+        -webkit-transform: scale(1);
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        -o-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+/* Preloader Effect 1 */ 
+#ple-loader-wraps1 #ple-animates {
+    height: 40px;
+    width: 40px;
+    margin: -20px 0 0 -20px;
+    text-indent: -9999em;
+  -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+  animation: sk-rotateplane 1.2s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-rotateplane {
+  0% { -webkit-transform: perspective(120px) }
+  50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+  100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+}
+
+@keyframes sk-rotateplane {
+  0% { 
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
+  } 50% { 
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) 
+  } 100% { 
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+
+/* Preloader Effect 2 */ 
+#ple-loader-wraps2 .spinner {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  text-align: center;
+  -webkit-animation: ple2-rotate 2.0s infinite linear;
+  animation: ple2-rotate 2.0s infinite linear;
+}
+
+#ple-loader-wraps2 .dot1, #ple-loader-wraps2 .dot2 {
+  width: 60%;
+  height: 60%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #333;
+  border-radius: 100%;
+  -webkit-animation: ple2-bounce 2.0s infinite ease-in-out;
+  animation: ple2-bounce 2.0s infinite ease-in-out;
+}
+
+#ple-loader-wraps2 .dot2 {
+  top: auto;
+  bottom: 0;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes ple2-rotate { 100% { -webkit-transform: rotate(360deg) }}
+@keyframes ple2-rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
+
+@-webkit-keyframes ple2-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes ple2-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+
+/* Preloader Effect 3 */
+#ple-loader-wraps3 .spinner {
+   width:35px;
+   height:35px;
+   padding:0px;
+   border-radius:100%;
+   border:2px solid;
+   border-top-color:rgba(0,0,0, 0.95);
+   border-bottom-color:rgba(0,0,0, 0.25);
+   border-left-color:rgba(0,0,0, 0.95);
+   border-right-color:rgba(0,0,0, 0.25);
+   -webkit-animation: pleloader3 0.8s linear infinite;
+   animation: pleloader3 0.8s linear infinite;
+}
+@keyframes pleloader3 {
+   from {transform: rotate(0deg);}
+   to {transform: rotate(360deg);}
+}
+@-webkit-keyframes pleloader3 {
+   from {-webkit-transform: rotate(0deg);}
+   to {-webkit-transform: rotate(360deg);}
+}
