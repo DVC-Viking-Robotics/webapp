@@ -89,12 +89,12 @@ def get_imu_data():
     senses = [[100, 50, 25], [-100, -50, -25], [100, -50, 25]]
     for imu in IMUs:
         if isinstance(imu, LSM9DS1_I2C):
-            senses[0] = imu.acceleration
-            senses[1] = imu.gyro
-            senses[2] = imu.magnetic
+            senses[0] = list(imu.acceleration)
+            senses[1] = list(imu.gyro)
+            senses[2] = list(imu.magnetic)
         elif isinstance(imu, MPU6050):
-            senses[0] = imu.acceleration
-            senses[1] = imu.gryo
+            senses[0] = list(imu.acceleration)
+            senses[1] = list(imu.gryo)
     return senses
 
 @socketio.on('connect')
