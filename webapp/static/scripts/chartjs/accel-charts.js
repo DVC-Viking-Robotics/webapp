@@ -1,7 +1,7 @@
 const configAccelLineChart = {
     type: 'line',
     data: {
-        labels: [...range(1, NUM_POINTS)].map(i => -(NUM_POINTS - i)),
+        labels: [...range(1, accel_data.length)].map(i => -(accel_data.length - i)),
         datasets: [{
             label: 'X Axis',
             backgroundColor: chartColors.red,

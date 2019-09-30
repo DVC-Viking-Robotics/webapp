@@ -1,7 +1,7 @@
 const configMagLineChart = {
     type: 'line',
     data: {
-        labels: [...range(1, NUM_POINTS)].map(i => -(NUM_POINTS - i)),
+        labels: [...range(1, mag_data.length)].map(i => -(mag_data.length - i)),
         datasets: [{
             label: 'X Axis',
             backgroundColor: chartColors.red,

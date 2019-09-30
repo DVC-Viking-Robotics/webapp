@@ -8,6 +8,12 @@ const chartColors = {
     grey: 'rgb(201, 203, 207)'
 };
 
+// generator that returns an iterator from start to end
+function* range(start, end) {
+    for (let i = start; i <= end; i++)
+        yield i;
+}
+
 // extract axis element from 2D array IMU data
 function extractAxis(arr, axis) {
     data = [];
