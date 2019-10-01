@@ -4,11 +4,11 @@
         {
             "motors":[
                 {
-                    "driver":"BiMotor",
+                    "driver":"PhasedMotor",
                     "address":"22,13"
                 },
                 {
-                    "driver":"BiMotor",
+                    "driver":"PhasedMotor",
                     "address":"17,18"
                 }
             ],
