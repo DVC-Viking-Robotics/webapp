@@ -1,9 +1,11 @@
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring
 
+import click
 from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import login_required, login_user, logout_user
 from .users import users, User
+from .sockets import socketio
 
 blueprint = Blueprint('blueprint', __name__)
 
@@ -82,3 +84,14 @@ def settings_page():
 @blueprint.route('/about')
 def about():
     return render_template('about.html', title='About this project')
+
+@blueprint.route("/shutdown")
+def shutdown():
+    """Shutdowns Webapp"""
+    socketio.stop()
+    return 
+
+@blueprint.route("/restart")
+def restart():
+    """Restarts Webapp"""
+    return
