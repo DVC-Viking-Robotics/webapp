@@ -56,7 +56,7 @@ function resize() {
     ctx.clearRect(0, 0, W, H);
     controller.draw();
 }
-
+// this will have to be class that manages all canvas elements' ctx conrexrs
 controls = []
 
 function initRemote() {
