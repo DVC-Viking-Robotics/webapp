@@ -29,15 +29,17 @@
     "IMU":[
             {
                 "driver":"LSM9DS1",
+                "DoF":"9",
                 "address":"0x1c,0x6a"
             },
             {
                 "driver":"MPU6050",
-                "type":"6 DoF",
+                "DoF":"6",
                 "address":"0x68"
             },
             {
                 "driver":"MAG3110",
+                "DoF":"3",
                 "address":"/dev/ttyUSB0"
             }
     ],
