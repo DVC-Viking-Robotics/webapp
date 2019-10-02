@@ -103,7 +103,7 @@
                         <div class="navbar-item">
                             <div class="buttons">
                                 {% if current_user.is_authenticated %}
-
+                              
                                 <!-- Connect notifications with 'robot events' via a list-->
                                 <!-- NOTE: Use '[data-badge]::after' to control badge visibility -->
                                 <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
@@ -123,7 +123,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
                                     <div class="dropdown-trigger">
                                         <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="user-dropdown-menu">
@@ -132,7 +132,7 @@
                                             </span>
                                         </a>
                                     </div>
-
+                                    
                                     <!-- TODO: Connect user object with dropdown menu -->
                                     <div class="dropdown-menu" id="user-dropdown-menu" role="menu">
                                         <div class="dropdown-content">
@@ -140,6 +140,24 @@
                                             <a class="dropdown-item">Edit Preferences</a>
                                             <hr class="dropdown-divider">
                                             <a href="/logout" class="dropdown-item">Log Out</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
+                                    <div class="dropdown-trigger">
+                                        <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="shutdown-dropdown-menu">
+                                            <span class="icon">
+                                                <i class="fas fa-power-off fa-lg"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="dropdown-menu" id="shutdown-dropdown-menu" role="menu">
+                                        <div class="dropdown-content">
+                                            <a href= "/shutdown_server" class="shutdown_server dropdown-item">Shutdown Server</a>
+                                            <a href= "/shutdown_robot" class="shutdown_robot dropdown-item">Shutdown System</a>
+                                            <a href= "/restart" class="restart dropdown-item">Restart System</a>
                                         </div>
                                     </div>
                                 </div>
