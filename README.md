@@ -6,7 +6,7 @@ Flask webapp for interacting and remotely controlling the MASCCOT robot via WiFi
 # Clone the repository and its submodules
 git clone https://github.com/DVC-Viking-Robotics/webapp
 cd webapp
-git checkout nondrive-R2D2
+git checkout master
 git submodule update --init --recursive
 
 # Prepare the virtual environment
@@ -16,7 +16,7 @@ python -m venv env
 ```bash
 # Activate the virtual environment
 # FOR WINDOWS
-env\Scripts\activate.bat
+env\\Scripts\\activate.bat
 
 # FOR LINUX
 source env/bin/activate
