@@ -63,9 +63,9 @@
                 <div class="quickview-block">
                     <a class="button is-medium is-fullwidth sidenav-button" href="/settings/user">My preferences</a>
                     <div class="favs">
-                        {% for remote in current_user.remotes %}
+                    <!--     {% for remote in current_user.remotes %}
                         <a href={{remote.link}}>{{remote.name}}</a>
-                        {% endfor %}
+                        {% endfor %} -->
 
                         {% for page in ALL_PAGES %}
                         <a class="button is-medium is-primary is-fullwidth sidenav-button" href="{{page.route}}">{{page.title}}</a>
