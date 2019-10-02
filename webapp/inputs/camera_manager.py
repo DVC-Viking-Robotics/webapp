@@ -19,7 +19,7 @@ if ON_RASPI:
             camera_available = False
         finally:
             print('Warning: picamera is not installed')
-else: # running on a PC
+else:  # running on a PC
     try:
         import cv2
         camera_available = True
@@ -67,7 +67,7 @@ class CameraManager:
                     self.camera = self._init_cv2_camera()
                 except cv2.error as e:
                     print("OpenCV Error:", e)
-        else: # running on a PC
+        else:  # running on a PC
             try:
                 self.camera = self._init_cv2_camera()
             except cv2.error as e:

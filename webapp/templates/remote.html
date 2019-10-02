@@ -1,12 +1,29 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title is-1">Remote Control</h1>
+    </div>
+</section>
+
 <script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
 <script>const socket = io.connect({ transports: ['websocket'] });</script>
+
+<section class="section">
+    <div class="container has-text-centered">
+        <img id="camera-stream"></img>
+    </div>
+</section>
+
 <div id="canvasContainer">
     <canvas id="canvas" width="200"></canvas>
 </div>
 
+<!-- Initialize camera websocket I/O -->
+<script src="{{ url_for('static', filename='scripts/camera.js') }}"></script>
+
+<!-- Initialize controller websocket I/O -->
 <script src="{{ url_for('static', filename='scripts/controller.js') }}"></script>
 <script>initRemote();</script>
 {% endblock %}

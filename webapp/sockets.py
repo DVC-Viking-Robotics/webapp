@@ -16,7 +16,7 @@ from flask_socketio import SocketIO, emit
 from circuitpython_mpu6050 import MPU6050
 from adafruit_lsm9ds1 import LSM9DS1_I2C
 # pylint: disable=import-error,wrong-import-position
-from .inputs.check_platform import ON_RASPI, ON_WINDOWS # , ON_JETSON
+from .inputs.check_platform import ON_RASPI, ON_WINDOWS  # , ON_JETSON
 if not ON_WINDOWS:
     import pty          # docs @ https://docs.python.org/3/library/pty.html
     import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
@@ -28,8 +28,8 @@ from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 from .inputs.camera_manager import CameraManager
 
 # for virtual terminal access
-fd = None # I think this stands for "file descriptor" used as an I/O handle
-child_pid = None # the child process ID; used to avoid starting multiple processes for the same task
+fd = None           # This stands for "file descriptor" used as an I/O handle
+child_pid = None    # The child process ID; used to avoid starting multiple processes for the same task
 term_cmd = ["bash"]
 
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
@@ -37,6 +37,7 @@ socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 # Initialize the camera
 camera_manager = CameraManager()
 camera_manager.open_camera()
+
 
 def getHYPR():
     heading = []
@@ -53,6 +54,7 @@ def getHYPR():
         heading.append(0)
     print('heading:', heading[0], 'yaw:', yaw, 'pitch:', pitch, 'roll:', roll)
     return [heading[0], yaw, pitch, roll]
+
 
 def get_imu_data():
     '''
@@ -71,9 +73,11 @@ def get_imu_data():
             senses[1] = imu.gryo
     return senses
 
+
 @socketio.on('connect')
 def handle_connect():
     print('websocket Client connected!')
+
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -85,6 +89,7 @@ def handle_disconnect():
     if camera_manager.initialized:
         camera_manager.close_camera()
         camera_manager.open_camera()
+
 
 @socketio.on('webcam')
 def handle_webcam_request():
