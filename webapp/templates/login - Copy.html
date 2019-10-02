@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}"aswatch-darkly.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-divider.min.css') }}">
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
+        <link rel="shortcut icon" href="/static/images/viking.png">
+    </head>
+
+    <!-- TODO: Add more content to login page -->
+    <body>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="columns is-vertical is-centered is-overlay">
+            <div class="column is-narrow">
+                {% for category, message in messages %}
+                {% set category = category.replace('message', 'info') %}
+                {% set category = category.replace('error', 'danger') %}
+                <div class="notification fading-notification is-{{ category }}">
+                    <span class="icon is-pulled-left has-text-black">
+                        {% if category.find('danger') >= 0 %}
+                        <i class="fas fa-ban"></i>
+                        {% elif category.find('warning') >= 0 %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% elif category.find('info') >= 0 %}
+                        <i class="fas fa-info-circle"></i>
+                        {% elif category.find('success') >= 0 %}
+                        <i class="fas fa-thumbs-up"></i>
+                        {% endif %}
+                    </span>
+                    <p class="has-text-black"><strong>{{ message }}</strong></p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <p style="text-align:center; padding-top:15px;">An account is needed to save your remotes and preferences. No personal information is used online.</p>
+        <div class="columns is-vcentered">
+            <div class="column" style="text-align:center;">
+                <button class="button is-info is-medium is-outlined is-rounded" onclick="showView('login-user')">Login</button>
+            </div>
+            <div class="column">
+                <div class="is-divider-vertical is-white-ter" data-content="OR"></div>
+            </div>
+            <div class="column" style="text-align:center;">
+                <button class="button is-success is-medium is-outlined is-rounded" onclick="showView('signup-user')">Create an account</button>
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div id="login-user" class="modal">
+            <div onclick="hideView('login-user')" class="modal-background"></div>
+            <div class="modal-card animate">
+                <form method="post">
+                    <header class="modal-card-head has-background-grey-darker">
+                        <h1 class="modal-card-title has-text-white">Sign In</h1>
+                        <button class="delete is-danger is-large" aria-label="close" onclick="hideView('login-user')"></button>
+                    </header>
+
+                    <section class="modal-card-body has-background-black-ter has-text-white">
+                        <label for="username"><b>Username</b></label>
+                        <div class="control has-text-white has-icons-left">
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" required>
+                            <span class="icon is-left">
+                                <i class="far fa-user"></i>
+                            </span>
+                        </div>
+                    </section>
+
+                    <footer class="modal-card-foot has-background-grey-darker">
+                        <button type="button" onclick="hideView('login-user')" class="button is-danger is-rounded has-text-black">
+                            <strong>Cancel</strong>
+                        </button>
+                        <button type="submit" class="button is-success is-rounded has-text-black">
+                            <strong>Login</strong>
+                        </button>
+                        <label class="checkbox has-text-white">
+                            <input type="checkbox" checked="checked" name="remember"> Remember me
+                        </label>
+                        <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
+                    </footer>
+                </form>
+            </div>
+        </div>
+
+        <!-- The Modal (contains the Sign Up form) -->
+        <div id="signup-user" class="modal">
+            <div onclick="hideView('signup-user')" class="modal-background"></div>
+            <div class="modal-card animate">
+                <form method="post">
+                    <header class="modal-card-head has-background-grey-darker">
+                        <h1 class="modal-card-title has-text-white">Sign Up</h1>
+                        <button class="delete has-background-danger is-large" aria-label="close" onclick="hideView('signup-user')"></button>
+                    </header>
+
+                    <section class="modal-card-body has-background-black-ter has-text-white">
+                        <p>Please enter your unique name (nicknames are best).</p>
+                        <label for="username"><b>Username</b></label>
+                        <div class="control has-text-white has-icons-left">
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" required>
+                            <span class="icon is-left">
+                                <i class="far fa-user"></i>
+                            </span>
+                        </div>
+                        <input type=hidden name="register" value="True">
+                    </section>
+                    
+                    <section class="modal-card-body has-background-black-ter has-text-white">
+                        <p>Please enter a password.</p>
+                        <label for="password"><b>Password</b></label>
+                        <div class="control has-text-white has-icons-left">
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" value="FakePSW" id = "user_password" required>
+                            <span class="icon is-left">
+                                <i class="far fa-user"></i>
+                            </span>
+                        </div>
+                        <input type=hidden name="register" value="True">
+                    </section>
+                    
+                    <footer class="modal-card-foot has-background-grey-darker">
+                        <button type="button" onclick="hideView('login-user')" class="button is-danger is-rounded has-text-black">
+                            <strong>Cancel</strong>
+                        </button>
+                        <button type="submit" class="button is-success is-rounded has-text-black">
+                            <strong>Login</strong>
+                        </button>
+                        <label class="checkbox has-text-white">
+                            <input type="checkbox" checked="checked" name="remember"> Remember me
+                        </label>
+                    </footer>
+                </form>
+            </div>
+        </div>
+
+        <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"fontawesome-all.min.js') }}"></script>
+
+        <script>
+            function showView(id) {
+                document.getElementById(id).style.display = 'block';
+            }
+
+            function hideView(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+        </script>
+    </body>
+
+</html>
