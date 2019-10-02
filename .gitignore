@@ -126,3 +126,4 @@ dmypy.json
 # VS Code folder
 .vscode/
 webapp/inputs/HWconfig.json
+webapp/.project
