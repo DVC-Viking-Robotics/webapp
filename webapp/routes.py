@@ -86,18 +86,21 @@ def about():
     return render_template('about.html', title='About this project')
 
 @blueprint.route("/shutdown_server")
+@login_required
 def shutdown_server():
     """Shutdowns Webapp"""
     socketio.stop()
     return 
 
 @blueprint.route("/restart")
+@login_required
 def restart():
     """Restarts Robot (Only applicable if webserver runs off rasp pi)"""
     os.system('sudo reboot')
     return
 
 @blueprint.route("/shutdown_robot")
+@login_required
 def shutdown_robot():
     """Shutsdown Robot (Only applicable if webserver runs off rasp pi)"""
     os.system('sudo shutdown -h now')
