@@ -25,6 +25,8 @@ if not ON_WINDOWS:
 from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 
+from .inputs.camera_manager import CameraManager
+
 # for virtual terminal access
 fd = None # I think this stands for "file descriptor" used as an I/O handle
 child_pid = None # the child process ID; used to avoid starting multiple processes for the same task
@@ -32,37 +34,9 @@ term_cmd = ["bash"]
 
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
-# handle camera dependencies
-# NOTE Module 'cv2' has no 'VideoCapture' member -- pylint(no-member)
-# pylint: disable=no-member
-if ON_RASPI:
-    try:
-        import picamera
-        camera = picamera.PiCamera()
-        camera.resolution = (256, 144)
-        camera.start_preview(fullscreen=False, window=(100, 20, 650, 480))
-        # time.sleep(1)
-        # camera.stop_preview()
-    except picamera.exc.PiCameraError:
-        camera = None
-        print('picamera is not connected')
-    except ImportError:
-        try:
-            import cv2
-            camera = cv2.VideoCapture(0)
-        except ImportError:
-            camera = None
-            print('opencv-python is not installed')
-        finally:
-            print('picamera is not installed')
-else: # running on a PC
-    try:
-        import cv2
-        camera = cv2.VideoCapture(0)
-    except ImportError:
-        print('opencv-python is not installed')
-        camera = None
-# pylint: enable=no-member
+# Initialize the camera
+camera_manager = CameraManager()
+camera_manager.open_camera()
 
 def getHYPR():
     heading = []
@@ -105,19 +79,19 @@ def handle_connect():
 def handle_disconnect():
     print('websocket Client disconnected')
 
+    # If the camera was recently opened, then close it and reopen it to free the resource for future use
+    # The reason for "rebooting" the camera is that the camera device will be considered "in use" until
+    # the corresponding resource is freed, for which we can re-initialize the camera resource again.
+    if camera_manager.initialized:
+        camera_manager.close_camera()
+        camera_manager.open_camera()
+
 @socketio.on('webcam')
 def handle_webcam_request():
     # NOTE Module 'cv2' has no 'imencode' member -- pylint(no-member)
     # pylint: disable=no-member
-    if camera is not None:
-        if ON_RASPI:
-            sio = io.BytesIO()
-            camera.capture(sio, "jpeg", use_video_port=True)
-            buffer = sio.getvalue()
-        else:
-            _, frame = camera.read()
-            _, buffer = cv2.imencode('.jpg', frame)
-
+    if camera_manager.initialized:
+        buffer = camera_manager.capture_image()
         b64 = base64.b64encode(buffer)
         print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', b64)
