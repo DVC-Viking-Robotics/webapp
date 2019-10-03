@@ -1,29 +1,63 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
+<style>
+    /* Used for handling mobile view */
+    .camera-stream-view {
+        min-width: 160px;
+        min-height: 120px
+    }
+
+    /* Removes extra fluff along sides of vertical sliders */
+    .thin-vertical-slider {
+        width: 50px;
+    }
+</style>
+
 <section class="section">
-    <div class="container">
-        <h1 class="title is-1">Remote Control</h1>
+    <div class="container has-text-centered is-vcentered">
+        <div class="columns is-mobile">
+            <div id="camera-stream-wrapper" class="column is-half is-offset-one-quarter">
+                <img id="camera-stream" class="camera-stream-view"></img>
+            </div>
+            <div class="column is-1 is-narrow-mobile">
+                <input id="slider-speed-control" class="slider is-large is-success thin-vertical-slider" orient="vertical" min="-100" max="100" step="2" value="0" type="range">
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column is-full">
+                <input id="slider-turning-control" class="slider is-inline is-large is-info is-circle" min="-100" max="100" step="2" value="0" type="range">
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column is-half">
+                <p class="title">Speed: <span id="speed-o-meter">0</span></p>
+            </div>
+            <div class="column is-half">
+                <p class="title">Turn: <span id="turn-o-meter">0</span></p>
+            </div>
+        </div>
     </div>
 </section>
 
+<!-- Initialize websocket I/O-->
 <script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
 <script>const socket = io.connect({ transports: ['websocket'] });</script>
 
-<section class="section">
-    <div class="container has-text-centered">
-        <img id="camera-stream"></img>
-    </div>
-</section>
+<!-- This is used for adjusting the slider sizes when the camera feed size changes -->
+<script src="{{ url_for('static', filename='scripts/libs/ResizeSensor.js') }}"></script>
 
-<div id="canvasContainer">
-    <canvas id="canvas" width="200"></canvas>
-</div>
-
-<!-- Initialize camera websocket I/O -->
+<!-- Initialize camera -->
 <script src="{{ url_for('static', filename='scripts/camera.js') }}"></script>
 
-<!-- Initialize controller websocket I/O -->
-<script src="{{ url_for('static', filename='scripts/controller.js') }}"></script>
+<script>
+
+</script>
+
+<!-- Initialize controller -->
+<script src="{{ url_for('static', filename='scripts/remote-controller.js') }}"></script>
 <script>initRemote();</script>
 {% endblock %}
