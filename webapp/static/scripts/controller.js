@@ -18,7 +18,7 @@ var prevArgs = [];
 function sendSpeedTurnValues(gamepadAxes = []) {
     var speed = null;
     var turn = null;
-    if (gamepadAxes.length){
+    if (gamepadAxes.length > 1){
         speed = round(gamepadAxes[0] * 100);
         turn = round(gamepadAxes[1] * 100);
     }
