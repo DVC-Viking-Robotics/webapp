@@ -21,6 +21,8 @@ function sendSpeedTurnValues(gamepadAxes = []) {
     if (gamepadAxes.length){
         speed = Math.round(gamepadAxes[0] * 100);
         turn = Math.round(gamepadAxes[1] * 100);
+        speedController.value = speed;
+        turnController.value = turn;
     }
     else{
         speed = parseInt(speedController.value);
@@ -98,7 +100,7 @@ function getGamepadChanges() {
             if (gamepads[0].axes.length >= 3){
                 // using a deadzone of +/- 4%
                 if (gamepads[0].axes[1] > 0.04 || gamepads[0].axes[1] < -0.04){
-                    result.push(gamepads[0].axes[1]); // used for speed
+                    result.push(gamepads[0].axes[1] * -1); // used for speed
                 }
                 else{ // axis is within deadzone
                     result.push(0)
