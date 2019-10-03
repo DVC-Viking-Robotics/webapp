@@ -134,7 +134,7 @@ def handle_remoteOut(arg):
     # for debugging
     print('remote =', repr(arg))
     if d_train: # if there is a drivetrain connected
-        d_train[0].go([arg[0], arg[1]])
+        d_train[0].go([arg[0] * 655.35, arg[1] * 655.35])
 
 # NOTE: Source for virtual terminal functions: https://github.com/cs01/pyxterm.js
 
