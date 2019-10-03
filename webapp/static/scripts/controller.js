@@ -7,8 +7,6 @@ var turnController = document.getElementById('slider-turning-control');
 var speedOMeter = document.getElementById('speed-o-meter');
 var turnOMeter = document.getElementById('turn-o-meter');
 
-const enableSockets = true;
-
 // Grab the speed and turning values and update the text as well as send them to the robot
 function sendSpeedTurnValues() {
     var speed = parseInt(speedController.value);
@@ -19,10 +17,7 @@ function sendSpeedTurnValues() {
 
     var args = [speed, turn];
 
-    if (enableSockets)
-        socket.emit('remoteOut', args);
-    else
-        console.log('remoteOut', args);
+    socket.emit('remoteOut', args);
 }
 
 // Take the width/height of the camera feed and adjust the sliders accordingly
