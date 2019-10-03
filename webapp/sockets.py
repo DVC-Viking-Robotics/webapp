@@ -222,7 +222,7 @@ def set_winsize(fd, row, col, xpix=0, ypix=0):
     winsize = struct.pack("HHHH", row, col, xpix, ypix) # contruct the bytearray
     if not ON_WINDOWS:
         # NOTE: This method does *not* take keyword arguments!
-        fcntl.ioctl(fd, termios.TIOCSWINSZ, arg=winsize)
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
         # docs for this @ https://docs.python.org/3/library/fcntl.html#fcntl.ioctl
 
 def read_and_forward_pty_output():
