@@ -4,8 +4,12 @@
 <script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
 <script>const socket = io.connect({ transports: ['websocket'] });</script>
 <div class="columns is-desktop">
-    <canvas class="column" id="joystick"></canvas>
-    <canvas class="column" id="horizontal-slider"></canvas>
+    <div class="column">
+        <canvas id="joystick"></canvas>
+    </div>
+    <div class="column">
+        <canvas id="horizontal-slider"></canvas>
+    </div>
 </div>
 
 <script src="{{ url_for('static', filename='scripts/remote/joystick.js') }}"></script>
