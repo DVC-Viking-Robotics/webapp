@@ -64,8 +64,8 @@ function initRemote() {
     turnController.addEventListener('input', sendSpeedTurnValues);
 
     // Reset the sliders to their zero whenever the user lets go of either slider
-    speedController.onmouseup = resetSliders;
-    turnController.onmouseup = resetSliders;
+    speedController.addEventListener('mouseup', resetSliders);
+    turnController.addEventListener('mouseup', resetSliders);
     // event listeners for connected gamepads
     window.addEventListener("gamepadconnected", function (e) {
         console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
