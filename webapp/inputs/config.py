@@ -1,4 +1,4 @@
-# pylint: disable=anomalous-backslash-in-string,missing-docstring,invalid-name
+# pylint: disable=anomalous-backslash-in-string,missing-docstring,invalid-name,relative-beyond-top-level
 import json
 try:
     import board

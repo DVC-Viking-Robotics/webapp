@@ -1,7 +1,13 @@
+# NOTE: Module 'cv2' has no 'VideoCapture' member -- pylint(no-member)
+# pylint: disable=no-member,relative-beyond-top-level
+
+try:
+    import cStringIO as io
+except ImportError:
+    import io
+
 from .check_platform import ON_RASPI
 
-# NOTE Module 'cv2' has no 'VideoCapture' member -- pylint(no-member)
-# pylint: disable=no-member
 
 camera_available = False
 
