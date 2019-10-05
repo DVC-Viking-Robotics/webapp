@@ -9,6 +9,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-quickview.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-slider.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-badge.min.css') }}">
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
@@ -54,16 +55,16 @@
         {% endwith %}
 
         <div id="sidenav" class="quickview is-left">
-            <header class="quickview-header is-dark">
+        <!--     <header class="quickview-header is-dark">
                 <p class="title">Main Menu</p>
                 <span class="delete has-background-danger is-outlined is-medium is-pulled-right" data-dismiss="quickview"></span>
-            </header>
+            </header> -->
 
             <div class="quickview-body is-dark">
                 <div class="quickview-block">
                     <a class="button is-medium is-fullwidth sidenav-button" href="/settings/user">My preferences</a>
                     <div class="favs">
-                        <!-- {% for remote in current_user.remotes %}
+                    <!--     {% for remote in current_user.remotes %}
                         <a href={{remote.link}}>{{remote.name}}</a>
                         {% endfor %} -->
 
@@ -81,9 +82,9 @@
         <div id="main">
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
-                    <div class="navbar-item">
+                    <!-- <div class="navbar-item">
                         <button class="button is-success is-outlined" data-show="quickview" data-target="sidenav">&#9776;</button>
-                    </div>
+                    </div> -->
 
                     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="top-navbar">
                         <span aria-hidden="true"></span>
@@ -143,6 +144,24 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
+                                    <div class="dropdown-trigger">
+                                        <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="shutdown-dropdown-menu">
+                                            <span class="icon">
+                                                <i class="fas fa-power-off fa-lg"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <div class="dropdown-menu" id="shutdown-dropdown-menu" role="menu">
+                                        <div class="dropdown-content">
+                                            <a href= "/shutdown_server" class="shutdown_server dropdown-item">Shutdown Server</a>
+                                            <a href= "/shutdown_robot" class="shutdown_robot dropdown-item">Shutdown System</a>
+                                            <a href= "/restart" class="restart dropdown-item">Restart System</a>
+                                        </div>
+                                    </div>
+                                </div>
                                 {% else %}
                                 <a class="button is-dark"><strong>Sign up</strong></a>
                                 <a class="button is-light">Log in</a>
@@ -157,6 +176,7 @@
         </div>
 
         <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/libs/bulma-slider.min.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/libs/bulma-quickview.min.js') }}"></script>
 
         <script src="{{ url_for('static', filename='scripts/navbar-mobile.js') }}"></script>

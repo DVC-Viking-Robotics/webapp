@@ -4,14 +4,19 @@
 
 #floating-top-panel {
     position: absolute;
-    top: 80px;
-    left: 23%;
     z-index: 5;
-    padding: 5px;
     text-align: center;
     font-family: 'Roboto', 'sans-serif';
     line-height: 30px;
-    padding-left: 10px;
+    padding: 0 5px 0 0;
+    top: 82px;
+    right: 50px;
+    left: 206px;
+    text-align: right;
+}
+
+#floating-top-panel button {
+  margin-bottom: 5px;
 }
 
 #floating-bottom-panel {
@@ -24,4 +29,14 @@
     font-family: 'Roboto', 'sans-serif';
     line-height: 30px;
     padding-left: 10px;
+}
+
+@media (max-width: 768px) {
+  #floating-top-panel {
+    position: relative;
+    top: 0;
+    left: 0;
+    text-align: right;
+    padding: 5px 0 0;
+  }
 }
