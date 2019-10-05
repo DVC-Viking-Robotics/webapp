@@ -8,13 +8,13 @@ const chartColors = {
     grey: 'rgb(201, 203, 207)'
 };
 
-// generator that returns an iterator from start to end
+// Generator that returns an iterator from start to end
 function* range(start, end) {
     for (let i = start; i <= end; i++)
         yield i;
 }
 
-// extract axis element from 2D array IMU data
+// Extract an (x/y/z) axis element from the IMU data (2D array)
 function extractAxis(arr, axis) {
     data = [];
     for (let i = 0; i < arr.length; i++)
@@ -22,11 +22,13 @@ function extractAxis(arr, axis) {
     return data;
 }
 
-function extractLastPoint(arr, axis) {
+// Extract the latest data point from the IMU data (2D array)
+function extractLatestPoint(arr, axis) {
     return (arr.length > 0 ? arr[arr.length - 1][axis] : 0);
 }
 
-function updateLineChart(lineChart, currentData) {
+// Update an IMU line chart with latest data
+function updateImuLineChart(lineChart, currentData) {
     // Clean up the labels
     lineChart.data.labels = [...range(1, currentData.length)].map(i => -(currentData.length - i));
 
@@ -38,10 +40,11 @@ function updateLineChart(lineChart, currentData) {
     lineChart.update();
 }
 
-function updateBarChart(barChart, currentData) {
+// Update an IMU bar chart with latest data
+function updateImuBarChart(barChart, currentData) {
     // Update the chart data on each axis
     barChart.data.datasets.forEach((dataset, i) => {
-        dataset.data = [extractLastPoint(currentData, i)];
+        dataset.data = [extractLatestPoint(currentData, i)];
     });
 
     barChart.update();

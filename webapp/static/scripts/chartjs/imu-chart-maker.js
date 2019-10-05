@@ -1,3 +1,5 @@
+// This will create an easy-to-use line and bar chart configuration for the accel, gyro,
+// and mag sensors. It will return in the form of [lineChartConfig, barChartConfig]
 function createImuChartConfigs() {
     const lineChartConfig = {
         type: 'line',

@@ -1,6 +1,7 @@
+// This is for toggling between the inertial data view and the robot view
 function toggleView(viewType) {
     const btnRobotView = document.getElementById('btn-robot-view');
-    const btnRawDataView = document.getElementById('btn-imu-data');
+    const btnImuDataView = document.getElementById('btn-imu-data');
 
     const robotView = document.getElementById('robot-view');
     const rawDataView = document.getElementById('imu-data-view');
@@ -8,14 +9,14 @@ function toggleView(viewType) {
     switch (viewType) {
         case 'robot-view':
             btnRobotView.classList.add('is-info');
-            btnRawDataView.classList.remove('is-link');
+            btnImuDataView.classList.remove('is-link');
 
             rawDataView.style.display = 'none';
             robotView.style.display = 'initial';
             break;
         case 'imu-data':
             btnRobotView.classList.remove('is-info');
-            btnRawDataView.classList.add('is-link');
+            btnImuDataView.classList.add('is-link');
 
             rawDataView.style.display = 'initial';
             robotView.style.display = 'none';
@@ -23,7 +24,14 @@ function toggleView(viewType) {
     }
 }
 
+// Initially show the sensor charts
 toggleView('imu-data');
+
+
+// Sensor data arrays
+var accel_data = [];
+var gyro_data = [];
+var mag_data = [];
 
 
 // Accelerometer chart initialization
@@ -65,8 +73,8 @@ socket.on('sensorDoF-response', function(imuSenses) {
     // imuSenses[1] = gyro[x,y,z]
     // imuSenses[2] = mag[x,y,z]
 
-    console.log('IMU sensors:');
-    console.log(imuSenses);
+    // console.log('IMU sensors:');
+    // console.log(imuSenses);
 
 
     // Handle the accelerometer data
@@ -79,8 +87,8 @@ socket.on('sensorDoF-response', function(imuSenses) {
     accel_data.push(imuSenses[0]);
 
     // Update accel charts accordingly
-    updateLineChart(accelLineChart, accel_data);
-    updateBarChart(accelBarChart, accel_data);
+    updateImuLineChart(accelLineChart, accel_data);
+    updateImuBarChart(accelBarChart, accel_data);
 
 
     // Handle the gyroscope data
@@ -93,8 +101,8 @@ socket.on('sensorDoF-response', function(imuSenses) {
     gyro_data.push(imuSenses[1]);
 
     // Update gyro charts accordingly
-    updateLineChart(gyroLineChart, gyro_data);
-    updateBarChart(gyroBarChart, gyro_data);
+    updateImuLineChart(gyroLineChart, gyro_data);
+    updateImuBarChart(gyroBarChart, gyro_data);
 
 
     // Handle the magnetometer data
@@ -107,6 +115,6 @@ socket.on('sensorDoF-response', function(imuSenses) {
     mag_data.push(imuSenses[2]);
 
     // Update mag charts accordingly
-    updateLineChart(magLineChart, mag_data);
-    updateBarChart(magBarChart, mag_data);
+    updateImuLineChart(magLineChart, mag_data);
+    updateImuBarChart(magBarChart, mag_data);
 });
