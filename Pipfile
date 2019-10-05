@@ -1,0 +1,25 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+adafruit-circuitpython-lsm9ds1 = {git = "https://github.com/2bndy5/Adafruit_CircuitPython_LSM9DS1.git"}
+circuitpython-mpu6050 = {git = "https://github.com/2bndy5/CircuitPython_MPU6050.git"}
+drivetrain = {git = "https://github.com/DVC-Viking-Robotics/Drivetrain.git"}
+gps-serial = {git = "https://github.com/DVC-Viking-Robotics/GPS_Serial.git"}
+circuitpython-nrf24l01 = "==1.1.0"
+opencv-python = "==3.4.3.18"
+pyserial = "==3.4"
+eventlet = "==0.24.1"
+pyxtermjs = "==0.4.0.1"
+Flask = "==1.0.2"
+Flask-CacheBuster = "==1.0.0"
+Flask-Compress = "==1.4.0"
+Flask-Login = "==0.4.1"
+Flask-SocketIO = "==3.3.2"
+
+[requires]
+python_version = "3.6"
