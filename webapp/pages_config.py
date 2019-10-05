@@ -21,17 +21,8 @@ ALL_PAGES = [
         metapage=False,
         rowLocation=0,
         tile_id="remote-control",
-        description="Control the robot remotely!",
+        description="Control and view the robot remotely!",
         image="joystick"
-    ),
-    Page(
-        title="Camera Feed",
-        route="camera",
-        metapage=False,
-        rowLocation=0,
-        tile_id="camera",
-        description="Access the robot's camera feed!",
-        image="camera"
     ),
     Page(
         title="Sensor Dashboard",
@@ -46,7 +37,7 @@ ALL_PAGES = [
         title="Autonomous Mode",
         route="automode",
         metapage=False,
-        rowLocation=1,
+        rowLocation=0,
         tile_id="automode",
         description="Manage the robot's autonomous capabilities!",
         image="smart-brain"
@@ -69,9 +60,14 @@ ALL_PAGES = [
         description="Configure the robot's settings!",
         image="settings"
     ),
+    # TODO: This is a temporary placeholder to avoid having some tiles show up abnormally large
     Page(
         title="About this project",
         route="about",
-        metapage=True
+        metapage=False,
+        rowLocation=1,
+        tile_id="about-us",
+        description="Learn more about the robot!",
+        image="viking"
     )
 ]
