@@ -26,6 +26,9 @@ from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 from .inputs.camera_manager import CameraManager
 
+# This is a temporary variable to switch between the old and new implementation for the virtual terminal
+# The reason for this var is that the output of the terminal is inconsistent between both implementations,
+# but the code for implementing them seems to be the same. This requires further investigation for now...
 old_term = True
 
 # for virtual terminal access
@@ -151,11 +154,13 @@ def handle_remoteOut(arg):
 def on_terminal_input(data):
     """write to the child pty. The pty sees this as if you are typing in a real terminal."""
     if not ON_WINDOWS:
-        global fd
-        if fd:
-            print("writing to ptd: %s" % data["input"])
-            os.write(fd, data["input"].encode())
-        # vterm.write_input(data["input"].encode())
+        if old_term:
+            global fd
+            if fd:
+                print("writing to ptd: %s" % data["input"])
+                os.write(fd, data["input"].encode())
+        else:
+            vterm.write_input(data["input"].encode())
 
 @socketio.on("terminal-resize", namespace="/pty")
 def on_terminal_resize(data):
