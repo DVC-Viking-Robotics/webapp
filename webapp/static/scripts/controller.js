@@ -7,6 +7,8 @@ var turnController = document.getElementById('slider-turning-control');
 var speedOMeter = document.getElementById('speed-o-meter');
 var turnOMeter = document.getElementById('turn-o-meter');
 
+var stopButton = document.getElementById('stop-button');
+
 // prototype list of all data on any connected gamepads
 // each item in list represents a gamepad (if any)
 // each gamepad has all info about axis and buttons
@@ -63,9 +65,9 @@ function initRemote() {
     speedController.addEventListener('input', sendSpeedTurnValues);
     turnController.addEventListener('input', sendSpeedTurnValues);
 
-    // Reset the sliders to their zero whenever the user lets go of either slider
-    speedController.addEventListener('mouseup', resetSliders);
-    turnController.addEventListener('mouseup', resetSliders);
+    // // Reset the sliders to their zero whenever the stop button is pressed
+    stopButton.addEventListener('click', resetSliders);
+
     // event listeners for connected gamepads
     window.addEventListener("gamepadconnected", function (e) {
         console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
@@ -76,7 +78,7 @@ function initRemote() {
         console.log("Gamepad disconnected from index %d: %s",
         e.gamepad.index, e.gamepad.id);
     });
-    // because gamepads aren't handled with events   
+    // because gamepads aren't handled with events
     window.setInterval(getGamepadChanges, 16);
 }
 
@@ -112,7 +114,7 @@ function getGamepadChanges() {
                     result.push(0)
                 }
             }
-        /*             
+        /*
         for (i = 0; i < gamepads.length; i++){
             // show axes data
             for (j = 0; j < gamepads[i].axes.length; j++) {

@@ -13,10 +13,15 @@
     .thin-vertical-slider {
         width: 50px;
     }
+
+    .stop-sign {
+        min-width: 50px;
+        min-height:50px;
+    }
 </style>
 
 <section class="section">
-    <div class="container has-text-centered is-vcentered">
+    <div class="container has-text-centered">
         <div class="columns is-mobile">
             <div id="camera-stream-wrapper" class="column is-half is-offset-one-quarter">
                 <img id="camera-stream" class="camera-stream-view"></img>
@@ -26,14 +31,19 @@
             </div>
         </div>
 
-        <div class="columns">
-            <div class="column is-full">
-                <input id="slider-turning-control" class="slider is-inline is-large is-info is-circle" min="-100" max="100" step="2" value="0" type="range">
+        <div class="columns is-mobile">
+            <div class="column is-8 is-offset-3" style="width: auto">
+                <input id="slider-turning-control" class="slider is-inline is-fullwidth is-large is-info is-circle" min="-100" max="100" step="2" value="0" type="range">
+            </div>
+            <div class="column is-1">
+                <figure class="image is-square">
+                    <img id="stop-button" class="stop-sign" src="/static/images/stop-sign.png">
+                </figure>
             </div>
         </div>
 
         <div class="columns">
-            <div class="column is-half">
+            <div class="column is-offset-2">
                 <p class="title">Speed: <span id="speed-o-meter">0</span></p>
             </div>
             <div class="column is-half">
