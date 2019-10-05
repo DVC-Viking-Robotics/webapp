@@ -14,10 +14,22 @@ term.resize(15, 35);
 console.log(`size: ${term.cols} columns, ${term.rows} rows`);
 term.fit();
 
+function resizeTerm(rows, cols) {
+    termSocket.emit("terminal-resize", { "cols": cols, "rows": rows });
+}
+
+function sendTermInput(input) {
+    termSocket.emit("terminal-input", { "input": input });
+}
+
+function displayTermOutput(output) {
+    term.write(output);
+}
+
 term.on('key', (key, ev) => {
     // console.log("pressed key", key);
     // console.log("event", ev);
-    termSocket.emit("terminal-input", { "input": key });
+    sendTermInput(key);
 });
 
 const termSocket = io.connect('/pty', { transports: ['websocket'] });
@@ -26,12 +38,15 @@ const status = document.getElementById("status");
 
 termSocket.on("terminal-output", function (data) {
     // console.log("new output", data);
-    term.write(data.output);
+    displayTermOutput(data.output);
 });
 
 termSocket.on("connect", () => {
     fitToscreen();
     status.innerHTML = '<span class="has-text-weight-bold has-text-success">connected!</span>';
+
+    // To always ensure that we see some terminal output after refreshing the page, we force clear the virtual terminal
+    sendTermInput('clear\n');
 });
 
 termSocket.on("disconnect", () => {
@@ -40,7 +55,7 @@ termSocket.on("disconnect", () => {
 
 function fitToscreen() {
     term.fit();
-    termSocket.emit("terminal-resize", { "cols": term.cols, "rows": term.rows });
+    resizeTerm(term.rows, term.cols);
 }
 
 function debounce(func, wait_ms) {

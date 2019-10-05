@@ -150,7 +150,7 @@ def on_terminal_input(data):
         if old_term:
             global fd
             if fd:
-                print("writing to ptd: %s" % data["input"])
+                print("writing to ptd: '%s'" % data["input"])
                 os.write(fd, data["input"].encode())
         else:
             vterm.write_input(data["input"].encode())
@@ -173,7 +173,7 @@ def on_terminal_connect():
             vterm.init_connect()
         else:
             global child_pid, fd, term_cmd
-            print(child_pid, fd)
+            # print(child_pid, fd)
 
             if child_pid:
                 # already started child process, don't start another
@@ -181,7 +181,7 @@ def on_terminal_connect():
 
             # create child process attached to a pty we can read from and write to
             (child_pid, fd) = pty.fork() # read docs for this https://docs.python.org/3/library/pty.html#pty.fork
-            print(child_pid, fd)
+            # print(child_pid, fd)
             # now child_pid == 0, and fd == 'invalid'
             if child_pid == 0:
                 # this is the child process fork. Anything printed here will show up in the pty,

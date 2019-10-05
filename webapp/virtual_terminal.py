@@ -40,7 +40,7 @@ class VTerminal:
     def running(self):
         return self.bg_thread is not None
 
-    # Create the
+    # Initiate the virtual terminal connection by creating a subprocess
     def init_connect(self, term_cmd=["bash"], init_rows=50, init_cols=50):
         # print(self.child_pid, self.fd)
         if self.child_pid:
