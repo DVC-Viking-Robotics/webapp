@@ -58,20 +58,20 @@ const configMagBarChart = {
             label: 'X Axis',
             backgroundColor: chartColors.red,
             borderColor: chartColors.red,
-            data: (mag_data.length ? mag_data[mag_data.length - 1] : 0),
+            data: extractLastPoint(mag_data, 0),
             fill: false,
         }, {
             label: 'Y Axis',
             fill: false,
             backgroundColor: chartColors.blue,
             borderColor: chartColors.blue,
-            data: (mag_data.length ? mag_data[mag_data.length - 1] : 0),
+            data: extractLastPoint(mag_data, 0),
         }, {
             label: 'Z Axis',
             fill: false,
             backgroundColor: chartColors.green,
             borderColor: chartColors.green,
-            data: (mag_data.length ? mag_data[mag_data.length - 1] : 0),
+            data: extractLastPoint(mag_data, 0),
         }]
     },
     options: {

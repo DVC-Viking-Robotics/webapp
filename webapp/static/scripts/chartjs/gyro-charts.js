@@ -58,20 +58,20 @@ const configGyroBarChart = {
             label: 'X Axis',
             backgroundColor: chartColors.red,
             borderColor: chartColors.red,
-            data: (gyro_data.length ? gyro_data[gyro_data.length - 1] : 0),
+            data: extractLastPoint(gyro_data, 0),
             fill: false,
         }, {
             label: 'Y Axis',
             fill: false,
             backgroundColor: chartColors.blue,
             borderColor: chartColors.blue,
-            data: (gyro_data.length ? gyro_data[gyro_data.length - 1] : 0),
+            data: extractLastPoint(gyro_data, 1),
         }, {
             label: 'Z Axis',
             fill: false,
             backgroundColor: chartColors.green,
             borderColor: chartColors.green,
-            data: (gyro_data.length ? gyro_data[gyro_data.length - 1] : 0),
+            data: extractLastPoint(gyro_data, 2),
         }]
     },
     options: {

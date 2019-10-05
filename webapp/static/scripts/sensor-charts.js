@@ -42,3 +42,47 @@ const magLineChart = new Chart(magLineCtx, configMagLineChart);
 
 const magBarCtx = document.getElementById('magnetometer-bar-chart').getContext('2d');
 const magBarChart = new Chart(magBarCtx, configMagBarChart);
+
+// Sensor data request loop
+const dataRequestLock = setInterval(function () {
+    socket.emit('sensorDoF'); // used to request sensor data from server
+}, 1000);
+
+// Used to receive IMU's sensor(s) data from the raspberry pi
+socket.on('sensorDoF-response', function (imuSenses) {
+    console.log('IMU sensors:');
+    console.log(imuSenses);
+    // imuSenses[0] = accel[x,y,z]
+    // imuSenses[1] = gyro[x,y,z]
+    // imuSenses[2] = mag[x,y,z]
+
+    while (accel_data.length >= MAX_NUM_POINTS) {
+        // remove first element & rebase index accordingly
+        accel_data.shift();
+    }
+
+    // add accelerometer data as array of [x, y, z]
+    accel_data.push(imuSenses[0]);
+    updateLineChart(accelLineChart, accel_data);
+    updateBarChart(accelBarChart, accel_data);
+
+    while (gyro_data.length >= MAX_NUM_POINTS) {
+        // remove first element & rebase index accordingly
+        gyro_data.shift();
+    }
+
+    // add gyroscope data as array of [x, y, z]
+    gyro_data.push(imuSenses[1]);
+    updateLineChart(gyroLineChart, gyro_data);
+    updateBarChart(gyroBarChart, gyro_data);
+
+    while (mag_data.length >= MAX_NUM_POINTS) {
+        // remove first element & rebase index accordingly
+        mag_data.shift();
+    }
+
+    // add magnetometer data as array of [x, y, z]
+    mag_data.push(imuSenses[2]);
+    updateLineChart(magLineChart, mag_data);
+    updateBarChart(magBarChart, mag_data);
+});

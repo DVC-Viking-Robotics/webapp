@@ -58,20 +58,20 @@ const configAccelBarChart = {
             label: 'X Axis',
             backgroundColor: chartColors.red,
             borderColor: chartColors.red,
-            data: (accel_data.length ? accel_data[accel_data.length - 1] : 0),
+            data: extractLastPoint(accel_data, 0),
             fill: false,
         }, {
             label: 'Y Axis',
             fill: false,
             backgroundColor: chartColors.blue,
             borderColor: chartColors.blue,
-            data: (accel_data.length ? accel_data[accel_data.length - 1] : 0),
+            data: extractLastPoint(accel_data, 1),
         }, {
             label: 'Z Axis',
             fill: false,
             backgroundColor: chartColors.green,
             borderColor: chartColors.green,
-            data: (accel_data.length ? accel_data[accel_data.length - 1] : 0),
+            data: extractLastPoint(accel_data, 2),
         }]
     },
     options: {

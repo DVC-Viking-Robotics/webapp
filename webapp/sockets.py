@@ -62,7 +62,12 @@ def get_imu_data():
     senses[1] = gyro[x,y,z]
     senses[2] = mag[x,y,z]
     '''
-    senses = [[100, 50, 25], [-100, -50, -25], [100, -50, 25]]
+    senses = [
+        [100, 50, 25],
+        [-100, -50, -25],
+        [100, -50, 25]
+    ]
+
     for imu in IMUs:
         if isinstance(imu, LSM9DS1_I2C):
             senses[0] = list(imu.acceleration)
