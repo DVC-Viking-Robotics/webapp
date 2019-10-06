@@ -8,31 +8,44 @@ const chartColors = {
     grey: 'rgb(201, 203, 207)'
 };
 
-function randInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
+// Generator that returns an iterator from start to end
 function* range(start, end) {
     for (let i = start; i <= end; i++)
         yield i;
 }
 
-function randData(length) {
-    const data = [];
-    for (let i of range(1, length))
-        data.push(randInt(-100, 100));
-
+// Extract an (x/y/z) axis element from the IMU data (2D array)
+function extractAxis(arr, axis) {
+    data = [];
+    for (let i = 0; i < arr.length; i++)
+        data.push(arr[i][axis]);
     return data;
 }
 
-// Sensor data request loop
-const dataRequestLock = setInterval(function () {
-    socket.emit('sensorDoF'); // used to request sensor data from server
-}, 1000);
+// Extract the latest data point from the IMU data (2D array)
+function extractLatestPoint(arr, axis) {
+    return (arr.length > 0 ? arr[arr.length - 1][axis] : 0);
+}
 
-// Used to receive IMU's sensor(s) data from the raspberry pi
-socket.on('sensorDoF-response', function (imuSenses) {
-    console.log('imu sensors = ' + imuSenses);
-});
+// Update an IMU line chart with latest data
+function updateImuLineChart(lineChart, currentData) {
+    // Clean up the labels
+    lineChart.data.labels = [...range(1, currentData.length)].map(i => -(currentData.length - i));
+
+    // Update the chart data on each axis
+    lineChart.data.datasets.forEach((dataset, i) => {
+        dataset.data = extractAxis(currentData, i);
+    });
+
+    lineChart.update();
+}
+
+// Update an IMU bar chart with latest data
+function updateImuBarChart(barChart, currentData) {
+    // Update the chart data on each axis
+    barChart.data.datasets.forEach((dataset, i) => {
+        dataset.data = [extractLatestPoint(currentData, i)];
+    });
+
+    barChart.update();
+}

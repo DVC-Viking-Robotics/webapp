@@ -17,14 +17,7 @@ if ON_RASPI:
         import picamera
         camera_available = True
     except ImportError:
-        try:
-            import cv2
-            camera_available = True
-        except ImportError:
-            print('Warning: opencv-python is not installed')
-            camera_available = False
-        finally:
-            print('Warning: picamera is not installed')
+        print('Warning: picamera is not installed')
 else:  # running on a PC
     try:
         import cv2
@@ -65,31 +58,31 @@ class CameraManager:
         if ON_RASPI:
             try:
                 self.camera = self._init_pi_camera()
-            except picamera.exc.PiCameraError:
+            except picamera.exc.PiCameraError as picam_error:
                 self.camera = None
-                print('Error: picamera is not connected! Switching to OpenCV camera...')
-
-                try:
-                    self.camera = self._init_cv2_camera()
-                except cv2.error as e:
-                    print("OpenCV Error:", e)
+                print('Error: picamera is not connected!')
+                print(picam_error)
         else:  # running on a PC
             try:
                 self.camera = self._init_cv2_camera()
             except cv2.error as e:
+                self.camera = None
                 print("OpenCV Error:", e)
 
     # Fetches an image from the camera feed and incodes it as a JPEG buffer
     def capture_image(self):
-        if ON_RASPI:
-            sio = io.BytesIO()
-            self.camera.capture(sio, "jpeg", use_video_port=True)
-            buffer = sio.getvalue()
-        else:
-            _, frame = self.camera.read()
-            _, buffer = cv2.imencode('.jpg', frame)
+        if self.initialized:
+            if ON_RASPI:
+                sio = io.BytesIO()
+                self.camera.capture(sio, "jpeg", use_video_port=True)
+                buffer = sio.getvalue()
+            else:
+                _, frame = self.camera.read()
+                _, buffer = cv2.imencode('.jpg', frame)
 
-        return buffer
+            return buffer
+        else:
+            raise RuntimeError('Camera manager is not initialized!')
 
     # Cleans up and closes the camera. Note that you cannot use the camera unless you
     # re-initialize it with `CameraManager.open_camera()`
