@@ -35,7 +35,17 @@ class VTerminal:
     # Check if the virtual terminal is initialized and ready to start doing I/O
     @property
     def initialized(self):
-        return self.fd is not None
+        if self.fd is None:
+            return False
+
+        valid_fd = None
+        try:
+            # os.stat will throw an error if an invalid file descriptor is given
+            valid_fd = os.stat(self.fd) is not None
+        except OSError as e:
+            print('DAMMIT', e)
+            valid_fd = False
+        return valid_fd
 
     # Check if the virtual terminal is doing I/O as of now
     @property
@@ -44,21 +54,30 @@ class VTerminal:
 
     # Initiate the virtual terminal connection by creating a subprocess
     def init_connect(self, term_cmd=["/bin/bash"], init_rows=50, init_cols=50):
-        # print(self.child_pid, self.fd)
         if self.child_pid:
             # Already started child process, don't start another
             return  # Maybe needed to manage multiple client sessions across 1 server
 
         # Create child process attached to a pty we can read from and write to
         (self.child_pid, self.fd) = pty.fork()  # read docs for this https://docs.python.org/3/library/pty.html#pty.fork
-        # print('what')
-        # print(self.child_pid, self.fd)
 
         # now child_pid == 0, and fd == 'invalid'
         if self.child_pid == 0:
             # This is the child process fork. Anything printed here will show up in the pty, including the output of this subprocess
             # Docs for subprocess.run @ https://docs.python.org/3/library/subprocess.html#subprocess.run
-            subprocess.run(term_cmd)  # `term_cmd` is a list of arguments that (in our case) get passed to
+
+            # NOTE/HACK: If the shell child process ever goes down, it will restart again. The two ways that can happen
+            # are due to the user exiting the bash session or the user pressing Ctrl+C and causing a KeyboardInterrupt
+            # (which can only happen during the login prompt).
+
+            # NOTE/HACK (cont):This happens because when the websocket receives a 'broken close frame', it attempts to reconnect to the server,
+            # which consequentally attempts to restart the terminal session.
+            try:
+                subprocess.run(term_cmd)  # `term_cmd` is a list of arguments that (in our case) get passed to
+            except KeyboardInterrupt:
+                print('Caught an attempted KeyboardInterrupt during the login prompt. Starting a new session...')
+                pass
+
             # subprocess.Popen(); Docs @ https://docs.python.org/3/library/subprocess.html#subprocess.Popen
             # Docs say term_cmd can be a simple string which (in our case) would be a little easier as long as
             # We don't need to add more args to the `bash` program's starting call
@@ -83,6 +102,7 @@ class VTerminal:
                 with self.thread_lock:
                     # Docs for start_background_task @ https://flask-socketio.readthedocs.io/en/latest/#flask_socketio.SocketIO.start_background_task
                     self.bg_thread = self.socket_inst.start_background_task(target=self._read_and_forward_pty_output)
+
                 # Since this method returns a `threading.Thread` object that is already start()-ed, we can
                 # simply capture the thread's instance for the multiprocessing module, but not until I (2bndy5) know how
                 print("Output listener thread for terminal started")
@@ -95,11 +115,16 @@ class VTerminal:
             if self.running:
                 self.running_flag = False
 
-            self.remove_all_listeners()
-
             # Close the file descriptor associated with the virtual terminal
             os.close(self.fd)
 
+            # Kill the running child process
+            os.kill(self.child_pid, signal.SIGTERM)
+
+            # Clear used varables for next time usage
+            self.fd = None
+            self.child_pid = None
+            self.bg_thread = None
 
     # Helper function for resizing the virtual terminal
     def _set_winsize(self, row, col, xpix=0, ypix=0):
@@ -134,21 +159,27 @@ class VTerminal:
         while self.running_flag:
             self.socket_inst.sleep(OUTPUT_SLEEP_DURATION)
             if self.initialized:
-                # Docs: https://docs.python.org/3/library/select.html
-                # The optional timeout argument specifies a time-out as a floating point number in seconds.
-                # When the timeout argument is omitted the function blocks until at least one file descriptor is ready.
-                # A time-out value of zero specifies a poll and never blocks.
-                timeout_sec = 0
-                (data_ready, _, _) = select.select([self.fd], [], [], timeout_sec)
-                if data_ready:
-                    # For invalid characters, print out the hex representation (as indicated by errors='backslashreplace')
-                    output = os.read(self.fd, MAX_OUTPUT_READ_BYTES).decode(encoding='utf-8', errors='backslashreplace')
+                try:
+                    # Docs: https://docs.python.org/3/library/select.html
+                    # The optional timeout argument specifies a time-out as a floating point number in seconds.
+                    # When the timeout argument is omitted the function blocks until at least one file descriptor is ready.
+                    # A time-out value of zero specifies a poll and never blocks.
+                    timeout_sec = 0
+                    (data_ready, _, _) = select.select([self.fd], [], [], timeout_sec)
+                    if data_ready:
+                        # For invalid characters, print out the hex representation (as indicated by errors='backslashreplace')
+                        output = os.read(self.fd, MAX_OUTPUT_READ_BYTES).decode(encoding='utf-8', errors='backslashreplace')
 
-                    # HACK: This is a work-around for removing astray carriage returns that appear
-                    # due to outsourcing the virtual terminal code into a separate class.
-                    output = output.replace('\rn', '')
+                        # HACK: This is a work-around for removing astray carriage returns that appear
+                        # due to outsourcing the virtual terminal code into a separate class.
+                        output = output.replace('\rn', '')
 
-                    # NOTE: Even though we are using the 'event'-based approach, note that these calls are still synchronous and blocking.
-                    # Ideally we'd like them to be non-blocking, but it's not a huge priority for now.
-                    for listener in self.output_listeners:
-                        listener(output)
+                        # NOTE: Even though we are using the 'event'-based approach, note that these calls are still synchronous and blocking.
+                        # Ideally we'd like them to be non-blocking, but it's not a huge priority for now.
+                        for listener in self.output_listeners:
+                            listener(output)
+                except OSError as ose:
+                    print("An OS Error occurred during the output read loop:")
+                    print(ose)
+                    print("Stopping read loop...")
+                    self.running_flag = False

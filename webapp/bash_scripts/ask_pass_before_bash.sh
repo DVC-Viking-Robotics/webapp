@@ -39,33 +39,12 @@ ask_times=3
 clear
 
 # Color scripts copied from https://stackoverflow.com/a/58149187
-black() {
-  printf "\e[30m${1}\e[0m"
-}
-
-red() {
-  printf "\e[31m${1}\e[0m"
-}
-
-yellow() {
-  printf "\e[33m${1}\e[0m"
-}
-
-green() {
-  printf "\e[32m${1}\e[0m"
-}
-
-cyan() {
-  printf "\e[36m${1}\e[0m"
-}
-
-blue() {
-  printf "\e[34m${1}\e[0m"
-}
-
-magenta() {
-  printf "\e[35m${1}\e[0m"
-}
+red()     { printf "\e[31m${1}\e[0m"; }
+yellow()  { printf "\e[33m${1}\e[0m"; }
+green()   { printf "\e[32m${1}\e[0m"; }
+cyan()    { printf "\e[36m${1}\e[0m"; }
+blue()    { printf "\e[34m${1}\e[0m"; }
+magenta() { printf "\e[35m${1}\e[0m"; }
 
 # Generated from http://patorjk.com/software/taag/ with 'Reverse' font
 red     "===================================================================================================\n";
