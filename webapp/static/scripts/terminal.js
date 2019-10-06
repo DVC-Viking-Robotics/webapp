@@ -44,9 +44,6 @@ termSocket.on("terminal-output", function (data) {
 termSocket.on("connect", () => {
     fitToscreen();
     status.innerHTML = '<span class="has-text-weight-bold has-text-success">connected!</span>';
-
-    // To always ensure that we see some terminal output after refreshing the page, we force clear the virtual terminal
-    sendTermInput('clear\n');
 });
 
 termSocket.on("disconnect", () => {

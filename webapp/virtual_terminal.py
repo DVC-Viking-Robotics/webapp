@@ -2,15 +2,16 @@ from .inputs.check_platform import ON_WINDOWS
 
 import os
 import subprocess
+import signal
 from threading import Lock
+import struct       # struct library to pack data into bytearrays for setting terminal window size
+import select       # async I/O for file descriptors; used for retrieving terminal output
+import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
 
 if not ON_WINDOWS:
     import pty          # docs @ https://docs.python.org/3/library/pty.html
     import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
     import fcntl        # I/O for file descriptors; used for setting terminal window size
-    import struct       # struct library to pack data into bytearrays for setting terminal window size
-    import select       # async I/O for file descriptors; used for retrieving terminal output
-    import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
 
 
 OUTPUT_SLEEP_DURATION = 0.01        # Amount of time to sleep between calls to read the terminal output buffer
@@ -29,7 +30,7 @@ class VTerminal:
         self.bg_thread = None   # The background thread that listens for terminal output.
         self.running_flag = False   # Flag indicating if the loop in the background thread is running or now
         self.output_listeners = []  # An array of output listeners, that allows the developer to perform various actions to the terminal output.
-        self.thread_lock = Lock()   # Lock that's used for instantiating the background task
+        self.thread_lock = Lock()   # An object lock that's used for instantiating the background task
 
     # Check if the virtual terminal is initialized and ready to start doing I/O
     @property
@@ -42,7 +43,7 @@ class VTerminal:
         return self.bg_thread is not None
 
     # Initiate the virtual terminal connection by creating a subprocess
-    def init_connect(self, term_cmd=["bash"], init_rows=50, init_cols=50):
+    def init_connect(self, term_cmd=["/bin/bash"], init_rows=50, init_cols=50):
         # print(self.child_pid, self.fd)
         if self.child_pid:
             # Already started child process, don't start another
@@ -93,7 +94,12 @@ class VTerminal:
         if self.initialized:
             if self.running:
                 self.running_flag = False
+
             self.remove_all_listeners()
+
+            # Close the file descriptor associated with the virtual terminal
+            os.close(self.fd)
+
 
     # Helper function for resizing the virtual terminal
     def _set_winsize(self, row, col, xpix=0, ypix=0):

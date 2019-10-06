@@ -97,6 +97,10 @@ def handle_disconnect():
         camera_manager.close_camera()
         camera_manager.open_camera()
 
+    # If the vterm was initialized and possibly running, close the file descriptor and kill the child process
+    if vterm.running or vterm.initialized:
+        vterm.cleanup()
+
 
 @socketio.on('webcam')
 def handle_webcam_request():
@@ -167,10 +171,10 @@ def on_terminal_resize(data):
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
-    """new client connected"""
+    """A new client has connected"""
     if not ON_WINDOWS:
         if not old_term:
-            vterm.init_connect()
+            vterm.init_connect(["/bin/bash", "./webapp/bash_scripts/ask_pass_before_bash.sh"])
         else:
             global child_pid, fd, term_cmd
             # print(child_pid, fd)
