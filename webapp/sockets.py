@@ -22,24 +22,13 @@ from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 from .inputs.camera_manager import CameraManager
 
-# This is a temporary variable to switch between the old and new implementation for the virtual terminal
-# The reason for this var is that the output of the terminal is inconsistent between both implementations,
-# but the code for implementing them seems to be the same. This requires further investigation for now...
-old_term = not True
-
-# for virtual terminal access
-fd = None           # This stands for "file descriptor" used as an I/O handle
-child_pid = None    # The child process ID; used to avoid starting multiple processes for the same task
-term_cmd = ["bash"]
-
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # for virtual terminal access
-if not old_term:
-    from .virtual_terminal import VTerminal
-    if not ON_WINDOWS:
-        vterm = VTerminal(socketio)
-        vterm.register_output_listener(lambda output: socketio.emit("terminal-output", {"output": output}, namespace="/pty"))
+from .virtual_terminal import VTerminal
+if not ON_WINDOWS:
+    vterm = VTerminal(socketio)
+    vterm.register_output_listener(lambda output: socketio.emit("terminal-output", {"output": output}, namespace="/pty"))
 
 # Initialize the camera
 camera_manager = CameraManager()
@@ -151,87 +140,15 @@ def handle_remoteOut(arg):
 def on_terminal_input(data):
     """write to the child pty. The pty sees this as if you are typing in a real terminal."""
     if not ON_WINDOWS:
-        if old_term:
-            global fd
-            if fd:
-                print("writing to ptd: '%s'" % data["input"])
-                os.write(fd, data["input"].encode())
-        else:
-            vterm.write_input(data["input"].encode())
+        vterm.write_input(data["input"].encode())
 
 @socketio.on("terminal-resize", namespace="/pty")
 def on_terminal_resize(data):
     if not ON_WINDOWS:
-        if old_term:
-            global fd
-            if fd:
-                set_winsize(fd, data["rows"], data["cols"])
-        else:
-            vterm.resize_terminal(data["rows"], data["cols"])
+        vterm.resize_terminal(data["rows"], data["cols"])
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
     """A new client has connected"""
     if not ON_WINDOWS:
-        if not old_term:
-            vterm.init_connect(["/bin/bash", "./webapp/bash_scripts/ask_pass_before_bash.sh"])
-        else:
-            global child_pid, fd, term_cmd
-            # print(child_pid, fd)
-
-            if child_pid:
-                # already started child process, don't start another
-                return # maybe needed to manage multiple client sessions across 1 server
-
-            # create child process attached to a pty we can read from and write to
-            (child_pid, fd) = pty.fork() # read docs for this https://docs.python.org/3/library/pty.html#pty.fork
-            # print(child_pid, fd)
-            # now child_pid == 0, and fd == 'invalid'
-            if child_pid == 0:
-                # this is the child process fork. Anything printed here will show up in the pty,
-                # including the output of this subprocess
-                # docs for subprocess.run @ https://docs.python.org/3/library/subprocess.html#subprocess.run
-                subprocess.run(term_cmd) # term_cmd is a list of arguments that (in our case) get passed to
-                # subprocess.Popen(); docs @ https://docs.python.org/3/library/subprocess.html#subprocess.Popen
-                # docs say term_cmd can be a simple string which (in our case) would be a little easier as long as
-                # we don't need to add more args to the `bash` program's starting call
-
-                # NOTE `multiprocessing` module has subprocess.run() functionality abstracted into their `Process` class
-            else:
-                # this is the parent process fork.
-                set_winsize(fd, 50, 50)
-                # now concatenate the term_cmd list into a " " delimited string for
-                # outputting in the debugging print() cmds. See also previous comment after Popen() docs link
-                term_cmd = " ".join(shlex.quote(c) for c in term_cmd)
-                print("terminal thread's Process ID is", child_pid)
-                print(
-                    f"starting background task with command `{term_cmd}` to continously read "
-                    "and forward pty output to client"
-                )
-                # docs for start_background_task @ https://flask-socketio.readthedocs.io/en/latest/#flask_socketio.SocketIO.start_background_task
-                socketio.start_background_task(target=read_and_forward_pty_output)
-                # since this method returns a `threading.Thread` object that is already start()-ed, we can
-                # simply capture the thread's instance for the multiprocessing module, but not until I know how
-                print("thread for terminal started")
-
-# virtual terminal helper functions
-def set_winsize(fd, row, col, xpix=0, ypix=0):
-    # ioctl will only accept window size parameters as a bytearray
-    winsize = struct.pack("HHHH", row, col, xpix, ypix) # contruct the bytearray
-    if not ON_WINDOWS:
-        # NOTE: This method does *not* take keyword arguments!
-        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
-        # docs for this @ https://docs.python.org/3/library/fcntl.html#fcntl.ioctl
-
-def read_and_forward_pty_output():
-    global fd
-    max_read_bytes = 1024 * 20
-    while True:
-        socketio.sleep(0.01)
-        if fd:
-            timeout_sec = 0
-            (data_ready, _, _) = select.select([fd], [], [], timeout_sec)
-            if data_ready:
-                # for invalid characters, print out the hex representation
-                output = os.read(fd, max_read_bytes).decode(encoding='utf-8', errors='backslashreplace')
-                socketio.emit("terminal-output", {"output": output}, namespace="/pty")
+        vterm.init_connect(["/bin/bash", "./webapp/bash_scripts/ask_pass_before_bash.sh"])
