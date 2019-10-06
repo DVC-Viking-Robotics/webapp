@@ -94,14 +94,11 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
-    # NOTE Module 'cv2' has no 'imencode' member -- pylint(no-member)
-    # pylint: disable=no-member
     if camera_manager.initialized:
         buffer = camera_manager.capture_image()
         b64 = base64.b64encode(buffer)
         # print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', b64)
-    # pylint: enable=no-member
 
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):
