@@ -35,7 +35,7 @@ var mag_data = [];
 
 
 // Accelerometer chart initialization
-const [ accelLineChartConfig, accelBarChartConfig ] = createImuChartConfigs();
+const [ accelLineChartConfig, accelBarChartConfig ] = createImuChartConfigs("m/s^2");
 
 const accelLineCtx = document.getElementById('accelerometer-line-chart').getContext('2d');
 const accelLineChart = new Chart(accelLineCtx, accelLineChartConfig);
@@ -44,7 +44,7 @@ const accelBarCtx = document.getElementById('accelerometer-bar-chart').getContex
 const accelBarChart = new Chart(accelBarCtx, accelBarChartConfig);
 
 // Gyroscope chart initialization
-const [ gyroLineChartConfig, gyroBarChartConfig ] = createImuChartConfigs();
+const [ gyroLineChartConfig, gyroBarChartConfig ] = createImuChartConfigs("degrees/sec");
 
 const gyroLineCtx = document.getElementById('gyroscope-line-chart').getContext('2d');
 const gyroLineChart = new Chart(gyroLineCtx, gyroLineChartConfig);
@@ -53,7 +53,7 @@ const gyroBarCtx = document.getElementById('gyroscope-bar-chart').getContext('2d
 const gyroBarChart = new Chart(gyroBarCtx, gyroBarChartConfig);
 
 // Magnetometer chart initialization
-const [ magLineChartConfig, magBarChartConfig ] = createImuChartConfigs();
+const [ magLineChartConfig, magBarChartConfig ] = createImuChartConfigs("gauss");
 
 const magLineCtx = document.getElementById('magnetometer-line-chart').getContext('2d');
 const magLineChart = new Chart(magLineCtx, magLineChartConfig);
