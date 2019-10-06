@@ -11,4 +11,3 @@ Flask-Compress==1.4.0
 Flask-Login==0.4.1
 Flask-SocketIO==3.3.2
 eventlet==0.24.1
-pyxtermjs==0.4.0.1
