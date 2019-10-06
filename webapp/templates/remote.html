@@ -32,7 +32,7 @@
         </div>
 
         <div class="columns is-mobile">
-            <div class="column is-8 is-offset-3" style="width: auto">
+            <div class="column is-8 is-offset-3">
                 <canvas class="slider has-text-link" id="turn"></canvas>
             </div>
             <!-- <div class="column is-1">
@@ -44,10 +44,10 @@
 
         <div class="columns">
             <div class="column is-offset-2">
-                <p class="title">Speed: <span id="speed-o-meter">0</span></p>
+                <p class="title">Turn: <span id="turn-o-meter">0</span></p>
             </div>
             <div class="column is-half">
-                <p class="title">Turn: <span id="turn-o-meter">0</span></p>
+                <p class="title">Speed: <span id="speed-o-meter">0</span></p>
             </div>
         </div>
     </div>
@@ -63,6 +63,7 @@
 <!-- Initialize camera -->
 <script src="{{ url_for('static', filename='scripts/camera.js') }}"></script>
 <!-- Initialize controller -->
-<script src="{{ url_for('static', filename='scripts/controller.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/remote/controller.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/remote/slider.js') }}"></script>
 <script>initRemote();</script>
 {% endblock %}

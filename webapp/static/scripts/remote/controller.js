@@ -1,26 +1,84 @@
-var speed;
-var turn;
+var cameraStream = document.getElementById('camera-stream');
+var cameraStreamWrapper = document.getElementById('camera-stream-wrapper');
+var speedController = document.getElementById("speed");
+var turnController = document.getElementById("turn");
+var speedOMeter = document.getElementById('speed-o-meter');
+var turnOMeter = document.getElementById('turn-o-meter');
 var speedSlider;
 var turnSlider;
 
-function initRemote(){
-    speed = document.getElementById("speed");
-    turn = document.getElementById("turn");
-    speedSlider = new Slider(speed, !speed.className.includes("vertical"));
-    turnSlider = new Slider(turn, !turn.className.includes("vertical"));
-    let controls = [[turn, turnSlider], [speed, speedSlider]];
-    // console.log("speed pos:", speedSlider.rect.left, speedSlider.rect.top);
-    for (let ctrl of controls){
-        ctrl[1].draw();
-        ctrl[0].addEventListener('touchstart', touchStartOnSliders);
-        ctrl[0].addEventListener('touchmove', touchMoveOnSliders);
-        ctrl[0].addEventListener('touchend', touchEndOnSliders);
-        ctrl[0].addEventListener('touchcancel', touchEndOnSliders);
-        ctrl[0].addEventListener('mousedown', function(e){mouseStartOnSliders(e, ctrl[1]);});
-        ctrl[0].addEventListener('mouseup', function(e){mouseEndOnSliders(e, ctrl[1]);});
-        ctrl[0].addEventListener('mousemove', function(e){mouseMoveOnSliders(e, ctrl[1]);});
-        ctrl[0].addEventListener('mouseleave', function(e){mouseEndOnSliders(e, ctrl[1]);});
+// prototype list of all data on any connected gamepads
+// each item in list represents a gamepad (if any)
+// each gamepad has all info about axis and buttons
+var gamepads = [];
+// avoid cluttering socket with duplicate data due to setInterval polling of gamepads
+var prevArgs = [];
+
+// Grab the speed and turning values and update the text as well as send them to the robot
+function sendSpeedTurnValues(gamepadAxes = []) {
+    let speed = null;
+    let turn = null;
+    if (gamepadAxes.length){
+        speed = Math.round(gamepadAxes[0] * 100);
+        turn = Math.round(gamepadAxes[1] * 100);
+        speedSlider.value = speed;
+        turnSlider.value = turn;
     }
+    else{
+        speed = speedSlider.value;
+        turn = turnSlider.value;
+    }
+
+    speedOMeter.innerText = speed;
+    turnOMeter.innerText = turn;
+
+    var args = [speed, turn];
+    // only send data if it has changed
+    if (prevArgs[0] != args[0] || prevArgs[1] != args[1]){
+        prevArgs = args;
+        socket.emit('remoteOut', args);
+    }
+}
+
+// Take the width/height of the camera feed and adjust the sliders accordingly
+function adjustSliderSizes() {
+    speedController.parentNode.style.height = cameraStream.clientHeight;
+    turnController.parentNode.style.width = cameraStream.clientWidth;
+    speedSlider.resize();
+    turnSlider.resize();
+}
+
+function initRemote(){
+    // speedController = document.getElementById("speed");
+    // turnController = document.getElementById("turn");
+    speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
+    turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
+    let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
+    for (let ctrl of controls){
+        ctrl.obj.draw();
+        ctrl.el.addEventListener('touchstart', touchStartOnSliders);
+        ctrl.el.addEventListener('touchmove', touchMoveOnSliders);
+        ctrl.el.addEventListener('touchend', touchEndOnSliders);
+        ctrl.el.addEventListener('touchcancel', touchEndOnSliders);
+        ctrl.el.addEventListener('mousedown', function(e){mouseStartOnSliders(e, ctrl.obj);});
+        ctrl.el.addEventListener('mouseup', function(e){mouseEndOnSliders(e, ctrl.obj);});
+        ctrl.el.addEventListener('mousemove', function(e){mouseMoveOnSliders(e, ctrl.obj);});
+        ctrl.el.addEventListener('mouseleave', function(e){mouseEndOnSliders(e, ctrl.obj);});
+    }
+
+    // event listeners for connected gamepads
+    window.addEventListener("gamepadconnected", function (e) {
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index, e.gamepad.id,
+        e.gamepad.buttons.length, e.gamepad.axes.length);
+    });
+    window.addEventListener("gamepaddisconnected", function (e) {
+        console.log("Gamepad disconnected from index %d: %s",
+        e.gamepad.index, e.gamepad.id);
+    });
+    // because gamepads aren't handled with events
+    window.setInterval(getGamepadChanges, 16);
+    new ResizeSensor(cameraStreamWrapper, adjustSliderSizes);
 }
 
 // detirmine if touch point is in the slider's rect
@@ -96,4 +154,61 @@ function getMousePosOnSliders(e, obj) {
     const mouseY = (e.clientY / obj.height * -2 + 1) / ((obj.height - obj.stick.radius * 2) / obj.height) * 100;
     obj.value = obj.horizontal ? mouseX : mouseY;
     // console.log("slider value:", obj.value);
+}
+
+
+// get data from physical gamepads
+// Google's Chrome handles gamepads differently than others, so we implement a workaraound
+function getGamepadChanges() {
+    // do this here as it is needed for Chrome workaround
+    gamepads = navigator.getGamepads();
+    /*  according to the "standard" mapping scheme
+     *  (compatible w/ xBox 360 & other xinput controllers):
+     * axis[0] = left stick X axis
+     * axis[1] = left stick Y axis
+     * axis[2] = right stick X axis
+     * axis[3] = right stick Y axis
+     */
+    let result = [];
+    // only grab data from gamepad @ index 0
+    if (gamepads.length) {
+        if (gamepads[0] != null) {// Chrome specific workaround
+            // if there is at least 3 axes on the gamepad
+            if (gamepads[0].axes.length >= 3){
+                // using a deadzone of +/- 4%
+                if (gamepads[0].axes[1] > 0.04 || gamepads[0].axes[1] < -0.04){
+                    result.push(gamepads[0].axes[1] * -1); // used for speed
+                }
+                else{ // axis is within deadzone
+                    result.push(0)
+                }
+                if (gamepads[0].axes[2] > 0.04 || gamepads[0].axes[2] < -0.04) {
+                    result.push(gamepads[0].axes[2]); // used for turn
+                }
+                else{ // axis is within deadzone
+                    result.push(0)
+                }
+            }
+        /*
+        for (i = 0; i < gamepads.length; i++){
+            // show axes data
+            for (j = 0; j < gamepads[i].axes.length; j++) {
+                var temp = gamepads[i].axes[j];
+                if (temp > 0.025 || temp < -0.025) {
+                    console.log("gamepad[" + i + "], axis[" + j + "] = " + temp);
+                }
+            }
+            //show button presses (analog triggers have preset threshold)
+            for (j = 0; j < gamepads[i].buttons.length; j++) {
+                var temp = gamepads[i].buttons[j].pressed;
+                if (temp)
+                console.log("gamepad[" + i + "], button[" + j + "] = " + temp);
+            }
+        }
+        */
+        }
+    }
+    // result is empty if no usable data was detected
+    // otherwise result = [speed, turn]
+    sendSpeedTurnValues(result);
 }

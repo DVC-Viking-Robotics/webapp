@@ -2,12 +2,10 @@
 class Slider {
     constructor(canvas, horizontal = true) {
         this.canvas = canvas;
-        this.rect = this.canvas.parentNode.getBoundingClientRect();
         this.ctx = this.canvas.getContext("2d");
-        this.height = this.rect.bottom - this.rect.top;
-        this.width = this.rect.right - this.rect.left;
-        this.canvas.height = this.height;
-        this.canvas.width = this.width;
+        this.rect = 0;
+        this.height = 0;
+        this.width = 0;
         this.horizontal = horizontal;
         this.color = window.getComputedStyle(this.canvas)["color"];
         this.pos = 0;
@@ -18,6 +16,14 @@ class Slider {
             color: "#f3f3f3",
             manip: false // for shrink/swell of stick on manipulation
         };
+        this.resize();
+    }
+    resize(){
+        this.rect = this.canvas.parentNode.getBoundingClientRect();
+        this.height = this.rect.bottom - this.rect.top;
+        this.width = this.rect.right - this.rect.left;
+        this.canvas.height = this.height;
+        this.canvas.width = this.width;
     }
     set value(val){
         this.pos = Math.max(-100, Math.min(100, val));
@@ -61,6 +67,5 @@ class Slider {
         gradient.addColorStop(0.7, '#f3f3f3');
         this.ctx.fillStyle = gradient;        
         this.ctx.fill();
-
     }
 }// end canvas's slider object
