@@ -1,6 +1,6 @@
 // This will create an easy-to-use line and bar chart configuration for the accel, gyro,
 // and mag sensors. It will return in the form of [lineChartConfig, barChartConfig]
-function createImuChartConfigs(minRange = -100, maxRange = 100, yAxisLabel = 'Value') {
+function createImuChartConfigs(/* minRange = -100, maxRange = 100, */ yAxisLabel = 'Value') {
     const lineChartConfig = {
         type: 'line',
         data: {
@@ -45,10 +45,10 @@ function createImuChartConfigs(minRange = -100, maxRange = 100, yAxisLabel = 'Va
                 }],
                 yAxes: [{
                     display: true,
-                    ticks: {
-                        min: minRange,
-                        max: maxRange,
-                    },
+                    // ticks: {
+                    //     min: minRange,
+                    //     max: maxRange,
+                    // },
                     scaleLabel: {
                         display: true,
                         labelString: yAxisLabel
@@ -94,10 +94,10 @@ function createImuChartConfigs(minRange = -100, maxRange = 100, yAxisLabel = 'Va
             scales: {
                 yAxes: [{
                     display: true,
-                    ticks: {
-                        min: minRange,
-                        max: maxRange,
-                    },
+                    // ticks: {
+                    //     min: minRange,
+                    //     max: maxRange,
+                    // },
                     scaleLabel: {
                         display: true,
                         labelString: yAxisLabel
