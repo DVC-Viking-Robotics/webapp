@@ -2,6 +2,7 @@ from .inputs.check_platform import ON_WINDOWS
 
 import os
 import subprocess
+from threading import Lock
 
 if not ON_WINDOWS:
     import pty          # docs @ https://docs.python.org/3/library/pty.html
@@ -14,7 +15,6 @@ if not ON_WINDOWS:
 
 OUTPUT_SLEEP_DURATION = 0.01        # Amount of time to sleep between calls to read the terminal output buffer
 MAX_OUTPUT_READ_BYTES = 1024 * 20   # Maximum number of bytes to read from the terminal output buffer
-
 
 # This class is for abstracting the virtual terminal capabilities. Note that this does not work for windows
 class VTerminal:
@@ -29,6 +29,7 @@ class VTerminal:
         self.bg_thread = None   # The background thread that listens for terminal output.
         self.running_flag = False   # Flag indicating if the loop in the background thread is running or now
         self.output_listeners = []  # An array of output listeners, that allows the developer to perform various actions to the terminal output.
+        self.thread_lock = Lock()   # Lock that's used for instantiating the background task
 
     # Check if the virtual terminal is initialized and ready to start doing I/O
     @property
@@ -77,8 +78,10 @@ class VTerminal:
 
             if not self.running:
                 self.running_flag = True
-                # Docs for start_background_task @ https://flask-socketio.readthedocs.io/en/latest/#flask_socketio.SocketIO.start_background_task
-                self.bg_thread = self.socket_inst.start_background_task(target=self._read_and_forward_pty_output)
+
+                with self.thread_lock:
+                    # Docs for start_background_task @ https://flask-socketio.readthedocs.io/en/latest/#flask_socketio.SocketIO.start_background_task
+                    self.bg_thread = self.socket_inst.start_background_task(target=self._read_and_forward_pty_output)
                 # Since this method returns a `threading.Thread` object that is already start()-ed, we can
                 # simply capture the thread's instance for the multiprocessing module, but not until I (2bndy5) know how
                 print("Output listener thread for terminal started")
@@ -134,10 +137,12 @@ class VTerminal:
                 if data_ready:
                     # For invalid characters, print out the hex representation (as indicated by errors='backslashreplace')
                     output = os.read(self.fd, MAX_OUTPUT_READ_BYTES).decode(encoding='utf-8', errors='backslashreplace')
-                    print('output', output)
+
+                    # HACK: This is a work-around for removing astray carriage returns that appear
+                    # due to outsourcing the virtual terminal code into a separate class.
+                    output = output.replace('\rn', '')
 
                     # NOTE: Even though we are using the 'event'-based approach, note that these calls are still synchronous and blocking.
                     # Ideally we'd like them to be non-blocking, but it's not a huge priority for now.
-                    # self.socket_inst.emit("terminal-output", {"output": output}, namespace="/pty")
                     for listener in self.output_listeners:
                         listener(output)

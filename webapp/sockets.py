@@ -25,7 +25,7 @@ from .inputs.camera_manager import CameraManager
 # This is a temporary variable to switch between the old and new implementation for the virtual terminal
 # The reason for this var is that the output of the terminal is inconsistent between both implementations,
 # but the code for implementing them seems to be the same. This requires further investigation for now...
-old_term = True
+old_term = not True
 
 # for virtual terminal access
 fd = None           # This stands for "file descriptor" used as an I/O handle
