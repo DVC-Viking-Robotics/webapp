@@ -11,14 +11,15 @@ if ON_RASPI:
         import picamera
         camera_available = True
     except ImportError:
-        try:
-            import cv2
-            camera_available = True
-        except ImportError:
-            print('Warning: opencv-python is not installed')
-            camera_available = False
-        finally:
-            print('Warning: picamera is not installed')
+        print('Warning: picamera is not installed')
+        # try:
+        #     import cv2
+        #     camera_available = True
+        # except ImportError:
+        #     print('Warning: opencv-python is not installed')
+        #     camera_available = False
+        # finally:
+        #     print('Warning: picamera is not installed')
 else:  # running on a PC
     try:
         import cv2

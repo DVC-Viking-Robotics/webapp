@@ -36,7 +36,7 @@ socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # Initialize the camera
 camera_manager = CameraManager()
-camera_manager.open_camera()
+# camera_manager.open_camera()
 
 
 def getHYPR():
@@ -91,9 +91,9 @@ def handle_disconnect():
     # If the camera was recently opened, then close it and reopen it to free the resource for future use
     # The reason for "rebooting" the camera is that the camera device will be considered "in use" until
     # the corresponding resource is freed, for which we can re-initialize the camera resource again.
-    if camera_manager.initialized:
-        camera_manager.close_camera()
-        camera_manager.open_camera()
+    # if camera_manager.initialized:
+    #     camera_manager.close_camera()
+    #     camera_manager.open_camera()
 
 
 @socketio.on('webcam')
