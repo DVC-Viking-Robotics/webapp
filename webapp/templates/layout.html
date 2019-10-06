@@ -11,6 +11,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-quickview.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-slider.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-badge.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/outdated-browser-rework.css') }}"
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
         <link rel="shortcut icon" href="/static/images/viking.png">
@@ -173,11 +174,15 @@
             </nav>
 
             {% block content %}{% endblock %}
+
+            <!-- This is for the outdate browser banner -->
+            <div id="outdated"></div>
         </div>
 
         <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/libs/bulma-slider.min.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/libs/bulma-quickview.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/libs/outdated-browser-rework.min.js') }}"
 
         <script src="{{ url_for('static', filename='scripts/navbar-mobile.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/delete-notif.js') }}"></script>
@@ -193,6 +198,40 @@
                     this.classList.remove('is-active');
                 }
             }
+        </script>
+
+        <script>
+            outdatedBrowserRework({
+                browserSupport: {
+                    'Chrome': true, // Includes Chrome for mobile devices
+                    'Firefox': true,
+                    'Edge': false,
+                    'IE': false,
+                    'Safari': false,
+                    'Mobile Safari': false,
+                    'Opera': true,
+                    'Vivaldi': true,
+                    'Yandex': true,
+                },
+                requireChromeOnAndroid: false,
+                isUnknownBrowserOK: false,
+                messages: {
+                    en: {
+                        outOfDate: "Your browser is out of date!",
+                        unsupported: "Your browser is not supported!",
+                        update: {
+                            web: "Update your browser to view this website correctly. ",
+                            googlePlay: "Please install Chrome from Google Play",
+                            appStore: "Please update iOS from the Settings App"
+                        },
+                        // You can set the URL to null if you do not want a clickable link or provide
+                        // your own markup in the `update.web` message.
+                        url: "http://outdatedbrowser.com/",
+                        callToAction: "Update my browser now",
+                        close: "Close"
+                    }
+                }
+            });
         </script>
 
         <script>bulmaQuickview.attach();</script>

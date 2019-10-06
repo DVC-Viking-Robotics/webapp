@@ -30,6 +30,14 @@ if has_gpio_pins:
     SPI_BUS = board.SPI()
     I2C_BUS = board.I2C()
     RPI_PIN_ALIAS = {
+        '2': board.D2,
+        '3': board.D3,
+        '4': board.D4,
+        '5': board.D5,
+        '6': board.D6,
+        '7': board.D7,
+        '8': board.D8,
+        '9': board.D9,
         '10': board.D10,
         '11': board.D11,
         '12': board.D12,
@@ -40,7 +48,6 @@ if has_gpio_pins:
         '17': board.D17,
         '18': board.D18,
         '19': board.D19,
-        '2': board.D2,
         '20': board.D20,
         '21': board.D21,
         '22': board.D22,
@@ -49,13 +56,6 @@ if has_gpio_pins:
         '25': board.D25,
         '26': board.D26,
         '27': board.D27,
-        '3': board.D3,
-        '4': board.D4,
-        '5': board.D5,
-        '6': board.D6,
-        '7': board.D7,
-        '8': board.D8,
-        '9': board.D9,
     }
 
 d_train = []

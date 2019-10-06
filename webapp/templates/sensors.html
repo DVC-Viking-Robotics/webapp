@@ -11,15 +11,14 @@
 <script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
 <script>const socket = io.connect({ transports: ['websocket'] });</script>
 
-<!-- TODO: Connect sensors with charts -->
 <section class="section">
     <div class="container">
         <div class="buttons has-addons are-medium is-centered">
-            <a class="button is-rounded" id="btn-raw-data" onclick="toggleView('raw-data')">Raw Data</a>
+            <a class="button is-rounded" id="btn-imu-data" onclick="toggleView('imu-data')">Inertial Data</a>
             <a class="button is-rounded" id="btn-robot-view" onclick="toggleView('robot-view')">Robot View</a>
         </div>
 
-        <div class="tile is-ancestor" id="raw-data-view">
+        <div class="tile is-ancestor" id="imu-data-view">
             <div class="tile is-vertical is-12">
                 <div class="tile">
                     <div class="tile is-parent is-8">
@@ -78,12 +77,9 @@
 <script src="{{ url_for('static', filename='scripts/libs/moment.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/libs/Chart.min.js') }}"></script>
 
-<script src="{{ url_for('static', filename='scripts/chartjs/sensor-utils.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/chartjs/chart-config.js') }}"></script>
-
-<script src="{{ url_for('static', filename='scripts/chartjs/accel-charts.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/chartjs/gyro-charts.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/chartjs/mag-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/sensor-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/chartjs/imu-chart-maker.js') }}"></script>
 
 <script src="{{ url_for('static', filename='scripts/sensor-charts.js') }}"></script>
 {% endblock %}
