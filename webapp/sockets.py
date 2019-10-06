@@ -2,10 +2,6 @@
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring
 
-try:
-    import cStringIO as io
-except ImportError:
-    import io
 import os
 import subprocess
 import base64

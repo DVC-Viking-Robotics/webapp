@@ -1,3 +1,8 @@
+try:
+    import cStringIO as io
+except ImportError:
+    import io
+
 from .check_platform import ON_RASPI
 
 # NOTE Module 'cv2' has no 'VideoCapture' member -- pylint(no-member)
@@ -40,6 +45,7 @@ class CameraManager:
 
     # Initialize the camera feed using OpenCV's implementation
     def _init_cv2_camera(self):
+        import cv2
         camera = cv2.VideoCapture(0)
         return camera
 
