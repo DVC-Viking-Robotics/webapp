@@ -2,22 +2,12 @@
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring
 
-import os
-import subprocess
 import base64
-import struct       # struct library to pack data into bytearrays for setting terminal window size
-import select       # async I/O for file descriptors; used for retrieving terminal output
-import shlex        # used to shell-escape commands to prevent unsafe multi-commands (like "ls -l somefile; rm -rf ~")
 from flask_socketio import SocketIO, emit
 from circuitpython_mpu6050 import MPU6050
 from adafruit_lsm9ds1 import LSM9DS1_I2C
-# pylint: disable=import-error,wrong-import-position
+
 from .inputs.check_platform import ON_RASPI, ON_WINDOWS  # , ON_JETSON
-if not ON_WINDOWS:
-    import pty          # docs @ https://docs.python.org/3/library/pty.html
-    import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
-    import fcntl        # I/O for file descriptors; used for setting terminal window size
-# pylint: enable=import-error
 from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 from .inputs.camera_manager import CameraManager
