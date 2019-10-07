@@ -5,7 +5,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import Blueprint, render_template, request, flash, redirect
-from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import login_required, login_user, logout_user
 from .users import users, User, db
 from .sockets import socketio
 
@@ -31,18 +31,18 @@ def login():
     registered_user = User.query.filter_by(username=username,password=password).first()
     if registered_user is None:
       flash('Username or Password is invalid' , 'error')
-      return redirect(url_for('login'))
+      return redirect('/login')
     login_user(registered_user)
     flash('Logged in successfully')
     return redirect('home')
 
 
 @blueprint.route("/logout")
+@login_required
 def logout():
     """Redirects to login page after logging out"""
     logout_user()
     return redirect("login")
-
 
 @blueprint.route('/')
 @blueprint.route('/home')

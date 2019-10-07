@@ -23,10 +23,11 @@ dbname   = dbname + socket
 app.config['SQLALCHEMY_DATABASE_URI'] = userpass + basedir + dbname
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-db = SQLAlchemy(app)
+app.config['LOGIN_DISABLED'] = False
 
-db.create_all()
- 
+db = SQLAlchemy(app)
+   
+   
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "/login"
@@ -42,11 +43,11 @@ class Remote:
         self.link = link
 
 class User(db.Model):
-    __tablename__ = "users"
+    __tablename__ = 'users'
     id = db.Column('user_id',db.Integer , primary_key=True)
     username = db.Column('username', db.String(20), unique=True , index=True)
     password = db.Column('password' , db.String(10))
- 
+    
     def __init__(self , username ,password):
         self.username = username
         self.password = password
@@ -61,7 +62,7 @@ class User(db.Model):
         return False
  
     def get_id(self):
-        return unicode(self.id)
+        return str(self.id)
  
     def __repr__(self):
         return '<User %r>' % (self.username)
@@ -89,4 +90,4 @@ users = {'admin': User(u'admin','"admin'), 'anonymous': AnonUser()}
 @login_manager.user_loader
 def load_user(user_id):
     """A function wrapper to retreive a user account's object"""
-    return users.get(user_id)
+    return User.query.get(int(user_id))
