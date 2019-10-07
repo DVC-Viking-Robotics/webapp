@@ -84,7 +84,6 @@ function initRemote(){
     });
     // because gamepads aren't handled with events
     window.setInterval(getGamepadChanges, 16);
-    // new ResizeSensor(cameraStreamWrapper, adjustSliderSizes);
 }
 
 // detirmine if touch point is in the slider's rect
