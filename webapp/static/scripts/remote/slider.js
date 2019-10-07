@@ -4,8 +4,8 @@ class Slider {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
         this.rect = 0;
-        this.height = 0;
-        this.width = 0;
+        this.height = this.canvas.width;
+        this.width = this.canvas.height;
         this.horizontal = horizontal;
         this.color = window.getComputedStyle(this.canvas)["color"];
         this.pos = 0;
@@ -19,14 +19,16 @@ class Slider {
         this.resize();
     }
     resize(){
-        this.rect = this.canvas.parentNode.getBoundingClientRect();
-        this.height = this.rect.bottom - this.rect.top;
-        this.width = this.rect.right - this.rect.left;
+        let parentStyle = window.getComputedStyle(this.canvas.parentNode);
+        console.log(this.canvas.id, parentStyle.width, parentStyle.height);
+        this.height = parseInt(parentStyle["height"]);
+        this.width = parseInt(parentStyle["width"]);
         this.canvas.height = this.height;
         this.canvas.width = this.width;
+        this.draw();
     }
     set value(val){
-        this.pos = Math.max(-100, Math.min(100, val));
+        this.pos = Math.max(-100, Math.min(100, Math.round(val)));
         this.draw();
     }
     get value(){

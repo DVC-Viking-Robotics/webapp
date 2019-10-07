@@ -42,8 +42,12 @@ function sendSpeedTurnValues(gamepadAxes = []) {
 
 // Take the width/height of the camera feed and adjust the sliders accordingly
 function adjustSliderSizes() {
-    speedController.parentNode.style.height = cameraStream.clientHeight;
-    turnController.parentNode.style.width = cameraStream.clientWidth;
+    let newCamRect = cameraStream.getBoundingClientRect();
+    speedController.parentNode.style.width = "80px";
+    speedController.parentNode.style.height = newCamRect.bottom - newCamRect.top;
+    turnController.parentNode.style.width = newCamRect.right - newCamRect.left;
+    turnController.parentNode.style.height = "80px";
+    console.log(newCamRect.bottom - newCamRect.top);
     speedSlider.resize();
     turnSlider.resize();
 }
@@ -54,6 +58,8 @@ function initRemote(){
     speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
     turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
     let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
+    adjustSliderSizes();
+    window.addEventListener('resize', adjustSliderSizes);
     for (let ctrl of controls){
         ctrl.obj.draw();
         ctrl.el.addEventListener('touchstart', touchStartOnSliders);
@@ -78,7 +84,7 @@ function initRemote(){
     });
     // because gamepads aren't handled with events
     window.setInterval(getGamepadChanges, 16);
-    new ResizeSensor(cameraStreamWrapper, adjustSliderSizes);
+    // new ResizeSensor(cameraStreamWrapper, adjustSliderSizes);
 }
 
 // detirmine if touch point is in the slider's rect
@@ -150,8 +156,9 @@ function mouseEndOnSliders(e, obj) {
 }
 
 function getMousePosOnSliders(e, obj) {
-    const mouseX = (e.clientX / obj.width * 2 - 1) / ((obj.width - obj.stick.radius * 2) / obj.width) * 100;
-    const mouseY = (e.clientY / obj.height * -2 + 1) / ((obj.height - obj.stick.radius * 2) / obj.height) * 100;
+    let targetRect = e.target.getBoundingClientRect();
+    const mouseX = ((e.pageX - targetRect.left) / obj.width * 2 - 1) / ((obj.width - obj.stick.radius * 2) / obj.width) * 100;
+    const mouseY = ((e.pageY - targetRect.top) / obj.height * -2 + 1) / ((obj.height - obj.stick.radius * 2) / obj.height) * 100;
     obj.value = obj.horizontal ? mouseX : mouseY;
     // console.log("slider value:", obj.value);
 }
@@ -180,13 +187,13 @@ function getGamepadChanges() {
                     result.push(gamepads[0].axes[1] * -1); // used for speed
                 }
                 else{ // axis is within deadzone
-                    result.push(0)
+                    result.push(0);
                 }
                 if (gamepads[0].axes[2] > 0.04 || gamepads[0].axes[2] < -0.04) {
                     result.push(gamepads[0].axes[2]); // used for turn
                 }
                 else{ // axis is within deadzone
-                    result.push(0)
+                    result.push(0);
                 }
             }
         /*

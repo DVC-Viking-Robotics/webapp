@@ -16,6 +16,7 @@ socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # for virtual terminal access
 from .virtual_terminal import VTerminal
+
 if not ON_WINDOWS:
     vterm = VTerminal(socketio)
     vterm.register_output_listener(lambda output: socketio.emit("terminal-output", {"output": output}, namespace="/pty"))
@@ -82,8 +83,9 @@ def handle_disconnect():
         camera_manager.open_camera()
 
     # If the vterm was initialized and possibly running, close the file descriptor and kill the child process
-    if vterm.running or vterm.initialized:
-        vterm.cleanup()
+    if not ON_WINDOWS:
+        if vterm.running or vterm.initialized:
+            vterm.cleanup()
 
 
 @socketio.on('webcam')
