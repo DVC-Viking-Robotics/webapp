@@ -3,9 +3,32 @@
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name
 
+import pymysql
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, LoginManager
 
+app = Flask(__name__)
+# this userpass assumes you did not create a password for your database
+# and the database username is the default, 'root'
+userpass = 'mysql+pymysql://root:r3J8h$2*SA%7@'
+basedir  = '127.0.0.1'
+# change to YOUR database name, with a slash added as shown
+dbname   = '/user_accounts'
+socket   = ''
+dbname   = dbname + socket
+
+# put them all together as a string that shows SQLAlchemy where the database is
+app.config['SQLALCHEMY_DATABASE_URI'] = userpass + basedir + dbname
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+
+db.create_all()
+ 
 login_manager = LoginManager()
+login_manager.init_app(app)
 login_manager.login_view = "/login"
 login_manager.login_message_category = "warning"
 
@@ -18,33 +41,31 @@ class Remote:
         self.name = name
         self.link = link
 
-class User(UserMixin):
-    """A class for instantiating saved user accounts.
-        There should be 1 object of this class type per user account.
-
-    """
-    def __init__(self, name):
-        self._id = name
-        self._remotes = []
-        self._config = {}
-        self._load_config()
-
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column('user_id',db.Integer , primary_key=True)
+    username = db.Column('username', db.String(20), unique=True , index=True)
+    password = db.Column('password' , db.String(10))
+ 
+    def __init__(self , username ,password):
+        self.username = username
+        self.password = password
+         
+    def is_authenticated(self):
+        return True
+ 
+    def is_active(self):
+        return True
+ 
+    def is_anonymous(self):
+        return False
+ 
     def get_id(self):
-        """This class attrubute holds the user account's ID"""
-        return self._id
-
-    def _load_config(self):
-        """This function will load the information about a user's preferences
-            (including account settings and remote control configurations) from the backup json file titled with the self._id atrtribute.
-        """
-        try:
-            with open('backup\\{}.json'.format(self._id), 'r') as acct_file:
-                for line in acct_file.readlines():
-                    # import from json to self.remotes & self.config
-                    print(line)
-        except OSError:
-            pass # file doesn't exist
-
+        return unicode(self.id)
+ 
+    def __repr__(self):
+        return '<User %r>' % (self.username)
+        
 class AnonUser(AnonymousUserMixin):
     """A class for instantiating an anonymous user account.
         There should be only 1 object of this class type.
@@ -62,7 +83,7 @@ class AnonUser(AnonymousUserMixin):
         """This class attrubute holds the user account's ID"""
         return self._id
 
-users = {'admin': User(u'admin'), 'anonymous': AnonUser()}
+users = {'admin': User(u'admin','"admin'), 'anonymous': AnonUser()}
 # users['admin'].remotes.append(Remote('dummy remote'))
 
 @login_manager.user_loader

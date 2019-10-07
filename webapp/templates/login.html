@@ -60,7 +60,7 @@
         <div id="login-user" class="modal">
             <div onclick="hideView('login-user')" class="modal-background"></div>
             <div class="modal-card animate">
-                <form method="post">
+                <form method="post" action="/login">
                     <header class="modal-card-head has-background-grey-darker">
                         <h1 class="modal-card-title has-text-white">Sign In</h1>
                         <button class="delete is-danger is-large" aria-label="close" onclick="hideView('login-user')"></button>
@@ -70,6 +70,13 @@
                         <label for="username"><b>Username</b></label>
                         <div class="control has-text-white has-icons-left">
                             <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" required>
+                            <span class="icon is-left">
+                                <i class="far fa-user"></i>
+                            </span>
+                        </div>
+                        <label for="password"><b>Password</b></label>
+                        <div class="control has-text-white has-icons-left">
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id = "user_password" required>
                             <span class="icon is-left">
                                 <i class="far fa-user"></i>
                             </span>
@@ -96,7 +103,7 @@
         <div id="signup-user" class="modal">
             <div onclick="hideView('signup-user')" class="modal-background"></div>
             <div class="modal-card animate">
-                <form method="post">
+                <form method="post" action="/register">
                     <header class="modal-card-head has-background-grey-darker">
                         <h1 class="modal-card-title has-text-white">Sign Up</h1>
                         <button class="delete has-background-danger is-large" aria-label="close" onclick="hideView('signup-user')"></button>
@@ -106,26 +113,20 @@
                         <p>Please enter your unique name (nicknames are best).</p>
                         <label for="username"><b>Username</b></label>
                         <div class="control has-text-white has-icons-left">
-                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" required>
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" id= "username" value="{{ request.form.username }}" required>
                             <span class="icon is-left">
                                 <i class="far fa-user"></i>
                             </span>
                         </div>
-                        <input type=hidden name="register" value="True">
-                    </section>
-                    
-                    <section class="modal-card-body has-background-black-ter has-text-white">
                         <p>Please enter a password.</p>
                         <label for="password"><b>Password</b></label>
                         <div class="control has-text-white has-icons-left">
-                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" value="FakePSW" id = "user_password" required>
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password" name="password" value="{{ request.form.password }}" required>
                             <span class="icon is-left">
                                 <i class="far fa-user"></i>
                             </span>
                         </div>
-                        <input type=hidden name="register" value="True">
-                    </section>
-                    
+                    </section>                 
                     <footer class="modal-card-foot has-background-grey-darker">
                         <button type="button" onclick="hideView('login-user')" class="button is-danger is-rounded has-text-black">
                             <strong>Cancel</strong>

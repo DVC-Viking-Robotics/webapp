@@ -2,34 +2,39 @@
 # pylint: disable=invalid-name,missing-docstring
 
 import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask import Blueprint, render_template, request, flash, redirect
-from flask_login import login_required, login_user, logout_user
-from .users import users, User
+from flask_login import login_required, login_user, logout_user, current_user
+from .users import users, User, db
 from .sockets import socketio
 
 blueprint = Blueprint('blueprint', __name__)
 
+@blueprint.route('/register' , methods=['GET','POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('login.html')
+    user = User(request.form['username'] , request.form['password'],)
+    db.session.add(user)
+    db.session.commit()
+    flash('User successfully registered')
+    return redirect('/login')
 
-@blueprint.route('/', methods=['GET', 'POST'])
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     """Renders the login page"""
-    if request.method == 'POST':
-        form = request.form
-        user_name = form.get('username', default=None)
-        is_new = bool(form.get('register', default=False))
-        if user_name is not None:
-            if bool(users.get(user_name)) or is_new:  # login
-                if is_new and not bool(users.get(user_name)):  # add new user
-                    users[user_name] = User(user_name)
-                    flash('Account created successfully.', 'info')
-                if users.get(user_name):
-                    login_user(users.get(user_name))
-                    flash('Logged in successfully.', 'success')
-                    return redirect('home')
-            else:
-                flash('Username "{}" does not exist!'.format(user_name), 'error')
-    return render_template('login.html')
+    if request.method == 'GET':
+        return render_template('login.html')
+    username = request.form['username']
+    password = request.form['password']
+    registered_user = User.query.filter_by(username=username,password=password).first()
+    if registered_user is None:
+      flash('Username or Password is invalid' , 'error')
+      return redirect(url_for('login'))
+    login_user(registered_user)
+    flash('Logged in successfully')
+    return redirect('home')
 
 
 @blueprint.route("/logout")
