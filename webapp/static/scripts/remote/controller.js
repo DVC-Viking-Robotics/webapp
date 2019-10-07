@@ -43,11 +43,11 @@ function sendSpeedTurnValues(gamepadAxes = []) {
 // Take the width/height of the camera feed and adjust the sliders accordingly
 function adjustSliderSizes() {
     let newCamRect = cameraStream.getBoundingClientRect();
-    speedController.parentNode.style.width = "80px";
-    speedController.parentNode.style.height = newCamRect.bottom - newCamRect.top;
-    turnController.parentNode.style.width = newCamRect.right - newCamRect.left;
-    turnController.parentNode.style.height = "80px";
-    console.log(newCamRect.bottom - newCamRect.top);
+    speedController.width = 80;
+    speedController.height = Math.round(newCamRect.height);
+    turnController.width = Math.round(newCamRect.width);
+    turnController.height = 80;
+    console.log("new Cam dimensions:", Math.round(newCamRect.width), 'x', Math.round(newCamRect.height));
     speedSlider.resize();
     turnSlider.resize();
 }

@@ -7,7 +7,7 @@ socket.on('error', (error) => {
 socket.on('disconnect', function() {
     // stop requesting for the feed
     clearInterval(webcamRequestLock);
-    console.log('socket disconnected', socket.connected);
+    // console.log('socket disconnected', socket.connected);
 });
 
 // Used to receive the live feed from the raspberry pi
