@@ -6,7 +6,7 @@ var speedOMeter = document.getElementById('speed-o-meter');
 var turnOMeter = document.getElementById('turn-o-meter');
 var speedSlider;
 var turnSlider;
-
+var selectRemote = document.getElementById("selectRemote");
 // prototype list of all data on any connected gamepads
 // each item in list represents a gamepad (if any)
 // each gamepad has all info about axis and buttons
@@ -47,16 +47,16 @@ function adjustSliderSizes() {
     speedController.height = Math.round(newCamRect.height);
     turnController.width = Math.round(newCamRect.width);
     turnController.height = 80;
-    console.log("new Cam dimensions:", Math.round(newCamRect.width), 'x', Math.round(newCamRect.height));
+    // console.log("new Cam dimensions:", Math.round(newCamRect.width), 'x', Math.round(newCamRect.height));
     speedSlider.resize();
     turnSlider.resize();
 }
 
 function initRemote(){
-    // speedController = document.getElementById("speed");
-    // turnController = document.getElementById("turn");
     speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
     turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
+    
+    console.log("selection:", selectRemote.value);
     let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
     adjustSliderSizes();
     window.addEventListener('resize', adjustSliderSizes);

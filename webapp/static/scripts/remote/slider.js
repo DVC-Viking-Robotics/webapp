@@ -2,7 +2,6 @@
 class Slider {
     constructor(canvas, horizontal = true) {
         this.canvas = canvas;
-        this.rect = 0;
         this.height = this.canvas.width;
         this.width = this.canvas.height;
         this.horizontal = horizontal;
@@ -20,7 +19,7 @@ class Slider {
     resize(){
         // let currentStyle = window.getComputedStyle(this.canvas.id);
         let currentStyle = this.canvas.getBoundingClientRect();
-        console.log(this.canvas.id, currentStyle.width, currentStyle.height);
+        // console.log(this.canvas.id, currentStyle.width, currentStyle.height);
         this.height = currentStyle.height;
         this.width = currentStyle.width;
         this.draw();
