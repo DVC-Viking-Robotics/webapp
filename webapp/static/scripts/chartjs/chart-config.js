@@ -5,4 +5,4 @@ Chart.defaults.global.maintainAspectRatio = true;
 
 Chart.defaults.global.elements.line.tension = 0;  // disables bezier curves
 
-const NUM_POINTS = 21;
+const MAX_NUM_POINTS = 31;

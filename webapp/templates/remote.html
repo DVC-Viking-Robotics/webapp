@@ -1,19 +1,63 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
+<style>
+#turn{
+    width:100%;
+    height:80px;
+}
+#speed{
+    width:80px;
+    height:100%;
+}
+</style>
+
+<section class="section">
+    <!-- camera feed and sliders -->
+    <div class="container">
+        <div class="columns is-mobile is-multiline is-centered" style="height:60%;">
+            <div class="column is-three-fifths is-centered is-offset-one-fifth">
+                <figure id="camera-stream-wrapper" class="image is-4by3">
+                    <img id="camera-stream" class="camera-stream-view"></img>
+                </figure>
+            </div>
+            <div class="column">
+                <canvas class="slider-vertical has-text-success" id="speed"></canvas>
+            </div>
+            <div class="column is-three-fifths is-centered">
+                <canvas class="slider has-text-info" id="turn"></canvas>
+            </div>
+        </div>
+
+        <!-- sliders' textual values -->
+        <div class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Turn</p>
+                    <p class="title" id="turn-o-meter">0</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Speed</p>
+                    <p class="title" id="speed-o-meter">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Initialize websocket I/O-->
 <script src="{{ url_for('static', filename='scripts/libs/socket.io.min.js') }}"></script>
 <script>const socket = io.connect({ transports: ['websocket'] });</script>
-<div class="columns is-desktop">
-    <div class="column">
-        <canvas id="joystick"></canvas>
-    </div>
-    <div class="column">
-        <canvas id="horizontal-slider"></canvas>
-    </div>
-</div>
 
-<script src="{{ url_for('static', filename='scripts/remote/joystick.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/remote/slider.js') }}"></script>
+<!-- Initialize camera -->
+<script src="{{ url_for('static', filename='scripts/camera.js') }}"></script>
+
+<!-- Initialize controller -->
 <script src="{{ url_for('static', filename='scripts/remote/controller.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/remote/slider.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/remote/joystick.js') }}"></script>
 <script>initRemote();</script>
 {% endblock %}

@@ -9,7 +9,9 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-quickview.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-slider.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-badge.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/outdated-browser-rework.css') }}"
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
         <link rel="shortcut icon" href="/static/images/viking.png">
@@ -54,16 +56,16 @@
         {% endwith %}
 
         <div id="sidenav" class="quickview is-left">
-            <header class="quickview-header is-dark">
+        <!--     <header class="quickview-header is-dark">
                 <p class="title">Main Menu</p>
                 <span class="delete has-background-danger is-outlined is-medium is-pulled-right" data-dismiss="quickview"></span>
-            </header>
+            </header> -->
 
             <div class="quickview-body is-dark">
                 <div class="quickview-block">
                     <a class="button is-medium is-fullwidth sidenav-button" href="/settings/user">My preferences</a>
                     <div class="favs">
-                        <!-- {% for remote in current_user.remotes %}
+                    <!--     {% for remote in current_user.remotes %}
                         <a href={{remote.link}}>{{remote.name}}</a>
                         {% endfor %} -->
 
@@ -81,9 +83,9 @@
         <div id="main">
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
-                    <div class="navbar-item">
+                    <!-- <div class="navbar-item">
                         <button class="button is-success is-outlined" data-show="quickview" data-target="sidenav">&#9776;</button>
-                    </div>
+                    </div> -->
 
                     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="top-navbar">
                         <span aria-hidden="true"></span>
@@ -143,6 +145,24 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
+                                    <div class="dropdown-trigger">
+                                        <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="shutdown-dropdown-menu">
+                                            <span class="icon">
+                                                <i class="fas fa-power-off fa-lg"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <div class="dropdown-menu" id="shutdown-dropdown-menu" role="menu">
+                                        <div class="dropdown-content">
+                                            <a href= "/shutdown_server" class="shutdown_server dropdown-item">Shutdown Server</a>
+                                            <a href= "/shutdown_robot" class="shutdown_robot dropdown-item">Shutdown System</a>
+                                            <a href= "/restart" class="restart dropdown-item">Restart System</a>
+                                        </div>
+                                    </div>
+                                </div>
                                 {% else %}
                                 <a class="button is-dark"><strong>Sign up</strong></a>
                                 <a class="button is-light">Log in</a>
@@ -154,10 +174,15 @@
             </nav>
 
             {% block content %}{% endblock %}
+
+            <!-- This is for the outdate browser banner -->
+            <div id="outdated"></div>
         </div>
 
         <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/libs/bulma-slider.min.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/libs/bulma-quickview.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='scripts/libs/outdated-browser-rework.min.js') }}"
 
         <script src="{{ url_for('static', filename='scripts/navbar-mobile.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/delete-notif.js') }}"></script>
@@ -173,6 +198,40 @@
                     this.classList.remove('is-active');
                 }
             }
+        </script>
+
+        <script>
+            outdatedBrowserRework({
+                browserSupport: {
+                    'Chrome': true, // Includes Chrome for mobile devices
+                    'Firefox': true,
+                    'Edge': false,
+                    'IE': false,
+                    'Safari': false,
+                    'Mobile Safari': false,
+                    'Opera': true,
+                    'Vivaldi': true,
+                    'Yandex': true,
+                },
+                requireChromeOnAndroid: false,
+                isUnknownBrowserOK: false,
+                messages: {
+                    en: {
+                        outOfDate: "Your browser is out of date!",
+                        unsupported: "Your browser is not supported!",
+                        update: {
+                            web: "Update your browser to view this website correctly. ",
+                            googlePlay: "Please install Chrome from Google Play",
+                            appStore: "Please update iOS from the Settings App"
+                        },
+                        // You can set the URL to null if you do not want a clickable link or provide
+                        // your own markup in the `update.web` message.
+                        url: "http://outdatedbrowser.com/",
+                        callToAction: "Update my browser now",
+                        close: "Close"
+                    }
+                }
+            });
         </script>
 
         <script>bulmaQuickview.attach();</script>
