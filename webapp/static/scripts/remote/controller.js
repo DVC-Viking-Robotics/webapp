@@ -47,7 +47,7 @@ function adjustSliderSizes() {
     speedController.height = Math.round(newCamRect.height);
     turnController.width = Math.round(newCamRect.width);
     turnController.height = 80;
-    console.log("new Cam dimensions:", Math.round(newCamRect.width), 'x', Math.round(newCamRect.height));
+    // console.log("new Cam dimensions:", Math.round(newCamRect.width), 'x', Math.round(newCamRect.height));
     speedSlider.resize();
     turnSlider.resize();
 }
