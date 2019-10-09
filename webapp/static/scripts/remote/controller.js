@@ -195,26 +195,20 @@ function getGamepadChanges() {
                     result.push(0);
                 }
             }
-        /*
-        for (i = 0; i < gamepads.length; i++){
-            // show axes data
-            for (j = 0; j < gamepads[i].axes.length; j++) {
-                var temp = gamepads[i].axes[j];
-                if (temp > 0.025 || temp < -0.025) {
-                    console.log("gamepad[" + i + "], axis[" + j + "] = " + temp);
-                }
-            }
-            //show button presses (analog triggers have preset threshold)
-            for (j = 0; j < gamepads[i].buttons.length; j++) {
-                var temp = gamepads[i].buttons[j].pressed;
-                if (temp)
-                console.log("gamepad[" + i + "], button[" + j + "] = " + temp);
-            }
-        }
-        */
         }
     }
-    // result is empty if no usable data was detected
+    // result is empty if no gamepad was initialized
     // otherwise result = [speed, turn]
     sendSpeedTurnValues(result);
 }
+/* 
+// show gamepad button presses
+// analog triggers have a preset threshold that make them behave like buttons
+for (i = 0; i < gamepads.length; i++){
+    for (j = 0; j < gamepads[i].buttons.length; j++) {
+        var temp = gamepads[i].buttons[j].pressed;
+        if (temp)
+        console.log("gamepad[" + i + "], button[" + j + "] = " + temp);
+    }
+}
+*/
