@@ -22,12 +22,12 @@ def register():
     password = request.form['password']
     user = User(username, password, )
     if User.query.filter_by(username=username).count() > 0:
-        flash("Account already exists")
+        flash("Account already exists",'error')
         return redirect('/login')
     else:
         db.session.add(user)
         db.session.commit()
-        flash('User successfully registered')
+        flash('User successfully registered','sucess')
     return redirect('/login')
 
 
@@ -43,8 +43,8 @@ def login():
         flash('Username or Password is invalid', 'error')
         return redirect('/login')
     login_user(registered_user)
-    flash('Logged in successfully')
-    return redirect('home')
+    flash('Logged in successfully','success')
+    return redirect('/home')
 
 
 @blueprint.route("/logout")
@@ -133,7 +133,7 @@ def delete_user():
     "Deletes users account"
     db.session.delete(current_user)
     db.session.commit()
-    flash("Account deleted")
+    flash("Account deleted", 'success')
     return redirect('/login')
 
 
