@@ -27,7 +27,7 @@ def register():
     else:
         db.session.add(user)
         db.session.commit()
-        flash('User successfully registered','sucess')
+        flash('User successfully registered','success')
     return redirect('/login')
 
 
