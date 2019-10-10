@@ -46,7 +46,7 @@ def inject_constants():
 @click.option('--port', default=5555, help='The port number used to access the webapp.')
 def run(port):
     try:
-        print('Hosting @ http://localhost:{port}')
+        print(f'Hosting @ http://localhost:{port}')
         socketio.run(app, host='0.0.0.0', port=port, debug=False)
     except KeyboardInterrupt:
         socketio.stop()
