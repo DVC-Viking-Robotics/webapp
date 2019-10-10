@@ -11,15 +11,18 @@ from .sockets import socketio
 
 blueprint = Blueprint('blueprint', __name__)
 
-@blueprint.route('/register' , methods=['GET','POST'])
+
+@blueprint.route('/')
+@blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template('login.html')
-    user = User(request.form['username'] , request.form['password'],)
+    user = User(request.form['username'], request.form['password'], )
     db.session.add(user)
     db.session.commit()
     flash('User successfully registered')
     return redirect('/login')
+
 
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
@@ -28,10 +31,10 @@ def login():
         return render_template('login.html')
     username = request.form['username']
     password = request.form['password']
-    registered_user = User.query.filter_by(username=username,password=password).first()
+    registered_user = User.query.filter_by(username=username, password=password).first()
     if registered_user is None:
-      flash('Username or Password is invalid' , 'error')
-      return redirect('/login')
+        flash('Username or Password is invalid', 'error')
+        return redirect('/login')
     login_user(registered_user)
     flash('Logged in successfully')
     return redirect('home')
@@ -43,6 +46,7 @@ def logout():
     """Redirects to login page after logging out"""
     logout_user()
     return redirect("login")
+
 
 @blueprint.route('/')
 @blueprint.route('/home')
