@@ -126,4 +126,7 @@ def delete_user():
     "Deletes users account"
     db.session.delete(current_user)
     db.session.commit()
+    flash("Account deleted")
     return redirect('/login')
+
+
