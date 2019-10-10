@@ -10,17 +10,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, LoginManager
 
 app = Flask(__name__)
-# this userpass assumes you did not create a password for your database
-# and the database username is the default, 'root'
-userpass = 'mysql+pymysql://root:r3J8h$2*SA%7@'
-basedir  = '127.0.0.1'
-# change to YOUR database name, with a slash added as shown
-dbname   = '/user_accounts'
-socket   = ''
-dbname   = dbname + socket
 
 # put them all together as a string that shows SQLAlchemy where the database is
-app.config['SQLALCHEMY_DATABASE_URI'] = userpass + basedir + dbname
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://UserAdmin:^0o9JpRAPazf@webapp-dev-db.c1cjueiaoepn.us-west-1.rds.amazonaws.com:3306/user.accounts'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['LOGIN_DISABLED'] = False
@@ -44,11 +36,11 @@ class Remote:
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column('user_id',db.Integer , primary_key=True)
-    username = db.Column('username', db.String(20), unique=True , index=True)
-    password = db.Column('password' , db.String(10))
+    id = db.Column('user_id',db.Integer, primary_key=True)
+    username = db.Column('username', db.String(20), unique=True, index=True)
+    password = db.Column('password', db.String(10))
     
-    def __init__(self , username ,password):
+    def __init__(self, username,password):
         self.username = username
         self.password = password
          
