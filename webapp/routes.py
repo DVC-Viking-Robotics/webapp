@@ -4,6 +4,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import exists
 from flask import Blueprint, render_template, request, flash, redirect, session
 from flask_login import login_required, login_user, logout_user, current_user
 from .users import users, User, db
@@ -17,10 +18,16 @@ blueprint = Blueprint('blueprint', __name__)
 def register():
     if request.method == 'GET':
         return render_template('login.html')
-    user = User(request.form['username'], request.form['password'], )
-    db.session.add(user)
-    db.session.commit()
-    flash('User successfully registered')
+    username = request.form['username']
+    password = request.form['password']
+    user = User(username, password, )
+    if User.query.filter_by(username=username).count() > 0:
+        flash("Account already exists")
+        return redirect('/login')
+    else:
+        db.session.add(user)
+        db.session.commit()
+        flash('User successfully registered')
     return redirect('/login')
 
 
@@ -130,3 +137,8 @@ def delete_user():
     return redirect('/login')
 
 
+@blueprint.route("/reset_password")
+@login_required
+def reset_password():
+
+    return
