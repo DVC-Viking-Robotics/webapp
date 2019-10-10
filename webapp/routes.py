@@ -4,8 +4,8 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask import Blueprint, render_template, request, flash, redirect
-from flask_login import login_required, login_user, logout_user
+from flask import Blueprint, render_template, request, flash, redirect, session
+from flask_login import login_required, login_user, logout_user, current_user
 from .users import users, User, db
 from .sockets import socketio
 
@@ -118,3 +118,12 @@ def shutdown_robot():
     """Shutsdown Robot (Only applicable if webserver runs off rasp pi)"""
     os.system('sudo shutdown -h now')
     return
+
+
+@blueprint.route("/delete_user")
+@login_required
+def delete_user():
+    "Deletes users account"
+    db.session.delete(current_user)
+    db.session.commit()
+    return redirect('/login')
