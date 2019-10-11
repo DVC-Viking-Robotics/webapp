@@ -130,7 +130,7 @@ def shutdown_robot():
 @blueprint.route("/delete_user")
 @login_required
 def delete_user():
-    "Deletes users account"
+    """Deletes users account"""
     db.session.delete(current_user)
     db.session.commit()
     flash("Account deleted", 'success')
