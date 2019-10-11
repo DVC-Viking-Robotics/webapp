@@ -54,11 +54,9 @@ class User(db.Model):
         return False
  
     def get_id(self):
+        """This class attrubute holds the user account's ID"""
         return str(self.id)
- 
-    def __repr__(self):
-        return '<User %r>' % (self.username)
-        
+
 class AnonUser(AnonymousUserMixin):
     """A class for instantiating an anonymous user account.
         There should be only 1 object of this class type.
@@ -70,11 +68,6 @@ class AnonUser(AnonymousUserMixin):
         self._id = 'anonymous'
         self._remotes = []
         self._config = {}
-
-    @property
-    def get_id(self):
-        """This class attrubute holds the user account's ID"""
-        return self._id
 
 
 @login_manager.user_loader

@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import exists
 from flask import Blueprint, render_template, request, flash, redirect, session
 from flask_login import login_required, login_user, logout_user, current_user
-from .users import users, User, db
+from .users import User, db
 from .sockets import socketio
 
 blueprint = Blueprint('blueprint', __name__)
