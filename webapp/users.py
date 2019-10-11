@@ -76,8 +76,6 @@ class AnonUser(AnonymousUserMixin):
         """This class attrubute holds the user account's ID"""
         return self._id
 
-users = {'admin': User(u'admin','"admin'), 'anonymous': AnonUser()}
-# users['admin'].remotes.append(Remote('dummy remote'))
 
 @login_manager.user_loader
 def load_user(user_id):
