@@ -143,12 +143,36 @@
                                             <hr class="dropdown-divider">
                                             <a href="/logout" class="dropdown-item">Log Out</a>
                                             <a href="/reset_password" class="dropdown-item">Reset Password</a>
-                                            <a href="/delete_user" class="dropdown-item"> <span style="color: red; ">Delete Account</span></a>
+                                            <button class="button is-primary modal-button dropdown-item" data-target="#myModal" aria-haspopup="true"><span style="color: red; ">Delete Account</span></button>
                                         </div>
                                     </div>
                                 </div>
 
+                                <div class="modal" id="myModal">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+                                        <section class="modal-card-body">
+                                            <p>Are you sure you want to delete your account?</p>
+                                        </section>
+                                        <footer class="modal-card-foot buttons is-right">
+                                              <button class="button is-success" onclick="location.href='/delete_user'">Yes</button>
+                                              <button class="button cancel-button">Cancel</button>
+                                        </footer>
+                                  </div>
+                                </div>
+                                <script>
+                                    document.querySelectorAll('.modal-button').forEach(function(el) {
+                                      el.addEventListener('click', function() {
+                                        var target = document.querySelector(el.getAttribute('data-target'));
 
+                                        target.classList.add('is-active');
+
+                                        target.querySelector('.cancel-button').addEventListener('click',   function() {
+                                            target.classList.remove('is-active');
+                                         });
+                                      });
+                                    });
+                                </script>
                                 <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
                                     <div class="dropdown-trigger">
                                         <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="shutdown-dropdown-menu">
