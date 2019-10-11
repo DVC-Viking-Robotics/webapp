@@ -8,7 +8,8 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, LoginManager
-from .app import app, db
+
+db = SQLAlchemy()
 
 login_manager = LoginManager()
 login_manager.login_view = "/login"

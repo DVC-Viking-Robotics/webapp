@@ -12,7 +12,6 @@ from .sockets import socketio
 
 blueprint = Blueprint('blueprint', __name__)
 
-
 @blueprint.route('/')
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
