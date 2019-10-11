@@ -20,7 +20,7 @@ def register():
         return render_template('login.html')
     username = request.form['username']
     password = request.form['password']
-    user = User(username, password, )
+    user = User(username, password)
     if User.query.filter_by(username=username).count() > 0:
         flash("Account already exists",'error')
         return redirect('/login')
@@ -43,8 +43,8 @@ def login():
         flash('Username or Password is invalid', 'error')
         return redirect('/login')
     login_user(registered_user)
-    flash('Logged in successfully','success')
-    return redirect('/home')
+    flash('Logged in successfully', 'success')
+    return redirect('home')
 
 
 @blueprint.route("/logout")
