@@ -8,20 +8,9 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, LoginManager
+from .app import app, db
 
-app = Flask(__name__)
-
-# put them all together as a string that shows SQLAlchemy where the database is
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://UserAdmin:^0o9JpRAPazf@webapp-dev-db.c1cjueiaoepn.us-west-1.rds.amazonaws.com:3306/user.accounts'
-
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['LOGIN_DISABLED'] = False
-
-db = SQLAlchemy(app)
-   
-   
 login_manager = LoginManager()
-login_manager.init_app(app)
 login_manager.login_view = "/login"
 login_manager.login_message_category = "warning"
 
