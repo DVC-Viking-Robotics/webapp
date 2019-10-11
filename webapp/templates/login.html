@@ -7,7 +7,7 @@
         <title>Login</title>
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}"aswatch-darkly.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulmaswatch-darkly.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-divider.min.css') }}">
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
@@ -78,7 +78,7 @@
                         <div class="control has-text-white has-icons-left">
                             <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password" name="password" required>
                             <span class="icon is-left">
-                                <i class="far fa-user"></i>
+                                <i class="far fa-key"></i>
                             </span>
                         </div>
                     </section>
@@ -123,7 +123,7 @@
                         <div class="control has-text-white has-icons-left">
                             <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password" name="password" value="{{ request.form.password }}" required>
                             <span class="icon is-left">
-                                <i class="far fa-user"></i>
+                                <i class="far fa-key"></i>
                             </span>
                         </div>
                     </section>                 
@@ -142,7 +142,7 @@
             </div>
         </div>
 
-        <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"fontawesome-all.min.js') }}"></script>
+        <script defer src="{{ url_for('static', filename='scripts/libs/fontawesome-all.min.js') }}"></script>
 
         <script>
             function showView(id) {
