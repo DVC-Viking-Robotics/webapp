@@ -146,8 +146,8 @@ def reset_password():
     old_password = request.form['old-password']
     new_password = request.form['new-password']
     user = current_user
-    if User.query.filter_by(password=old_password).count() > 0:
-        user.password = new_password
+    if check_password_hash(user.password, old_password):
+        user.password = generate_password_hash(new_password)
         db.session.add(user)
         db.session.commit()
         flash("Password has been updated", 'success')
