@@ -51,21 +51,6 @@ class User(db.Model):
         """This class attrubute holds the user account's ID"""
         return str(self.id)
 
-
-class AnonUser(AnonymousUserMixin):
-    """A class for instantiating an anonymous user account.
-        There should be only 1 object of this class type.
-
-    .. note:: This may get deprecated for security concerns/simplicity.
-
-    """
-
-    def __init__(self):
-        self._id = 'anonymous'
-        self._remotes = []
-        self._config = {}
-
-
 @login_manager.user_loader
 def load_user(user_id):
     """A function wrapper to retreive a user account's object"""
