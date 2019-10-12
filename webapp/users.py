@@ -9,9 +9,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, LoginManager
 from werkzeug.security import generate_password_hash, check_password_hash
-from .config import DISABLE_DATABASE
+from .config import DISABLE_AUTH_SYSTEM
 
-if not DISABLE_DATABASE:
+if not DISABLE_AUTH_SYSTEM:
     db = SQLAlchemy()
 
 login_manager = LoginManager()
@@ -29,7 +29,7 @@ class Remote:
         self.name = name
         self.link = link
 
-if not DISABLE_DATABASE:
+if not DISABLE_AUTH_SYSTEM:
     # pylint: disable=no-member
     class User(db.Model):
         __tablename__ = 'users'
@@ -59,7 +59,7 @@ if not DISABLE_DATABASE:
 @login_manager.user_loader
 def load_user(user_id):
     """A function wrapper to retreive a user account's object"""
-    if not DISABLE_DATABASE:
+    if not DISABLE_AUTH_SYSTEM:
         return User.query.get(int(user_id))
     else:
         return 42

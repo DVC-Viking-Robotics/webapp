@@ -4,7 +4,7 @@ This script runs the flask_controller application using a development server.
 import click
 import os
 from flask import Flask
-from .config import DISABLE_DATABASE
+from .config import DISABLE_AUTH_SYSTEM
 from .pages_config import ALL_PAGES, NUM_ROWS
 from .oss_lib_list import OSS_SERVER_LIST, OSS_CLIENT_LIST
 from .routes import blueprint
@@ -13,7 +13,7 @@ from .static_optimizer import cache_buster, compress
 from .users import login_manager
 from .file_encryption import EncryptedFileManager
 
-if not DISABLE_DATABASE:
+if not DISABLE_AUTH_SYSTEM:
     from .users import db
 
 # to temporarily disable non-crucial pylint errors in conformity
@@ -26,7 +26,7 @@ app.secret_key = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\x
 # Cache all static files for 1 year by default
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
 
-if not DISABLE_DATABASE:
+if not DISABLE_AUTH_SYSTEM:
     # Read the encrypted database URI and re-encrypt it again
     SECRET_KEYFILE = 'secret/secret.key'
     DB_CONFIG_FILE = 'secret/db-config.encrypted'

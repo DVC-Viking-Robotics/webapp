@@ -7,11 +7,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import exists
 from flask import Blueprint, render_template, request, flash, redirect, session
 from flask_login import login_required, login_user, logout_user, current_user
-from .config import DISABLE_DATABASE
+from .config import DISABLE_AUTH_SYSTEM
 from .sockets import socketio
 from werkzeug.security import generate_password_hash, check_password_hash
 
-if not DISABLE_DATABASE:
+if not DISABLE_AUTH_SYSTEM:
     from .users import User, db
 
 blueprint = Blueprint('blueprint', __name__)
@@ -20,7 +20,7 @@ blueprint = Blueprint('blueprint', __name__)
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        if not DISABLE_DATABASE:
+        if not DISABLE_AUTH_SYSTEM:
             return render_template('login.html')
         else:
             return render_template('home.html')
@@ -43,7 +43,7 @@ def register():
 def login():
     """Renders the login page"""
     if request.method == 'GET':
-        if not DISABLE_DATABASE:
+        if not DISABLE_AUTH_SYSTEM:
             return render_template('login.html')
         else:
             return render_template('home.html')
