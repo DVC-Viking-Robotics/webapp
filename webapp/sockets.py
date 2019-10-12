@@ -15,7 +15,7 @@ from .inputs.camera_manager import CameraManager
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # for virtual terminal access
-from .virtual_terminal import VTerminal
+from .utils.virtual_terminal import VTerminal
 
 if not ON_WINDOWS:
     vterm = VTerminal(socketio)

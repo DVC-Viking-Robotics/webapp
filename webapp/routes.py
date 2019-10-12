@@ -122,7 +122,6 @@ def about():
 def shutdown_server():
     """Shutdowns Webapp"""
     socketio.stop()
-    return
 
 
 @blueprint.route("/restart")
@@ -130,7 +129,6 @@ def shutdown_server():
 def restart():
     """Restarts Robot (Only applicable if webserver runs off rasp pi)"""
     os.system('sudo reboot')
-    return
 
 
 @blueprint.route("/shutdown_robot")
@@ -138,7 +136,6 @@ def restart():
 def shutdown_robot():
     """Shutsdown Robot (Only applicable if webserver runs off rasp pi)"""
     os.system('sudo shutdown -h now')
-    return
 
 
 @blueprint.route("/delete_user")
@@ -156,16 +153,17 @@ def delete_user():
 def reset_password():
     if request.method == 'GET':
         return render_template('home.html')
+
     old_password = request.form['old-password']
     new_password = request.form['new-password']
     user = current_user
+
     if check_password_hash(user.password, old_password):
         user.password = generate_password_hash(new_password)
         db.session.add(user)
         db.session.commit()
         flash("Password has been updated", 'success')
-        return redirect('home')
     else:
         flash("Incorrect old password",'error')
-        return redirect('home')
-    return
+
+    return redirect('home.html')

@@ -1,6 +1,6 @@
 import os
 from cryptography.fernet import Fernet
-from webapp.file_encryption import EncryptedFileManager
+from webapp.utils.file_encryption import EncryptedFileManager
 
 """
 This script allows the admin to generate a new secret key, should the old one be compromised.

@@ -9,9 +9,9 @@ from .pages_config import ALL_PAGES, NUM_ROWS
 from .oss_lib_list import OSS_SERVER_LIST, OSS_CLIENT_LIST
 from .routes import blueprint
 from .sockets import socketio
-from .static_optimizer import cache_buster, compress
 from .users import login_manager
-from .file_encryption import EncryptedFileManager
+from .utils.static_optimizer import cache_buster, asset_compressor
+from .utils.file_encryption import EncryptedFileManager
 
 if not DISABLE_AUTH_SYSTEM:
     from .users import db
@@ -48,7 +48,7 @@ login_manager.init_app(app)
 socketio.init_app(app)
 
 # Enable gzip compression of static assets
-compress.init_app(app)
+asset_compressor.init_app(app)
 
 # Enable indefinite caching of static assets based on hash values
 cache_buster.init_app(app)
