@@ -9,16 +9,31 @@ from .routes import blueprint
 from .sockets import socketio
 from .static_optimizer import cache_buster, compress
 from .users import login_manager, db
+import os
+from .file_encryption import encrypt_file, decrypt_file
+
+
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring,no-value-for-parameter
 
 app = Flask(__name__)
 
 app.secret_key = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\xea\xac\x15.'
+
 # Cache all static files for 1 year by default
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://UserAdmin:^0o9JpRAPazf@webapp-dev-db.c1cjueiaoepn.us-west-1.rds.amazonaws.com:3306/user.accounts'
+
+if os.path.exists("webapp/server_config.txt"):
+    encrypt_file("webapp/server_config.txt")
+else:
+    decrypt_file()
+server_config = open("webapp/server_config.txt", 'r')
+URI = server_config.readline()
+app.config['SQLALCHEMY_DATABASE_URI'] = URI
+server_config.close()
+encrypt_file("webapp/server_config.txt")
+
 
 db.init_app(app)
 
