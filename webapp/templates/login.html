@@ -14,7 +14,6 @@
         <link rel="shortcut icon" href="/static/images/viking.png">
     </head>
 
-    <!-- TODO: Add more content to login page -->
     <body>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -43,20 +42,20 @@
         {% endif %}
         {% endwith %}
 
-        <p style="text-align:center; padding-top:15px;">An account is needed to save your remotes and preferences. No personal information is used online.</p>
+        <p class="has-text-centered" style="padding-top: 15px;">An account is needed to save your remotes and preferences. No personal information is used online.</p>
         <div class="columns is-vcentered">
-            <div class="column" style="text-align:center;">
+            <div class="has-text-centered column">
                 <button class="button is-info is-medium is-outlined is-rounded" onclick="showView('login-user')">Login</button>
             </div>
             <div class="column">
                 <div class="is-divider-vertical is-white-ter" data-content="OR"></div>
             </div>
-            <div class="column" style="text-align:center;">
+            <div class="column has-text-centered">
                 <button class="button is-success is-medium is-outlined is-rounded" onclick="showView('signup-user')">Create an account</button>
             </div>
         </div>
 
-        <!-- The Modal -->
+        <!-- The login modal form -->
         <div id="login-user" class="modal">
             <div onclick="hideView('login-user')" class="modal-background"></div>
             <div class="modal-card animate">
@@ -99,7 +98,7 @@
             </div>
         </div>
 
-        <!-- The Modal (contains the Sign Up form) -->
+        <!-- The sign up modal form -->
         <div id="signup-user" class="modal">
             <div onclick="hideView('signup-user')" class="modal-background"></div>
             <div class="modal-card animate">
@@ -110,7 +109,6 @@
                     </header>
 
                     <section class="modal-card-body has-background-black-ter has-text-white">
-                        <p>Please enter your unique name (nicknames are best).</p>
                         <label for="username"><b>Username</b></label>
                         <div class="control has-text-white has-icons-left">
                             <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" id= "username" value="{{ request.form.username }}" required>
@@ -118,7 +116,6 @@
                                 <i class="far fa-user"></i>
                             </span>
                         </div>
-                        <p>Please enter a password.</p>
                         <label for="password"><b>Password</b></label>
                         <div class="control has-text-white has-icons-left">
                             <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password" name="password" value="{{ request.form.password }}" required>
@@ -126,7 +123,7 @@
                                 <i class="far fa-key"></i>
                             </span>
                         </div>
-                    </section>                 
+                    </section>
                     <footer class="modal-card-foot has-background-grey-darker">
                         <button type="button" onclick="hideView('login-user')" class="button is-danger is-rounded has-text-black">
                             <strong>Cancel</strong>
