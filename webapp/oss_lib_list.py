@@ -25,7 +25,7 @@ OSS_SERVER_LIST = [
     ),
     Library(
         'Viking Robotics: GPS_Serial',
-        'Yet another NMEA sentence parser for serial UART based GPS modules.',
+        'Yet another NMEA sentence parser for serial UART based GPS modules, but this time using multi-threading',
         'https://github.com/DVC-Viking-Robotics/GPS_Serial'
     ),
     Library(
@@ -92,11 +92,6 @@ OSS_CLIENT_LIST = [
         'https://github.com/Wikiki/bulma-quickview',
     ),
     Library(
-        'Bulma Slider',
-        'https://github.com/Wikiki/bulma-slider',
-        'Bulma extension to display sliders.',
-    ),
-    Library(
         'Bulmaswatch',
         'Free themes for Bulma.',
         'https://github.com/jenil/bulmaswatch',
@@ -115,10 +110,5 @@ OSS_CLIENT_LIST = [
         'outdated-browser-rework',
         'Detects outdated browsers and advises users to upgrade to a new version. Handles mobile devices!',
         'https://github.com/mikemaccana/outdated-browser-rework',
-    ),
-    Library(
-        'ResizeSensor',
-        'Javascript performance friendly element resize detection.',
-        'https://github.com/procurios/ResizeSensor',
     ),
 ]
