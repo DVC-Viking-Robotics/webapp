@@ -28,7 +28,6 @@ DB_CONFIG_FILE = 'secret/db-config.encrypted'
 
 db_config_manager = EncryptedFileManager(SECRET_KEYFILE)
 URI = db_config_manager.read_file(DB_CONFIG_FILE)
-db_config_manager.write_file(URI, DB_CONFIG_FILE)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
