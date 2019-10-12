@@ -2,41 +2,71 @@
 # pylint: disable=invalid-name,missing-docstring
 
 import os
-from flask import Blueprint, render_template, request, flash, redirect
-from flask_login import login_required, login_user, logout_user
-from .users import users, User
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import exists
+from flask import Blueprint, render_template, request, flash, redirect, session
+from flask_login import login_required, login_user, logout_user, current_user
+from .config import DISABLE_AUTH_SYSTEM
 from .sockets import socketio
+from werkzeug.security import generate_password_hash, check_password_hash
+
+if not DISABLE_AUTH_SYSTEM:
+    from .users import User, db
 
 blueprint = Blueprint('blueprint', __name__)
 
+@blueprint.route('/')
+@blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        if not DISABLE_AUTH_SYSTEM:
+            return render_template('login.html')
+        else:
+            return render_template('home.html')
 
-@blueprint.route('/', methods=['GET', 'POST'])
+    username = request.form['username']
+    password = request.form['password']
+
+    user = User(username, generate_password_hash(password))
+    if User.query.filter_by(username=username).count() > 0:
+        flash("Account already exists",'error')
+        return redirect('/login')
+    else:
+        db.session.add(user)
+        db.session.commit()
+        flash('User successfully registered','success')
+    return redirect('/login')
+
+
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     """Renders the login page"""
-    if request.method == 'POST':
-        form = request.form
-        user_name = form.get('username', default=None)
-        is_new = bool(form.get('register', default=False))
-        if user_name is not None:
-            if bool(users.get(user_name)) or is_new:  # login
-                if is_new and not bool(users.get(user_name)):  # add new user
-                    users[user_name] = User(user_name)
-                    flash('Account created successfully.', 'info')
-                if users.get(user_name):
-                    login_user(users.get(user_name))
-                    flash('Logged in successfully.', 'success')
-                    return redirect('home')
-            else:
-                flash('Username "{}" does not exist!'.format(user_name), 'error')
-    return render_template('login.html')
+    if request.method == 'GET':
+        if not DISABLE_AUTH_SYSTEM:
+            return render_template('login.html')
+        else:
+            return render_template('home.html')
+
+    username = request.form['username']
+    password = request.form['password']
+
+    registered_user = User.query.filter_by(username=username).first()
+    if registered_user and check_password_hash(registered_user.password, password):
+        login_user(registered_user)
+        flash('Logged in successfully', 'success')
+    else:
+        flash('Username or Password is invalid', 'error')
+        return redirect('/login')
+    return redirect('home')
 
 
-@blueprint.route("/logout")
+@blueprint.route('/logout')
+@login_required
 def logout():
     """Redirects to login page after logging out"""
     logout_user()
-    return redirect("login")
+    return redirect('login')
 
 
 @blueprint.route('/')
@@ -108,4 +138,34 @@ def restart():
 def shutdown_robot():
     """Shutsdown Robot (Only applicable if webserver runs off rasp pi)"""
     os.system('sudo shutdown -h now')
+    return
+
+
+@blueprint.route("/delete_user")
+@login_required
+def delete_user():
+    """Deletes users account"""
+    db.session.delete(current_user)
+    db.session.commit()
+    flash("Account deleted", 'success')
+    return redirect('/login')
+
+
+@blueprint.route("/reset_password", methods=['GET', 'POST'])
+@login_required
+def reset_password():
+    if request.method == 'GET':
+        return render_template('home.html')
+    old_password = request.form['old-password']
+    new_password = request.form['new-password']
+    user = current_user
+    if check_password_hash(user.password, old_password):
+        user.password = generate_password_hash(new_password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Password has been updated", 'success')
+        return redirect('home')
+    else:
+        flash("Incorrect old password",'error')
+        return redirect('home')
     return

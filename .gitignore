@@ -127,3 +127,6 @@ dmypy.json
 .vscode/
 webapp/inputs/HWconfig.json
 webapp/.project
+
+# Webapp-specific files/folders
+secret/secret.key

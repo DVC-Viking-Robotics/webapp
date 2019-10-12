@@ -11,7 +11,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-quickview.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-slider.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bulma-badge.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/outdated-browser-rework.css') }}"
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/outdated-browser-rework.css') }}">
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}">
         <link rel="shortcut icon" href="/static/images/viking.png">
@@ -142,10 +142,11 @@
                                             <a class="dropdown-item">Edit Preferences</a>
                                             <hr class="dropdown-divider">
                                             <a href="/logout" class="dropdown-item">Log Out</a>
+                                            <a class="modal-button dropdown-item" data-target="#reset-password" aria-haspopup="true">Reset Password</a>
+                                            <a class="modal-button dropdown-item" data-target="#delete-user" aria-haspopup="true"><span class="has-text-danger">Delete Account</span></a>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="dropdown is-right" onclick="this.classList.toggle('is-active')">
                                     <div class="dropdown-trigger">
                                         <a class="button is-medium is-primary" aria-haspopup="true" aria-controls="shutdown-dropdown-menu">
@@ -172,7 +173,60 @@
                     </div>
                 </div>
             </nav>
+            <div class="modal" id="delete-user">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <section class="modal-card-body">
+                        <p>Are you sure you want to delete your account?</p>
+                    </section>
+                    <footer class="modal-card-foot buttons is-right">
+                          <button class="button is-success" onclick="location.href='/delete_user'">Yes</button>
+                          <button class="button cancel-button">Cancel</button>
+                    </footer>
+              </div>
+            </div>
+            <div class="modal" id="reset-password">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <form method="post" action="/reset_password">
+                        <section class="modal-card-body">
+                            <p>Please enter your old password</p>
+                            <label for="old-password"><b>Old Password</b></label>
+                            <div class="control has-text-white has-icons-left">
+                                <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="old-password" name="old-password" required>
+                                <span class="icon is-left">
+                                    <i class="far fa-user"></i>
+                                </span>
+                            </div>
+                            <p>Please enter your new password</p>
+                            <label for="new-password"><b> New Password</b></label>
+                            <div class="control has-text-white has-icons-left">
+                                <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="new-password" name="new-password" required>
+                                <span class="icon is-left">
+                                    <i class="far fa-user"></i>
+                                </span>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot buttons is-right">
+                              <button type="submit" class="button is-success">Change Password</button>
+                              <button class="button cancel-button">Cancel</button>
+                        </footer>
+                    </form>
+              </div>
+            </div>
+            <script>
+                document.querySelectorAll('.modal-button').forEach(function(el) {
+                  el.addEventListener('click', function() {
+                    var target = document.querySelector(el.getAttribute('data-target'));
 
+                    target.classList.add('is-active');
+
+                    target.querySelector('.cancel-button').addEventListener('click',   function() {
+                        target.classList.remove('is-active');
+                     });
+                  });
+                });
+            </script>
             {% block content %}{% endblock %}
 
             <!-- This is for the outdate browser banner -->
