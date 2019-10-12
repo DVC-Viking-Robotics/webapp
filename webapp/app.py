@@ -10,8 +10,7 @@ from .routes import blueprint
 from .sockets import socketio
 from .static_optimizer import cache_buster, compress
 from .users import login_manager, db
-from .file_encryption import encrypt_file, decrypt_file
-
+from .file_encryption import EncryptedFileManager
 
 # to temporarily disable non-crucial pylint errors in conformity
 # pylint: disable=invalid-name,missing-docstring,no-value-for-parameter
@@ -22,18 +21,17 @@ app.secret_key = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\x
 
 # Cache all static files for 1 year by default
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-if os.path.exists("webapp/server_config.txt"):
-    encrypt_file("webapp/server_config.txt")
-else:
-    decrypt_file()
-server_config = open("webapp/server_config.txt", 'r')
-URI = server_config.readline()
+# Read the encrypted database URI and re-encrypt it again
+SECRET_KEYFILE = 'secret/secret.key'
+DB_CONFIG_FILE = 'secret/db-config.encrypted'
+
+db_config_manager = EncryptedFileManager(SECRET_KEYFILE)
+URI = db_config_manager.read_file(DB_CONFIG_FILE)
+db_config_manager.write_file(URI, DB_CONFIG_FILE)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = URI
-server_config.close()
-encrypt_file("webapp/server_config.txt")
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db.init_app(app)
 

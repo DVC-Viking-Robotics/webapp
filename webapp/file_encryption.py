@@ -1,33 +1,20 @@
 from cryptography.fernet import Fernet
-import os
 
-file = open('key.key', 'rb')
-key = file.read() # The key will be type bytes
-file.close()
-def encrypt_file(input_file):
-    output_file = "webapp/output.encrypted"
+class EncryptedFileManager:
+    def __init__(self, key_file_path):
+        with open(key_file_path, 'rb') as fp:
+            self.key = fp.read()
 
-    with open(input_file, 'rb') as f:
-        data = f.read()
+    def read_file(self, input_file):
+        with open(input_file, 'rb') as fp:
+            data = fp.read()
+            fernet = Fernet(self.key)
+            decrypted = fernet.decrypt(data)
+            return decrypted
 
-    fernet = Fernet(key)
-    encrypted = fernet.encrypt(data)
+    def write_file(self, data, output_file):
+        fernet = Fernet(self.key)
+        encrypted = fernet.encrypt(data)
 
-    with open(output_file, 'wb') as f:
-        f.write(encrypted)
-    os.remove(input_file)
-
-def decrypt_file():
-    from cryptography.fernet import Fernet
-    input_file = 'webapp/output.encrypted'
-    output_file = 'webapp/server_config.txt'
-
-    with open(input_file, 'rb') as f:
-        data = f.read()
-
-    fernet = Fernet(key)
-    encrypted = fernet.decrypt(data)
-
-    with open(output_file, 'wb') as f:
-        f.write(encrypted)
-    os.remove(input_file)
+        with open(output_file, 'wb') as fp:
+            fp.write(encrypted)
