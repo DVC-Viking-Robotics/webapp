@@ -9,6 +9,7 @@ from flask import Blueprint, render_template, request, flash, redirect, session
 from flask_login import login_required, login_user, logout_user, current_user
 from .users import User, db
 from .sockets import socketio
+from werkzeug.security import generate_password_hash, check_password_hash
 
 blueprint = Blueprint('blueprint', __name__)
 
@@ -19,7 +20,7 @@ def register():
         return render_template('login.html')
     username = request.form['username']
     password = request.form['password']
-    user = User(username, password)
+    user = User(username, generate_password_hash(password))
     if User.query.filter_by(username=username).count() > 0:
         flash("Account already exists",'error')
         return redirect('/login')
@@ -37,12 +38,13 @@ def login():
         return render_template('login.html')
     username = request.form['username']
     password = request.form['password']
-    registered_user = User.query.filter_by(username=username, password=password).first()
-    if registered_user is None:
+    registered_user = User.query.filter_by(username=username).first()
+    if registered_user and check_password_hash(registered_user.password, password):
+        login_user(registered_user)
+        flash('Logged in successfully', 'success')
+    else:
         flash('Username or Password is invalid', 'error')
         return redirect('/login')
-    login_user(registered_user)
-    flash('Logged in successfully', 'success')
     return redirect('home')
 
 
