@@ -2,6 +2,7 @@
 This script runs the flask_controller application using a development server.
 """
 import click
+import os
 from flask import Flask
 from .pages_config import ALL_PAGES, NUM_ROWS
 from .oss_lib_list import OSS_SERVER_LIST, OSS_CLIENT_LIST
@@ -9,7 +10,6 @@ from .routes import blueprint
 from .sockets import socketio
 from .static_optimizer import cache_buster, compress
 from .users import login_manager, db
-import os
 from .file_encryption import encrypt_file, decrypt_file
 
 
