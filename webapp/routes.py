@@ -7,9 +7,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import exists
 from flask import Blueprint, render_template, request, flash, redirect, session
 from flask_login import login_required, login_user, logout_user, current_user
-from .users import User, db
+from .config import DISABLE_DATABASE
 from .sockets import socketio
 from werkzeug.security import generate_password_hash, check_password_hash
+
+if not DISABLE_DATABASE:
+    from .users import User, db
 
 blueprint = Blueprint('blueprint', __name__)
 
@@ -17,9 +20,14 @@ blueprint = Blueprint('blueprint', __name__)
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('login.html')
+        if not DISABLE_DATABASE:
+            return render_template('login.html')
+        else:
+            return render_template('home.html')
+
     username = request.form['username']
     password = request.form['password']
+
     user = User(username, generate_password_hash(password))
     if User.query.filter_by(username=username).count() > 0:
         flash("Account already exists",'error')
@@ -35,9 +43,14 @@ def register():
 def login():
     """Renders the login page"""
     if request.method == 'GET':
-        return render_template('login.html')
+        if not DISABLE_DATABASE:
+            return render_template('login.html')
+        else:
+            return render_template('home.html')
+
     username = request.form['username']
     password = request.form['password']
+
     registered_user = User.query.filter_by(username=username).first()
     if registered_user and check_password_hash(registered_user.password, password):
         login_user(registered_user)
@@ -48,12 +61,12 @@ def login():
     return redirect('home')
 
 
-@blueprint.route("/logout")
+@blueprint.route('/logout')
 @login_required
 def logout():
     """Redirects to login page after logging out"""
     logout_user()
-    return redirect("login")
+    return redirect('login')
 
 
 @blueprint.route('/')
