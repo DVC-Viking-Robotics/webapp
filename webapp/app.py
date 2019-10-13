@@ -14,24 +14,19 @@ from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager
 from .utils.static_optimizer import cache_buster, asset_compressor
-from .utils.file_encryption import FernetVault
+
+app = Flask(__name__)
+
+# TODO: document this
+app.config['SECRET_KEY'] = FLASK_SECRET
+
+# Cache all static files for 1 year by default
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
 
 if not DISABLE_AUTH_SYSTEM:
     from .users import db
 
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = FLASK_SECRET_KEY
-
-# Cache all static files for 1 year by default
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
-
-if not DISABLE_AUTH_SYSTEM:
-    # Read and decrypt the encrypted database URI
-    db_config_manager = FernetVault(SECRET_KEYFILE)
-    URI = db_config_manager.read_file(DB_CONFIG_FILE).decode('utf-8')
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = URI
+    app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
     db.init_app(app)

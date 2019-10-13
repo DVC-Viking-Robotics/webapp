@@ -1,4 +1,5 @@
 import json
+from .utils.file_encryption import FernetVault
 
 # Restricts variables exposed via a wildcard import
 __all__ = ['TECH_USED', 'PAGES_CONFIG', 'SECRET_KEYFILE', 'DB_CONFIG_FILE', 'FLASK_SECRET_KEY']
@@ -10,8 +11,13 @@ with open('webapp/constants/technology-used.json', 'r') as fp:
 with open('webapp/constants/pages-config.json', 'r') as fp:
     PAGES_CONFIG = json.load(fp)
 
+ONE_YEAR = 60 * 60 * 24 * 365
+
 SECRET_KEYFILE = 'secret/secret.key'
 DB_CONFIG_FILE = 'secret/db-config.encrypted'
 FLASK_SECRET_FILE = 'secret/flask-secret.encrypted'
 
-FLASK_SECRET_KEY = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\xea\xac\x15.'
+# Read and decrypt the encrypted database URI and Flask secret
+vault = FernetVault(SECRET_KEYFILE)
+DB_URI = vault.read_file(DB_CONFIG_FILE).decode('utf-8')
+FLASK_SECRET = vault.read_file(FLASK_SECRET_FILE)
