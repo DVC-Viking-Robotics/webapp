@@ -4,9 +4,8 @@ This script runs the flask_controller application using a development server.
 import click
 import os
 from flask import Flask
+from .constants import TECH_USED, PAGES_CONFIG
 from .config import DISABLE_AUTH_SYSTEM
-from .pages_config import ALL_PAGES, NUM_ROWS
-from .oss_lib_list import OSS_SERVER_LIST, OSS_CLIENT_LIST
 from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager
@@ -57,10 +56,10 @@ cache_buster.init_app(app)
 @app.context_processor
 def inject_constants():
     return dict(
-        ALL_PAGES=ALL_PAGES,
-        NUM_ROWS=NUM_ROWS,
-        OSS_SERVER_LIST=OSS_SERVER_LIST,
-        OSS_CLIENT_LIST=OSS_CLIENT_LIST,
+        ALL_PAGES=PAGES_CONFIG['ALL_PAGES'],
+        NUM_ROWS=PAGES_CONFIG['NUM_ROWS'],
+        OSS_SERVER_LIST=TECH_USED['OSS_SERVER_LIST'],
+        OSS_CLIENT_LIST=TECH_USED['OSS_CLIENT_LIST'],
     )
 
 

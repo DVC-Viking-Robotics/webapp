@@ -1,0 +1,58 @@
+{
+    "NUM_ROWS": 2,
+    "ALL_PAGES": [
+        {
+            "title": "Home",
+            "route": "home",
+            "metapage": true
+        },
+        {
+            "title": "Remote Control",
+            "route": "remote",
+            "metapage": false,
+            "row_location": 0,
+            "description": "Control and view the robot remotely!",
+            "image": "joystick"
+        },
+        {
+            "title": "Sensor Dashboard",
+            "route": "sensors",
+            "metapage": false,
+            "row_location": 0,
+            "description": "View the robot's sensor data!",
+            "image": "dashboard"
+        },
+        {
+            "title": "Autonomous Mode",
+            "route": "automode",
+            "metapage": false,
+            "row_location": 0,
+            "description": "Manage the robot's autonomous capabilities!",
+            "image": "smart-brain"
+        },
+        {
+            "title": "Terminal I/O",
+            "route": "terminal",
+            "metapage": false,
+            "row_location": 1,
+            "description": "Access the robot's terminal remotely!",
+            "image": "dev-computer"
+        },
+        {
+            "title": "Settings",
+            "route": "settings",
+            "metapage": false,
+            "row_location": 1,
+            "description": "Configure the robot's settings!",
+            "image": "settings"
+        },
+        {
+            "title": "About this project",
+            "route": "about",
+            "metapage": false,
+            "row_location": 1,
+            "description": "Learn more about the robot!",
+            "image": "viking"
+        }
+    ]
+}
