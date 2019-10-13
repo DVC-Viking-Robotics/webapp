@@ -1,10 +1,14 @@
 """
 This script runs the flask_controller application using a development server.
 """
+
+# to temporarily disable non-crucial pylint errors in conformity
+# pylint: disable=invalid-name,missing-docstring,no-value-for-parameter,unused-wildcard-import
+
 import click
 import os
 from flask import Flask
-from .constants import TECH_USED, PAGES_CONFIG
+from .constants import *
 from .config import DISABLE_AUTH_SYSTEM
 from .routes import blueprint
 from .sockets import socketio
@@ -15,21 +19,15 @@ from .utils.file_encryption import EncryptedFileManager
 if not DISABLE_AUTH_SYSTEM:
     from .users import db
 
-# to temporarily disable non-crucial pylint errors in conformity
-# pylint: disable=invalid-name,missing-docstring,no-value-for-parameter
-
 app = Flask(__name__)
 
-app.secret_key = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\xea\xac\x15.'
+app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 
 # Cache all static files for 1 year by default
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
 
 if not DISABLE_AUTH_SYSTEM:
-    # Read the encrypted database URI and re-encrypt it again
-    SECRET_KEYFILE = 'secret/secret.key'
-    DB_CONFIG_FILE = 'secret/db-config.encrypted'
-
+    # Read and decrypt the encrypted database URI
     db_config_manager = EncryptedFileManager(SECRET_KEYFILE)
     URI = db_config_manager.read_file(DB_CONFIG_FILE).decode('utf-8')
 

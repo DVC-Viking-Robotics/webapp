@@ -1,14 +1,12 @@
 import os
 from cryptography.fernet import Fernet
 from webapp.utils.file_encryption import EncryptedFileManager
+from webapp.constants import SECRET_KEYFILE, DB_CONFIG_FILE
 
 """
 This script allows the admin to generate a new secret key, should the old one be compromised.
 """
 if __name__ == '__main__':
-    SECRET_KEYFILE = 'secret/secret.key'
-    DB_CONFIG_FILE = 'secret/db-config.encrypted'
-
     if not os.path.exists(SECRET_KEYFILE):
         print("Error: You must have the original key file before you can change to a new one.")
         exit(-1)
