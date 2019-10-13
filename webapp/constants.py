@@ -2,7 +2,11 @@ import json
 from .utils.file_encryption import FernetVault
 
 # Restricts variables exposed via a wildcard import
-__all__ = ['TECH_USED', 'PAGES_CONFIG', 'SECRET_KEYFILE', 'DB_CONFIG_FILE', 'FLASK_SECRET_KEY']
+__all__ = [
+    'TECH_USED', 'PAGES_CONFIG', 'ONE_YEAR',
+    'SECRET_KEYFILE', 'DB_CONFIG_FILE', 'FLASK_SECRET_FILE',
+    'DB_URI', 'FLASK_SECRET'
+]
 
 # Prepare constants from JSON files
 with open('webapp/constants/technology-used.json', 'r') as fp:
