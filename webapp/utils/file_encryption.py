@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-class EncryptedFileManager:
+class FernetVault:
     def __init__(self, key_file_path):
         with open(key_file_path, 'rb') as fp:
             self.key = fp.read()

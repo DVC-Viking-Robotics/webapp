@@ -14,7 +14,7 @@ from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager
 from .utils.static_optimizer import cache_buster, asset_compressor
-from .utils.file_encryption import EncryptedFileManager
+from .utils.file_encryption import FernetVault
 
 if not DISABLE_AUTH_SYSTEM:
     from .users import db
@@ -28,7 +28,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
 
 if not DISABLE_AUTH_SYSTEM:
     # Read and decrypt the encrypted database URI
-    db_config_manager = EncryptedFileManager(SECRET_KEYFILE)
+    db_config_manager = FernetVault(SECRET_KEYFILE)
     URI = db_config_manager.read_file(DB_CONFIG_FILE).decode('utf-8')
 
     app.config['SQLALCHEMY_DATABASE_URI'] = URI

@@ -1,6 +1,6 @@
 import os
 from cryptography.fernet import Fernet
-from webapp.utils.file_encryption import EncryptedFileManager
+from webapp.utils.file_encryption import FernetVault
 from webapp.constants import SECRET_KEYFILE, DB_CONFIG_FILE
 
 """
@@ -12,8 +12,8 @@ if __name__ == '__main__':
         exit(-1)
 
     # read URI with old key file
-    old_db_config_manager = EncryptedFileManager(SECRET_KEYFILE)
-    URI = old_db_config_manager.read_file(DB_CONFIG_FILE)
+    old_vault = FernetVault(SECRET_KEYFILE)
+    URI = old_vault.read_file(DB_CONFIG_FILE)
 
     # generate new key and save it
     new_key = Fernet.generate_key()
@@ -21,5 +21,5 @@ if __name__ == '__main__':
         fp.write(new_key)
 
     # encrypt DB config with new key
-    new_db_config_manager = EncryptedFileManager(SECRET_KEYFILE)
-    new_db_config_manager.write_file(URI, DB_CONFIG_FILE)
+    new_vault = FernetVault(SECRET_KEYFILE)
+    new_vault.write_file(URI, DB_CONFIG_FILE)
