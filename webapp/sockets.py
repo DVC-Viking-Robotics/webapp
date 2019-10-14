@@ -1,3 +1,4 @@
+"""A collection of websocket routes"""
 # pylint: disable=invalid-name
 
 import base64
@@ -26,6 +27,7 @@ camera_manager.open_camera()
 
 
 def getHYPR():
+    """HYPR = Heading Yaw Pitch Roll. This function """
     heading = []
     yaw = 0
     pitch = 0
@@ -67,11 +69,13 @@ def get_imu_data():
 
 @socketio.on('connect')
 def handle_connect():
+    """This event fired when a websocket client establishes a connection to the server"""
     print('websocket Client connected!')
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
+    """This event fired when a websocket client breaks connection to the server"""
     print('websocket Client disconnected')
 
     # If the camera was recently opened, then close it and reopen it to free the resource for
@@ -90,6 +94,7 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
+    """This event is to stream the webcam over websockets."""
     if camera_manager.initialized:
         buffer = camera_manager.capture_image()
         b64 = base64.b64encode(buffer)
@@ -98,6 +103,16 @@ def handle_webcam_request():
 
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):
+    """Builds a list of waypoints based on the order they were created on
+    the 'automode.html' page
+
+    :param list waypoints: A list of GPS latitude & longitude pairs for the robot to
+        travel to in sequence.
+
+    :param bool clear: A flag that will clear the eisting list of GPS waypoints before appending to
+        it.
+
+    """
     if nav is not None:
         if clear:
             nav.clear()
@@ -108,6 +123,7 @@ def build_wapypoints(waypoints, clear):
 
 @socketio.on('gps')
 def handle_gps_request():
+    """This event fired when a websocket client's response to the server about GPS coordinates."""
     print('gps data sent')
     NESW = (0, 0)
     if gps:
@@ -119,13 +135,15 @@ def handle_gps_request():
 
 @socketio.on('sensorDoF')
 def handle_DoF_request():
+    """This event fired when a websocket client a response to the server about IMU data."""
     senses = get_imu_data()
     emit('sensorDoF-response', senses)
     print('DoF sensor data sent')
 
 @socketio.on('remoteOut')
 def handle_remoteOut(arg):
-    # for debugging
+    """This evemt gets fired when the client sends data to the server about remote controls
+    (via remote control page)"""
     print('remote =', repr(arg))
     if d_train: # if there is a drivetrain connected
         d_train[0].go([arg[0] * 655.35, arg[1] * 655.35])
@@ -141,6 +159,7 @@ def on_terminal_input(data):
 
 @socketio.on("terminal-resize", namespace="/pty")
 def on_terminal_resize(data):
+    """This event is fired when a websocket clients' window gets resized to the server"""
     if not ON_WINDOWS:
         vterm.resize_terminal(data["rows"], data["cols"])
 
