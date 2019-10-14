@@ -1,3 +1,7 @@
+"""
+A collection of constants that's used throughout the web app.
+"""
+
 import json
 from .utils.file_encryption import FernetVault
 
@@ -20,6 +24,8 @@ ONE_YEAR = 60 * 60 * 24 * 365
 SECRET_KEYFILE = 'secret/secret.key'
 DB_CONFIG_FILE = 'secret/db-config.encrypted'
 FLASK_SECRET_FILE = 'secret/flask-secret.encrypted'
+
+# pylint: disable=invalid-name
 
 # Read and decrypt the encrypted database URI and Flask secret
 vault = FernetVault(SECRET_KEYFILE)

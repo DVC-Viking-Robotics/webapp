@@ -2,13 +2,11 @@
 This script runs the flask_controller application using a development server.
 """
 
-# to temporarily disable non-crucial pylint errors in conformity
-# pylint: disable=invalid-name,missing-docstring,no-value-for-parameter,unused-wildcard-import
+# pylint: disable=invalid-name,no-value-for-parameter
 
 import click
-import os
 from flask import Flask
-from .constants import *
+from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED
 from .config import DISABLE_AUTH_SYSTEM
 from .routes import blueprint
 from .sockets import socketio
@@ -17,7 +15,7 @@ from .utils.static_optimizer import cache_buster, asset_compressor
 
 app = Flask(__name__)
 
-# TODO: document this
+# Secret key used by Flask to sign cookies.
 app.config['SECRET_KEY'] = FLASK_SECRET
 
 # Cache all static files for 1 year by default

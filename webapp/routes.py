@@ -1,15 +1,12 @@
 # to temporarily disable non-crucial pylint errors in conformity
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 import os
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import exists
-from flask import Blueprint, render_template, request, flash, redirect, session
+from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import login_required, login_user, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from .config import DISABLE_AUTH_SYSTEM
 from .sockets import socketio
-from werkzeug.security import generate_password_hash, check_password_hash
 
 if not DISABLE_AUTH_SYSTEM:
     from .users import User, db
@@ -30,12 +27,12 @@ def register():
 
     user = User(username, generate_password_hash(password))
     if User.query.filter_by(username=username).count() > 0:
-        flash("Account already exists",'error')
+        flash("Account already exists", 'error')
         return redirect('/login')
     else:
         db.session.add(user)
         db.session.commit()
-        flash('User successfully registered','success')
+        flash('User successfully registered', 'success')
     return redirect('/login')
 
 
@@ -164,6 +161,6 @@ def reset_password():
         db.session.commit()
         flash("Password has been updated", 'success')
     else:
-        flash("Incorrect old password",'error')
+        flash("Incorrect old password", 'error')
 
     return redirect('home.html')

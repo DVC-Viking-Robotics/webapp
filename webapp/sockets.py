@@ -1,6 +1,6 @@
 
 # to temporarily disable non-crucial pylint errors in conformity
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 import base64
 from flask_socketio import SocketIO, emit
