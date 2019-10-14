@@ -6,14 +6,17 @@ This script runs the flask_controller application using a development server.
 
 import click
 from flask import Flask
+from flask_debugtoolbar import DebugToolbarExtension
 from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED
-from .config import DISABLE_AUTH_SYSTEM
+from .config import DEBUG, DISABLE_AUTH_SYSTEM
 from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager
 from .utils.static_optimizer import cache_buster, asset_compressor
 
 app = Flask(__name__)
+
+app.config['DEBUG'] = DEBUG
 
 # Secret key used by Flask to sign cookies.
 app.config['SECRET_KEY'] = FLASK_SECRET
@@ -26,6 +29,7 @@ if not DISABLE_AUTH_SYSTEM:
 
     app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    app.config['SQLALCHEMY_RECORD_QUERIES'] = True
 
     db.init_app(app)
 
@@ -43,6 +47,9 @@ asset_compressor.init_app(app)
 # Enable indefinite caching of static assets based on hash values
 cache_buster.init_app(app)
 
+# Enable the Flask debug toolbar ONLY if debug mode is enabled
+debug_toolbar = DebugToolbarExtension()
+debug_toolbar.init_app(app)
 
 @app.context_processor
 def inject_constants():
