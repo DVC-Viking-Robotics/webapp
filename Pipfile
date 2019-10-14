@@ -4,6 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pep8 = "==1.7.1"
+pylint = "==2.4.2"
+autopep8 = "==1.4.4"
+sphinx = "==2.2.0"
+recommonmark = "==0.6.0"
+sphinx-rtd-theme = "==0.4.3"
 
 [packages]
 adafruit-circuitpython-lsm9ds1 = {git = "https://github.com/2bndy5/Adafruit_CircuitPython_LSM9DS1.git"}
@@ -14,12 +20,18 @@ circuitpython-nrf24l01 = "==1.1.0"
 opencv-python = "==3.4.3.18"
 pyserial = "==3.4"
 eventlet = "==0.24.1"
-pyxtermjs = "==0.4.0.1"
-Flask = "==1.0.2"
-Flask-CacheBuster = "==1.0.0"
-Flask-Compress = "==1.4.0"
-Flask-Login = "==0.4.1"
-Flask-SocketIO = "==3.3.2"
+flask = "==1.0.2"
+flask-cachebuster = "==1.0.0"
+flask-compress = "==1.4.0"
+flask-login = "==0.4.1"
+flask-socketio = "==3.3.2"
+flask-sqlalchemy = "==2.4.1"
+cryptography = "==2.7"
+flask-debugtoolbar = "==0.10.1"
+click = "==7.0"
+adafruit-platformdetect = "==1.3.4"
+pymysql = "==0.9.3"
+greenlet = "==0.4.15"
 
 [requires]
 python_version = "3.6"
