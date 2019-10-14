@@ -19,8 +19,7 @@ def register():
     if request.method == 'GET':
         if not DISABLE_AUTH_SYSTEM:
             return render_template('login.html')
-        else:
-            return render_template('home.html')
+        return render_template('home.html')
 
     username = request.form['username']
     password = request.form['password']
@@ -28,7 +27,6 @@ def register():
     user = User(username, generate_password_hash(password))
     if User.query.filter_by(username=username).count() > 0:
         flash("Account already exists", 'error')
-        return redirect('/login')
     else:
         db.session.add(user)
         db.session.commit()
@@ -42,8 +40,7 @@ def login():
     if request.method == 'GET':
         if not DISABLE_AUTH_SYSTEM:
             return render_template('login.html')
-        else:
-            return render_template('home.html')
+        return render_template('home.html')
 
     username = request.form['username']
     password = request.form['password']
