@@ -66,16 +66,16 @@
                     </header>
 
                     <section class="modal-card-body has-background-black-ter has-text-white">
-                        <label for="username"><b>Username</b></label>
+                        <label for="username-login"><b>Username</b></label>
                         <div class="control has-text-white has-icons-left">
-                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" id="username" required>
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" id="username-login" required>
                             <span class="icon is-left">
                                 <i class="far fa-user"></i>
                             </span>
                         </div>
-                        <label for="password"><b>Password</b></label>
+                        <label for="password-login"><b>Password</b></label>
                         <div class="control has-text-white has-icons-left">
-                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password" name="password" required>
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password-login" name="password" required>
                             <span class="icon is-left">
                                 <i class="far fa-key"></i>
                             </span>
@@ -109,16 +109,16 @@
                     </header>
 
                     <section class="modal-card-body has-background-black-ter has-text-white">
-                        <label for="username"><b>Username</b></label>
+                        <label for="username-signup"><b>Username</b></label>
                         <div class="control has-text-white has-icons-left">
-                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" id= "username" value="{{ request.form.username }}" required>
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="text" placeholder="Username" name="username" id= "username-signup" value="{{ request.form.username }}" required>
                             <span class="icon is-left">
                                 <i class="far fa-user"></i>
                             </span>
                         </div>
-                        <label for="password"><b>Password</b></label>
+                        <label for="password-signup"><b>Password</b></label>
                         <div class="control has-text-white has-icons-left">
-                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password" name="password" value="{{ request.form.password }}" required>
+                            <input class="input is-rounded has-background-grey-dark has-text-white" type="password" id ="password-signup" name="password" value="{{ request.form.password }}" required>
                             <span class="icon is-left">
                                 <i class="far fa-key"></i>
                             </span>
