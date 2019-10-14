@@ -10,6 +10,9 @@ Welcome to MASCCOT's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   test_md.md
+   test_rst.rst
+
 
 
 Indices and tables

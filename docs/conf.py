@@ -10,6 +10,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+# pylint: skip-file
+
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
@@ -78,6 +80,8 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 else:
     html_theme_path = ['.']
 
+html_logo = '../webapp/static/images/viking.png'
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -88,6 +92,7 @@ html_static_path = ['_static']
 html_css_files = [
     'darkness.css',
 ]
+
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
