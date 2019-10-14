@@ -1,5 +1,9 @@
 # webapp
+
+[![Documentation Status](https://readthedocs.org/projects/vve-webapp/badge/?version=latest)](https://vve-webapp.readthedocs.io/en/latest/?badge=latest)
+
 Flask webapp for interacting and remotely controlling the MASCCOT robot via WiFi.
+
 
 # How to Contribute
 check out our [contributing guidelines](https://github.com/DVC-Viking-Robotics/about-us/blob/master/Contributing%20Guidelines.rst)
