@@ -1,21 +1,33 @@
 """
 This script runs the flask_controller application using a development server.
 """
+
+# pylint: disable=invalid-name,no-value-for-parameter
+
 import click
 from flask import Flask
-from .pages_config import ALL_PAGES, NUM_ROWS
+from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED
+from .config import DISABLE_AUTH_SYSTEM
 from .routes import blueprint
-from .users import login_manager
 from .sockets import socketio
-from .static_optimizer import cache_buster, compress
-
-# to temporarily disable non-crucial pylint errors in conformity
-# pylint: disable=invalid-name,missing-docstring,no-value-for-parameter
+from .users import login_manager
+from .utils.static_optimizer import cache_buster, asset_compressor
 
 app = Flask(__name__)
-app.secret_key = b'\x93:\xda\x0cf[\x8c\xc5\xb7D\xa8\xebH\x1d\x9e-7\xca\xe7\x1e\xea\xac\x15.'
+
+# Secret key used by Flask to sign cookies.
+app.config['SECRET_KEY'] = FLASK_SECRET
+
 # Cache all static files for 1 year by default
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 60 * 60 * 24 * 365
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
+
+if not DISABLE_AUTH_SYSTEM:
+    from .users import db
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+    db.init_app(app)
 
 app.register_blueprint(blueprint)
 
@@ -26,7 +38,7 @@ login_manager.init_app(app)
 socketio.init_app(app)
 
 # Enable gzip compression of static assets
-compress.init_app(app)
+asset_compressor.init_app(app)
 
 # Enable indefinite caching of static assets based on hash values
 cache_buster.init_app(app)
@@ -35,8 +47,10 @@ cache_buster.init_app(app)
 @app.context_processor
 def inject_constants():
     return dict(
-        ALL_PAGES=ALL_PAGES,
-        NUM_ROWS=NUM_ROWS
+        ALL_PAGES=PAGES_CONFIG['ALL_PAGES'],
+        NUM_ROWS=PAGES_CONFIG['NUM_ROWS'],
+        OSS_SERVER_LIST=TECH_USED['OSS_SERVER_LIST'],
+        OSS_CLIENT_LIST=TECH_USED['OSS_CLIENT_LIST'],
     )
 
 

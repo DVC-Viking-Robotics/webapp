@@ -1,7 +1,7 @@
 from flask_compress import Compress
 from flask_cachebuster import CacheBuster
 
-compress = Compress()
+asset_compressor = Compress()
 
 cache_config = {
     'extensions': ['.js', '.css'],  # allowed extentions for caching

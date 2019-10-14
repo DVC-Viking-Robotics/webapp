@@ -4,16 +4,35 @@
 <section class="section">
     <div class="container">
         <h1 class="title is-1">About this project</h1>
-        <h4 class="subtitle is-4">This web app is designed to control Viking Robotics's MASCCOT robot.</h4>
+        <h4 class="subtitle is-4">This web app is designed to control Viking Robotics's MASCCOT robot. It was created by the Diablo Valley College (DVC) Robotics Club.</h4>
         <p>
-            This website's support: <a href="https://github.com/DVC-Viking-Robotics/webapp">DVC Viking Robotics</a>
-            <br />
-            Marketing: Contact us! <a href="mailto:dvcrobotics@gmail.com">Diablo Valley Community College - Robotics Club</a>
+            More information can be found at our <a href="http://dvcrobotics.tech/">project website</a>
+            <br/>
+            Check out our GitHub: <a href="https://github.com/DVC-Viking-Robotics">DVC Viking Robotics</a>
+            <br/>
+            Contact us at our email: <a href="mailto:dvcrobotics@gmail.com">dvcrobotics@gmail.com</a>
         </p>
+        <br />
 
-        <p>
-            More information can be found at the <a href="http://dvcrobotics.tech/">Project Website</a>
-        </p>
+        <h3 class="title is-3">Open source libraries used:</h3>
+
+        <h4 class="subtitle is-4">Server side:</h4>
+        <div class="content">
+            <ul>
+                {% for oss_lib in OSS_SERVER_LIST %}
+                <li><a href="{{oss_lib.link}}">{{oss_lib.name}}</a> - {{oss_lib.description}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <h4 class="subtitle is-4">Client side:</h4>
+        <div class="content">
+            <ul>
+                {% for oss_lib in OSS_CLIENT_LIST %}
+                <li><a href="{{oss_lib.link}}">{{oss_lib.name}}</a> - {{oss_lib.description}}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </section>
 {% endblock %}
