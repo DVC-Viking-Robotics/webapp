@@ -25,13 +25,13 @@ app.config['SECRET_KEY'] = FLASK_SECRET
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
 
 if not DISABLE_AUTH_SYSTEM:
-    from .users import db
+    from .users import DB
 
     app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SQLALCHEMY_RECORD_QUERIES'] = True
 
-    db.init_app(app)
+    DB.init_app(app)
 
 app.register_blueprint(blueprint)
 
@@ -64,6 +64,7 @@ def inject_constants():
 @click.command()
 @click.option('--port', default=5555, help='The port number used to access the webapp.')
 def run(port):
+    """ Launch point for the web app. """
     try:
         print(f'Hosting @ http://localhost:{port}')
         socketio.run(app, host='0.0.0.0', port=port, debug=False)

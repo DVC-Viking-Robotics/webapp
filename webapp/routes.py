@@ -1,4 +1,4 @@
-# to temporarily disable non-crucial pylint errors in conformity
+""" A collection of Flask routes """
 # pylint: disable=invalid-name
 
 import os
@@ -9,13 +9,14 @@ from .config import DISABLE_AUTH_SYSTEM
 from .sockets import socketio
 
 if not DISABLE_AUTH_SYSTEM:
-    from .users import User, db
+    from .users import User, DB
 
 blueprint = Blueprint('blueprint', __name__)
 
 @blueprint.route('/')
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
+    """ Renders the register page """
     if request.method == 'GET':
         if not DISABLE_AUTH_SYSTEM:
             return render_template('login.html')
@@ -28,15 +29,18 @@ def register():
     if User.query.filter_by(username=username).count() > 0:
         flash("Account already exists", 'error')
     else:
-        db.session.add(user)
-        db.session.commit()
+        DB.session.add(user)
+        DB.session.commit()
         flash('User successfully registered', 'success')
     return redirect('/login')
 
 
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
-    """Renders the login page"""
+    """
+    If it's a POST request, it will attempt to log the user in.
+    Otherwise, it renders the login page.
+    """
     if request.method == 'GET':
         if not DISABLE_AUTH_SYSTEM:
             return render_template('login.html')
@@ -58,7 +62,7 @@ def login():
 @blueprint.route('/logout')
 @login_required
 def logout():
-    """Redirects to login page after logging out"""
+    """ Redirects to login page after logging out """
     logout_user()
     return redirect('login')
 
@@ -67,77 +71,78 @@ def logout():
 @blueprint.route('/home')
 @login_required
 def home():
+    """ Renders the home page """
     return render_template('home.html', title='Home')
 
 
 @blueprint.route('/remote')
 @login_required
 def remote():
+    """ Renders the remote page """
     return render_template('remote.html', title='Remote Control')
-
-
-@blueprint.route('/camera')
-@login_required
-def camera():
-    return render_template('camera.html', title='Live Camera feed')
 
 
 @blueprint.route('/sensors')
 @login_required
 def sensors():
+    """ Renders the sensor dashboard page """
     return render_template('sensors.html', title='Sensor Dashboard')
 
 
 @blueprint.route('/automode')
 @login_required
 def automode():
+    """ Renders the autonomous page """
     return render_template('automode.html', title='Autonomous Navigation')
 
 
 @blueprint.route('/terminal')
 @login_required
 def terminal():
+    """ Renders the virtual terminal page """
     return render_template('terminal.html', title='Terminal I/O')
 
 
 @blueprint.route('/settings')
 @login_required
 def settings_page():
+    """ Renders the settings page """
     return render_template('settings.html', title='Settings')
 
 
 @blueprint.route('/about')
 def about():
+    """ Renders the about page """
     return render_template('about.html', title='About this project')
 
 
 @blueprint.route("/shutdown_server")
 @login_required
 def shutdown_server():
-    """Shutdowns Webapp"""
+    """ Shutdowns the webapp. """
     socketio.stop()
 
 
 @blueprint.route("/restart")
 @login_required
 def restart():
-    """Restarts Robot (Only applicable if webserver runs off rasp pi)"""
+    """ Restarts the robot (Only applicable if webserver runs off rasp pi) """
     os.system('sudo reboot')
 
 
 @blueprint.route("/shutdown_robot")
 @login_required
 def shutdown_robot():
-    """Shutsdown Robot (Only applicable if webserver runs off rasp pi)"""
+    """ Shutsdown the robot (Only applicable if webserver runs off rasp pi) """
     os.system('sudo shutdown -h now')
 
 
 @blueprint.route("/delete_user")
 @login_required
 def delete_user():
-    """Deletes users account"""
-    db.session.delete(current_user)
-    db.session.commit()
+    """ Deletes the current user's account. """
+    DB.session.delete(current_user)
+    DB.session.commit()
     flash("Account deleted", 'success')
     return redirect('/login')
 
@@ -145,6 +150,7 @@ def delete_user():
 @blueprint.route("/reset_password", methods=['GET', 'POST'])
 @login_required
 def reset_password():
+    """ Resets the current user's password. """
     if request.method == 'GET':
         return render_template('home.html')
 
@@ -154,8 +160,8 @@ def reset_password():
 
     if check_password_hash(user.password, old_password):
         user.password = generate_password_hash(new_password)
-        db.session.add(user)
-        db.session.commit()
+        DB.session.add(user)
+        DB.session.commit()
         flash("Password has been updated", 'success')
     else:
         flash("Incorrect old password", 'error')

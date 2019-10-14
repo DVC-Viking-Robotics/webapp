@@ -12,24 +12,16 @@ login_manager = LoginManager()
 login_manager.login_view = "/login"
 login_manager.login_message_category = "warning"
 
-
-"""
-A class used for instantiating a user's saved remote control configurations.
-There should be 1 object of this class type per remote control.
-"""
-class Remote:
-    def __init__(self, name, link='/remote'):
-        self.name = name
-        self.link = link
-
 if not DISABLE_AUTH_SYSTEM:
-    db = SQLAlchemy()
+    DB = SQLAlchemy()
 
-    class User(db.Model):
+    class User(DB.Model):
+        """ A User class for representing a user connected via an SQL database. """
+
         __tablename__ = 'users'
-        id = db.Column('user_id', db.Integer, primary_key=True, index=True)
-        username = db.Column('username', db.String(20), unique=True)
-        password = db.Column('password', db.String(20))
+        id = DB.Column('user_id', DB.Integer, primary_key=True, index=True)
+        username = DB.Column('username', DB.String(20), unique=True)
+        password = DB.Column('password', DB.String(20))
 
         def __init__(self, username, password):
             # Note: The primary key (id) is auto-generated
@@ -37,12 +29,17 @@ if not DISABLE_AUTH_SYSTEM:
             self.password = password
 
         def is_authenticated(self):
+            # TODO: This should not always be true
+            """ Return true if the user is authenticated. """
             return True
 
         def is_active(self):
+            """ Return true if the user is activated. """
+            # TODO: This should not always be true
             return True
 
         def is_anonymous(self):
+            """ Return true if the user is anonymous. """
             return False
 
         def get_id(self):
