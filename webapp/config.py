@@ -1,1 +1,2 @@
+DEBUG = False
 DISABLE_AUTH_SYSTEM = False
