@@ -54,6 +54,7 @@ debug_toolbar.init_app(app)
 
 @app.context_processor
 def inject_constants():
+    """ Allows Jinja to reference global python constants in HTML. """
     return dict(
         ALL_PAGES=PAGES_CONFIG['ALL_PAGES'],
         NUM_ROWS=PAGES_CONFIG['NUM_ROWS'],

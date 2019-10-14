@@ -83,7 +83,7 @@ class VTerminal:
             # frame', it attempts to reconnect to the server, which consequentally attempts to
             # restart the terminal session.
             try:
-                subprocess.run(term_cmd)  # `term_cmd` is a list of arguments that get passed to
+                subprocess.run(term_cmd, check=False)  # `term_cmd` is a list of arguments that get passed to
             except KeyboardInterrupt:
                 print('Caught KeyboardInterrupt during the login prompt. Starting a new session...')
 
