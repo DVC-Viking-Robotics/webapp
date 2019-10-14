@@ -1,4 +1,4 @@
-from .inputs.check_platform import ON_WINDOWS
+from ..inputs.check_platform import ON_WINDOWS
 
 import os
 import subprocess

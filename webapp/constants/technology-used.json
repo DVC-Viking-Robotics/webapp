@@ -1,0 +1,111 @@
+{
+    "OSS_SERVER_LIST": [
+        {
+            "name": "CircuitPython: NRF24L01",
+            "description": "CircuitPython driver library for the nRF24L01 transceiver.",
+            "link": "https://github.com/2bndy5/CircuitPython_nRF24L01"
+        },
+        {
+            "name": "CircuitPython: LSM9DS1",
+            "description": "CircuitPython module for the LSM9DS1 accelerometer, magnetometer, and gyroscope.",
+            "link": "https://github.com/2bndy5/Adafruit_CircuitPython_LSM9DS1"
+        },
+        {
+            "name": "CircuitPython: MPU6050",
+            "description": "A port of the python library for the MPU6050. 6 Degrees of Freedom sensor to CircuitPython using the Adafruit_BusDevice library.",
+            "link": "https://github.com/2bndy5/CircuitPython_MPU6050"
+        },
+        {
+            "name": "Viking Robotics: Drivetrain",
+            "description": "This module contains the necessary algorithms for utilizing different DC motor types in different configurations.",
+            "link": "https://github.com/DVC-Viking-Robotics/Drivetrain"
+        },
+        {
+            "name": "Viking Robotics: GPS_Serial",
+            "description": "Yet another NMEA sentence parser for serial UART based GPS modules, but this time using multi-threading",
+            "link": "https://github.com/DVC-Viking-Robotics/GPS_Serial"
+        },
+        {
+            "name": "OpenCV",
+            "description": "Open Source Computer Vision Library.",
+            "link": "https://github.com/opencv/opencv"
+        },
+        {
+            "name": "Flask",
+            "description": "The Python micro framework for building web applications.",
+            "link": "https://github.com/pallets/flask"
+        },
+        {
+            "name": "Flask-SocketIO",
+            "description": "Socket.IO integration for Flask applications.",
+            "link": "https://github.com/miguelgrinberg/Flask-SocketIO"
+        },
+        {
+            "name": "Flask-CacheBuster",
+            "description": "Flask-CacheBuster is a lightweight Flask extension that adds a hash to the URL query parameters of each static file.",
+            "link": "https://github.com/israel-fl/Flask-CacheBust"
+        },
+        {
+            "name": "Flask-Compress",
+            "description": "Compress responses in your Flask app with gzip.",
+            "link": "https://github.com/colour-science/flask-compress"
+        },
+        {
+            "name": "Flask-Login",
+            "description": "Flask user session management.",
+            "link": "https://github.com/maxcountryman/flask-login"
+        },
+        {
+            "name": "eventlet",
+            "description": "Concurrent networking library for Python.",
+            "link": "https://github.com/eventlet/eventlet"
+        },
+        {
+            "name": "PySerial",
+            "description": "Python serial port access library.",
+            "link": "https://github.com/pyserial/pyserial"
+        }
+    ],
+    "OSS_CLIENT_LIST": [
+        {
+            "name": "Bulma",
+            "description": "Modern CSS framework based on Flexbox.",
+            "link": "https://github.com/jgthms/bulma"
+        },
+        {
+            "name": "Bulma Badge",
+            "description": "Bulma extension element to display a number badge on text, button, etc.",
+            "link": "https://github.com/Wikiki/bulma-badge"
+        },
+        {
+            "name": "Bulma Divider",
+            "description": "Bulma extension to easily display an horizontal or vertical divider.",
+            "link": "https://github.com/Wikiki/bulma-divider"
+        },
+        {
+            "name": "Bulma QuickView",
+            "description": "Bulma extension to display a QuickView compoment.",
+            "link": "https://github.com/Wikiki/bulma-quickview"
+        },
+        {
+            "name": "Bulmaswatch",
+            "description": "Free themes for Bulma.",
+            "link": "https://github.com/jenil/bulmaswatch"
+        },
+        {
+            "name": "Chart.js",
+            "description": "Simple HTML5 Charts using the <canvas> tag.",
+            "link": "https://github.com/chartjs/Chart.js"
+        },
+        {
+            "name": "xterm.js",
+            "description": "A terminal for the web.",
+            "link": "https://github.com/xtermjs/xterm.js"
+        },
+        {
+            "name": "outdated-browser-rework",
+            "description": "Detects outdated browsers and advises users to upgrade to a new version. Handles mobile devices!",
+            "link": "https://github.com/mikemaccana/outdated-browser-rework"
+        }
+    ]
+}

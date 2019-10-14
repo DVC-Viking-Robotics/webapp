@@ -1,25 +1,24 @@
-
-# to temporarily disable non-crucial pylint errors in conformity
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 import base64
 from flask_socketio import SocketIO, emit
 from circuitpython_mpu6050 import MPU6050
 from adafruit_lsm9ds1 import LSM9DS1_I2C
 
-from .inputs.check_platform import ON_RASPI, ON_WINDOWS  # , ON_JETSON
+from .inputs.check_platform import ON_WINDOWS
 from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 from .inputs.camera_manager import CameraManager
+from .utils.virtual_terminal import VTerminal
 
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
 # for virtual terminal access
-from .virtual_terminal import VTerminal
-
 if not ON_WINDOWS:
     vterm = VTerminal(socketio)
-    vterm.register_output_listener(lambda output: socketio.emit("terminal-output", {"output": output}, namespace="/pty"))
+    vterm.register_output_listener(
+        lambda output: socketio.emit("terminal-output", {"output": output}, namespace="/pty")
+    )
 
 # Initialize the camera
 camera_manager = CameraManager()
@@ -75,14 +74,15 @@ def handle_connect():
 def handle_disconnect():
     print('websocket Client disconnected')
 
-    # If the camera was recently opened, then close it and reopen it to free the resource for future use
-    # The reason for "rebooting" the camera is that the camera device will be considered "in use" until
-    # the corresponding resource is freed, for which we can re-initialize the camera resource again.
+    # If the camera was recently opened, then close it and reopen it to free the resource for
+    # future use. The reason for "rebooting" the camera is that the camera device will be
+    # considered "in use" until the corresponding resource is freed, for which we can re-initialize
+    # the camera resource again.
     if camera_manager.initialized:
         camera_manager.close_camera()
         camera_manager.open_camera()
 
-    # If the vterm was initialized and possibly running, close the file descriptor and kill the child process
+    # If the vterm was initialized and/or running, close file descriptor and kill child process
     if not ON_WINDOWS:
         if vterm.running or vterm.initialized:
             vterm.cleanup()
@@ -135,7 +135,7 @@ def handle_remoteOut(arg):
 # virtual terminal handlers
 @socketio.on("terminal-input", namespace="/pty")
 def on_terminal_input(data):
-    """write to the child pty. The pty sees this as if you are typing in a real terminal."""
+    """ Write to the child pty. The pty sees this as if you are typing in a real terminal. """
     if not ON_WINDOWS:
         vterm.write_input(data["input"].encode())
 
@@ -146,6 +146,6 @@ def on_terminal_resize(data):
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
-    """A new client has connected"""
+    """ A new client has connected """
     if not ON_WINDOWS:
         vterm.init_connect(["/bin/bash", "./webapp/bash_scripts/ask_pass_before_bash.sh"])
