@@ -1,1 +1,6 @@
-ignored-classes=SQLObject,Registrant,scoped_session
+[TYPECHECK]
+
+# List of class names for which member attributes should not be checked (useful
+# for classes with dynamically set attributes). This supports the use of
+# qualified names.
+ignored-classes=SQLAlchemy,SQLObject,Registrant,scoped_session,cv2
