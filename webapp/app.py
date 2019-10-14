@@ -7,12 +7,13 @@ This script runs the flask_controller application using a development server.
 import click
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
-from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED
+from flask_compress import Compress
+from flask_cachebuster import CacheBuster
+from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED, STATIC_CACHE_CONFIG
 from .config import DEBUG, DISABLE_AUTH_SYSTEM
 from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager
-from .utils.static_optimizer import cache_buster, asset_compressor
 
 app = Flask(__name__)
 
@@ -42,10 +43,10 @@ login_manager.init_app(app)
 socketio.init_app(app)
 
 # Enable gzip compression of static assets
-asset_compressor.init_app(app)
+Compress().init_app(app)
 
 # Enable indefinite caching of static assets based on hash values
-cache_buster.init_app(app)
+CacheBuster(config=STATIC_CACHE_CONFIG).init_app(app)
 
 # Enable the Flask debug toolbar ONLY if debug mode is enabled
 debug_toolbar = DebugToolbarExtension()

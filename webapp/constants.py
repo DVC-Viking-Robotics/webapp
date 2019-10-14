@@ -31,3 +31,8 @@ FLASK_SECRET_FILE = 'secret/flask-secret.encrypted'
 vault = FernetVault(SECRET_KEYFILE)
 DB_URI = vault.read_file(DB_CONFIG_FILE).decode('utf-8')
 FLASK_SECRET = vault.read_file(FLASK_SECRET_FILE)
+
+STATIC_CACHE_CONFIG = {
+    'extensions': ['.js', '.css'],  # enabled extentions for caching
+    'hash_size': 10                 # length of hash string
+}
