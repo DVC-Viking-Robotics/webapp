@@ -39,3 +39,21 @@ Fernet Vault
 .. automodule:: webapp.utils.file_encryption
     :members:
     :inherited-members:
+
+User Management
+===============
+.. automodule:: webapp.users
+    :members:
+    :inherited-members:
+
+Configuration Management
+========================
+.. automodule:: webapp.config
+    :members:
+    :inherited-members:
+
+Constants
+=========
+.. automodule:: webapp.constants
+    :members:
+    :inherited-members:

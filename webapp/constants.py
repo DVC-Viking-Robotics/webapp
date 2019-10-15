@@ -38,7 +38,7 @@ FLASK_SECRET_FILE = os.path.join(ROOT_DIR, 'secret/flask-secret.encrypted')
 
 # Read and decrypt the encrypted database URI and Flask secret
 # NOTE: If RTD is executing this file, it will never find the secret key as it's gitignored
-if not os.environ['READTHEDOCS']:
+if not os.getenv('READTHEDOCS', None):
     vault = FernetVault(SECRET_KEYFILE)
     DB_URI = vault.read_file(DB_CONFIG_FILE).decode('utf-8')
     FLASK_SECRET = vault.read_file(FLASK_SECRET_FILE)
