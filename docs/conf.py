@@ -46,6 +46,23 @@ extensions = [
     'sphinx.ext.viewcode'
 ]
 
+# TODO: Please Read!
+# Uncomment the below if you use native CircuitPython modules such as
+# digitalio, micropython and others. List the modules you use. Without it, the
+# autodoc module docs will fail to generate with a warning.
+# autodoc_mock_imports = ["digitalio", "pulseio", "serial", "circuitpython_nrf24l01"]
+
+# the default order of documented memebers using autodoc extension.
+# Default is alphabetical :(
+autodoc_member_order = 'bysource'
+
+# Used for referencing objects from other libraries/packages.
+# The first item is needed to link the user to builtin datatypes
+# (like `list` or `tuple`) using python docs
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3.6', None)
+    }
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -57,7 +74,7 @@ master_doc = 'index'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.env']
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -99,6 +116,17 @@ html_css_files = [
 #
 html_favicon = '_static/favicon.ico'
 
+# The reST default role (used for this markup: `text`) to use for all
+# documents.
+#
+default_role = "any"
+
+# If true, '()' will be appended to :func: etc. cross-reference text.
+#
+add_function_parentheses = True
+
+# The name of the Pygments (syntax highlighting) style to use.
+pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False

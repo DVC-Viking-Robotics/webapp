@@ -27,7 +27,8 @@ camera_manager.open_camera()
 
 
 def getHYPR():
-    """HYPR = Heading Yaw Pitch Roll. This function """
+    """This function will try to determine the robot's Heading, Yaw, Pitch, & Roll (HYPR)
+    dependent on the specific data returned from the IMU device connected to the robot."""
     heading = []
     yaw = 0
     pitch = 0
@@ -45,11 +46,15 @@ def getHYPR():
 
 
 def get_imu_data():
-    '''
-    senses[0] = accel[x,y,z]
-    senses[1] = gyro[x,y,z]
-    senses[2] = mag[x,y,z]
-    '''
+    """Returns a 2d array containing the following
+
+    * ``senses[0] = accel[x, y, z]`` for accelerometer data
+    * ``senses[1] = gyro[x, y, z]`` for gyroscope data
+    * ``senses[2] = mag[x, y, z]`` for magnetometer data
+
+    .. note: Not all data may be aggregated depending on the IMU device connected to the robot.
+
+    """
     senses = [
         [100, 50, 25],
         [-100, -50, -25],
@@ -135,18 +140,23 @@ def handle_gps_request():
 
 @socketio.on('sensorDoF')
 def handle_DoF_request():
-    """This event fired when a websocket client a response to the server about IMU data."""
+    """This event fired when a websocket client a response to the server about IMU
+    device's data."""
     senses = get_imu_data()
     emit('sensorDoF-response', senses)
     print('DoF sensor data sent')
 
 @socketio.on('remoteOut')
-def handle_remoteOut(arg):
-    """This evemt gets fired when the client sends data to the server about remote controls
-    (via remote control page)"""
-    print('remote =', repr(arg))
+def handle_remoteOut(args):
+    """This event gets fired when the client sends data to the server about remote controls
+    (via remote control page) specific to the robot's drivetrain.
+
+    :param list args: The list of motor inputs received from the remote control page.
+
+    """
+    print('remote =', repr(args))
     if d_train: # if there is a drivetrain connected
-        d_train[0].go([arg[0] * 655.35, arg[1] * 655.35])
+        d_train[0].go([args[0] * 655.35, args[1] * 655.35])
 
 # NOTE: Source for virtual terminal functions: https://github.com/cs01/pyxterm.js
 
@@ -159,12 +169,12 @@ def on_terminal_input(data):
 
 @socketio.on("terminal-resize", namespace="/pty")
 def on_terminal_resize(data):
-    """This event is fired when a websocket clients' window gets resized to the server"""
+    """This event is fired when a websocket clients' window gets resized."""
     if not ON_WINDOWS:
         vterm.resize_terminal(data["rows"], data["cols"])
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
-    """ A new client has connected """
+    """This event is fired when a new client has connected to the server's terminal."""
     if not ON_WINDOWS:
         vterm.init_connect(["/bin/bash", "./webapp/bash_scripts/ask_pass_before_bash.sh"])
