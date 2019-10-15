@@ -52,7 +52,7 @@ def get_imu_data():
     * ``senses[1] = gyro[x, y, z]`` for gyroscope data
     * ``senses[2] = mag[x, y, z]`` for magnetometer data
 
-    .. note: Not all data may be aggregated depending on the IMU device connected to the robot.
+    .. note:: Not all data may be aggregated depending on the IMU device connected to the robot.
 
     """
     senses = [
