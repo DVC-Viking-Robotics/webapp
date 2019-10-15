@@ -114,7 +114,7 @@ def build_wapypoints(waypoints, clear):
     :param list waypoints: A list of GPS latitude & longitude pairs for the robot to
         travel to in sequence.
 
-    :param bool clear: A flag that will clear the eisting list of GPS waypoints before appending to
+    :param bool clear: A flag that will clear the existing list of GPS waypoints before appending to
         it.
 
     """
