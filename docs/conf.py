@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'MASCCOT web app'
-copyright = '2019, Tejas Shah'
-author = 'Tejas Shah'
+copyright = '2019, Brendan Doherty & Tejas Shah'
+author = 'Brendan Doherty & Tejas Shah'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -61,7 +61,7 @@ autodoc_member_order = 'bysource'
 # (like `list` or `tuple`) using python docs
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.6', None)
-    }
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -129,7 +129,7 @@ add_function_parentheses = True
 pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
+todo_include_todos = True
 
 # If this is True, todo emits a warning for each TODO entries. The default is False.
 todo_emit_warnings = False

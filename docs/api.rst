@@ -44,7 +44,7 @@ User Management
 ===============
 .. automodule:: webapp.users
     :members:
-    :inherited-members:
+    :show-inheritance:
 
 Configuration Management
 ========================
