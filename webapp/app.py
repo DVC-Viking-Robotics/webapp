@@ -35,7 +35,7 @@ def build_flask_app(use_local_db):
     # Secret key used by Flask to sign cookies.
     app.config['SECRET_KEY'] = FLASK_SECRET
 
-    # Cache all static files for 1 year by default
+    # Cache all static files for 1 year by default.
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
 
     if use_local_db:

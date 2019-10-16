@@ -29,10 +29,10 @@ SECRET_KEYFILE = os.path.join(ROOT_DIR, 'secret/secret.key')
 """Location of master secret keyfile for DB URI and Flask secret encryption."""
 
 DB_CONFIG_FILE = os.path.join(ROOT_DIR, 'secret/db-config.encrypted')
-"""."""
+"""Location of encrypted DB URI file."""
 
 FLASK_SECRET_FILE = os.path.join(ROOT_DIR, 'secret/flask-secret.encrypted')
-"""."""
+"""Location of encrypted flask secret file."""
 
 # pylint: disable=invalid-name
 
@@ -41,14 +41,19 @@ FLASK_SECRET_FILE = os.path.join(ROOT_DIR, 'secret/flask-secret.encrypted')
 if not os.getenv('READTHEDOCS', None):
     vault = FernetVault(SECRET_KEYFILE)
     DB_URI = vault.read_file(DB_CONFIG_FILE).decode('utf-8')
+    """The database URI for facilitating user management."""
+
     FLASK_SECRET = vault.read_file(FLASK_SECRET_FILE)
+    """Used by Flask to securely sign cookies"""
 else:
     DB_URI = 'sqlite://'
     FLASK_SECRET = os.urandom(24)
 
 LOCAL_DB_URI = 'sqlite:///../users.db'
+"""Database URI used when using local database. See `config.LOCAL_DATABASE` for more info."""
 
 STATIC_CACHE_CONFIG = {
     'extensions': ['.js', '.css'],  # enabled extentions for caching
     'hash_size': 10                 # length of hash string
 }
+"""Configuration for cache busting common static files."""
