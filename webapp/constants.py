@@ -6,13 +6,6 @@ import os
 import json
 from .utils.file_encryption import FernetVault
 
-# Restricts variables exposed via a wildcard import
-__all__ = [
-    'TECH_USED', 'PAGES_CONFIG', 'ONE_YEAR',
-    'SECRET_KEYFILE', 'DB_CONFIG_FILE', 'FLASK_SECRET_FILE',
-    'DB_URI', 'FLASK_SECRET', 'LOCAL_DB_URI', 'STATIC_CACHE_CONFIG'
-]
-
 # NOTE: When sphinx generates the docs automatically, it will try to import the file relative
 # to where the build command was issues, which means that the string path isn't guaranteed
 # to refer to the same file location. Thus, we use this file as a basis for figuring out the
@@ -24,15 +17,22 @@ PAGES_CONFIG_FILE = os.path.join(ROOT_DIR, 'webapp/constants/pages-config.json')
 # Prepare constants from JSON files
 with open(TECH_USED_FILE, 'r') as fp:
     TECH_USED = json.load(fp)
+    """A exhaustive list of all the technology used for this project."""
 
 with open(PAGES_CONFIG_FILE, 'r') as fp:
     PAGES_CONFIG = json.load(fp)
+    """A front-end configuration for the arrangement of the page tiles for the home page."""
 
 ONE_YEAR = 60 * 60 * 24 * 365
 
 SECRET_KEYFILE = os.path.join(ROOT_DIR, 'secret/secret.key')
+"""Location of master secret keyfile for DB URI and Flask secret encryption."""
+
 DB_CONFIG_FILE = os.path.join(ROOT_DIR, 'secret/db-config.encrypted')
+"""."""
+
 FLASK_SECRET_FILE = os.path.join(ROOT_DIR, 'secret/flask-secret.encrypted')
+"""."""
 
 # pylint: disable=invalid-name
 
