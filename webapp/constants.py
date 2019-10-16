@@ -24,6 +24,7 @@ with open(PAGES_CONFIG_FILE, 'r') as fp:
     """A front-end configuration for the arrangement of the page tiles for the home page."""
 
 ONE_YEAR = 60 * 60 * 24 * 365
+"""The time of one year in seconds."""
 
 SECRET_KEYFILE = os.path.join(ROOT_DIR, 'secret/secret.key')
 """Location of master secret keyfile for DB URI and Flask secret encryption."""
@@ -44,7 +45,7 @@ if not os.getenv('READTHEDOCS', None):
     """The database URI for facilitating user management."""
 
     FLASK_SECRET = vault.read_file(FLASK_SECRET_FILE)
-    """Used by Flask to securely sign cookies"""
+    """Used by Flask to securely sign cookies."""
 else:
     DB_URI = 'sqlite://'
     FLASK_SECRET = os.urandom(24)
