@@ -135,3 +135,7 @@ todo_include_todos = True
 todo_emit_warnings = False
 
 napoleon_numpy_docstring = False
+
+# Prevent exposing the values of any defined constants for security sake
+from hide_constant_values import apply_monkey_patch
+apply_monkey_patch()
