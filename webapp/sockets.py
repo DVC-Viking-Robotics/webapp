@@ -23,7 +23,6 @@ if not ON_WINDOWS:
 
 # Initialize the camera
 camera_manager = CameraManager()
-camera_manager.open_camera()
 
 
 def getHYPR():
@@ -87,14 +86,21 @@ def handle_disconnect():
     # future use. The reason for "rebooting" the camera is that the camera device will be
     # considered "in use" until the corresponding resource is freed, for which we can re-initialize
     # the camera resource again.
-    if camera_manager.initialized:
-        camera_manager.close_camera()
-        camera_manager.open_camera()
+    # if camera_manager.initialized:
+    #     camera_manager.close_camera()
+    #     camera_manager.open_camera()
 
     # If the vterm was initialized and/or running, close file descriptor and kill child process
     if not ON_WINDOWS:
         if vterm.running or vterm.initialized:
             vterm.cleanup()
+
+
+@socketio.on('webcam-init')
+def handle_webcam_init():
+    """Initialize the camera when the user goes to the remote control page."""
+    if not camera_manager.initialized:
+        camera_manager.open_camera()
 
 
 @socketio.on('webcam')
@@ -105,6 +111,13 @@ def handle_webcam_request():
         b64 = base64.b64encode(buffer)
         # print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', b64)
+
+@socketio.on('webcam-cleanup')
+def handle_webcam_cleanup():
+    """Cleanup the camera when the user leaves the remote control page."""
+    if camera_manager.initialized:
+        camera_manager.close_camera()
+
 
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):

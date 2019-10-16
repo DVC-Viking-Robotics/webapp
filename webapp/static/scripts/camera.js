@@ -1,8 +1,15 @@
 const stream = document.getElementById("camera-stream");
 
+socket.emit('webcam-init');
+
 socket.on('error', (error) => {
     console.log('Socket error:', error)
 });
+
+window.onbeforeunload = function() {
+    clearInterval(webcamRequestLock);
+    socket.emit('webcam-cleanup');
+}
 
 socket.on('disconnect', function() {
     // stop requesting for the feed
