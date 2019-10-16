@@ -8,6 +8,9 @@ Flask webapp for interacting and remotely controlling the MASCCOT robot via WiFi
 # How to Contribute
 check out our [contributing guidelines](https://github.com/DVC-Viking-Robotics/about-us/blob/master/Contributing%20Guidelines.rst)
 
+# How to add or change the documentation
+check out our guide on [contributing documentation](https://github.com/DVC-Viking-Robotics/about-us/blob/master/Contributing%20Documentation.rst)
+
 ## Setup instructions
 ```bash
 # Clone the repository and its submodules
