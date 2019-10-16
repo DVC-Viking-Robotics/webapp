@@ -5,11 +5,8 @@ import os
 from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from .config import DISABLE_AUTH_SYSTEM
 from .sockets import socketio
-
-if not DISABLE_AUTH_SYSTEM:
-    from .users import User, DB
+from .users import User, DB
 
 blueprint = Blueprint('blueprint', __name__)
 
@@ -18,9 +15,7 @@ blueprint = Blueprint('blueprint', __name__)
 def register():
     """ Renders the register page """
     if request.method == 'GET':
-        if not DISABLE_AUTH_SYSTEM:
-            return render_template('login.html')
-        return render_template('home.html')
+        return render_template('login.html')
 
     username = request.form['username']
     password = request.form['password']
@@ -42,9 +37,7 @@ def login():
     Otherwise, it renders the login page.
     """
     if request.method == 'GET':
-        if not DISABLE_AUTH_SYSTEM:
-            return render_template('login.html')
-        return render_template('home.html')
+        return render_template('login.html')
 
     username = request.form['username']
     password = request.form['password']

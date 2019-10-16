@@ -37,7 +37,7 @@ sudo apt-get install python3-picamera
 ```
 
 ## Setting up the server
-You'll need to generate the `secret.key` file in order to enable the database for user management and place it in the `secret/` folder. The secret file is for encrypting the database URI. Alternatively, you can go to `webapp/config.py` and set `DISABLE_AUTH_SYSTEM` to `True`.
+You'll need to generate the `secret.key` file in order to enable the database for user management and place it in the `secret/` folder. The secret file is for encrypting the database URI. Alternatively, you can go to `webapp/config.py` and set `LOCAL_DATABASE` to `True`.
 
 ## Running the server
 ```bash
