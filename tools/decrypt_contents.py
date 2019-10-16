@@ -1,5 +1,7 @@
 """
 This script allows the admin to generate a new secret key, should the old one be compromised.
+
+Run it with ``python -m tools.decrypt_contents``
 """
 
 import os

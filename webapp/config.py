@@ -6,5 +6,5 @@ DEBUG = False
 LOCAL_DATABASE = False
 """
 If set to true, it will attempt to use the local database via SQLITE.
-You can initialize this database with 'python -m tools.init_test_db'
+You can initialize this database with ``python -m tools.init_test_db``
 """

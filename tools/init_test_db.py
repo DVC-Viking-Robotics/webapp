@@ -1,5 +1,7 @@
 """
 This script allows you to create a local database with a default admin user.
+
+Run it with ``python -m tools.init_test_db``
 """
 
 # pylint: disable=invalid-name
