@@ -1,3 +1,4 @@
+"""A collection of websocket routes"""
 # pylint: disable=invalid-name
 
 import base64
@@ -26,6 +27,8 @@ camera_manager.open_camera()
 
 
 def getHYPR():
+    """This function will try to determine the robot's Heading, Yaw, Pitch, & Roll (HYPR)
+    dependent on the specific data returned from the IMU device connected to the robot."""
     heading = []
     yaw = 0
     pitch = 0
@@ -43,11 +46,15 @@ def getHYPR():
 
 
 def get_imu_data():
-    '''
-    senses[0] = accel[x,y,z]
-    senses[1] = gyro[x,y,z]
-    senses[2] = mag[x,y,z]
-    '''
+    """Returns a 2d array containing the following
+
+    * ``senses[0] = accel[x, y, z]`` for accelerometer data
+    * ``senses[1] = gyro[x, y, z]`` for gyroscope data
+    * ``senses[2] = mag[x, y, z]`` for magnetometer data
+
+    .. note:: Not all data may be aggregated depending on the IMU device connected to the robot.
+
+    """
     senses = [
         [100, 50, 25],
         [-100, -50, -25],
@@ -67,11 +74,13 @@ def get_imu_data():
 
 @socketio.on('connect')
 def handle_connect():
+    """This event fired when a websocket client establishes a connection to the server"""
     print('websocket Client connected!')
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
+    """This event fired when a websocket client breaks connection to the server"""
     print('websocket Client disconnected')
 
     # If the camera was recently opened, then close it and reopen it to free the resource for
@@ -90,6 +99,7 @@ def handle_disconnect():
 
 @socketio.on('webcam')
 def handle_webcam_request():
+    """This event is to stream the webcam over websockets."""
     if camera_manager.initialized:
         buffer = camera_manager.capture_image()
         b64 = base64.b64encode(buffer)
@@ -98,6 +108,16 @@ def handle_webcam_request():
 
 @socketio.on('WaypointList')
 def build_wapypoints(waypoints, clear):
+    """Builds a list of waypoints based on the order they were created on
+    the 'automode.html' page
+
+    :param list waypoints: A list of GPS latitude & longitude pairs for the robot to
+        travel to in sequence.
+
+    :param bool clear: A flag that will clear the existing list of GPS waypoints before appending to
+        it.
+
+    """
     if nav is not None:
         if clear:
             nav.clear()
@@ -108,6 +128,7 @@ def build_wapypoints(waypoints, clear):
 
 @socketio.on('gps')
 def handle_gps_request():
+    """This event fired when a websocket client's response to the server about GPS coordinates."""
     print('gps data sent')
     NESW = (0, 0)
     if gps:
@@ -119,16 +140,23 @@ def handle_gps_request():
 
 @socketio.on('sensorDoF')
 def handle_DoF_request():
+    """This event fired when a websocket client a response to the server about IMU
+    device's data."""
     senses = get_imu_data()
     emit('sensorDoF-response', senses)
     print('DoF sensor data sent')
 
 @socketio.on('remoteOut')
-def handle_remoteOut(arg):
-    # for debugging
-    print('remote =', repr(arg))
+def handle_remoteOut(args):
+    """This event gets fired when the client sends data to the server about remote controls
+    (via remote control page) specific to the robot's drivetrain.
+
+    :param list args: The list of motor inputs received from the remote control page.
+
+    """
+    print('remote =', repr(args))
     if d_train: # if there is a drivetrain connected
-        d_train[0].go([arg[0] * 655.35, arg[1] * 655.35])
+        d_train[0].go([args[0] * 655.35, args[1] * 655.35])
 
 # NOTE: Source for virtual terminal functions: https://github.com/cs01/pyxterm.js
 
@@ -141,11 +169,12 @@ def on_terminal_input(data):
 
 @socketio.on("terminal-resize", namespace="/pty")
 def on_terminal_resize(data):
+    """This event is fired when a websocket clients' window gets resized."""
     if not ON_WINDOWS:
         vterm.resize_terminal(data["rows"], data["cols"])
 
 @socketio.on("connect", namespace="/pty")
 def on_terminal_connect():
-    """ A new client has connected """
+    """This event is fired when a new client has connected to the server's terminal."""
     if not ON_WINDOWS:
         vterm.init_connect(["/bin/bash", "./webapp/bash_scripts/ask_pass_before_bash.sh"])

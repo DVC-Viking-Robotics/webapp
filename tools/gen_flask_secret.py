@@ -1,6 +1,8 @@
 """
 This script allows the admin to generate a new Fernet key file and re-encrypt
 any '.encrypted' file, should the old key file be compromised.
+
+Run it with ``python -m tools.gen_flask_secret``
 """
 
 import os
