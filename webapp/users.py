@@ -16,7 +16,10 @@ if not DISABLE_AUTH_SYSTEM:
     DB = SQLAlchemy()
 
     class User(DB.Model):
-        """ A User class for representing a user connected via an SQL database. """
+        """ A User class for representing a user connected via an SQL database.
+        See `"Declaring Models" of the Flask-SQLAlchemy docs
+        <https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/#declaring-models>`_
+        for more info on this class' base object."""
 
         __tablename__ = 'users'
         id = DB.Column('user_id', DB.Integer, primary_key=True, index=True)

@@ -60,7 +60,7 @@ autodoc_member_order = 'bysource'
 # The first item is needed to link the user to builtin datatypes
 # (like `list` or `tuple`) using python docs
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.6', None)
+    'python': ('https://docs.python.org/3.6', None),
 }
 
 # Add any paths that contain templates here, relative to this directory.

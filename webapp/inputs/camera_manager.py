@@ -90,7 +90,7 @@ class CameraManager:
     def close_camera(self):
         """
         Cleans up and closes the camera. Note that you cannot use the camera unless you
-        re-initialize it with `CameraManager.open_camera()`
+        re-initialize it with `open_camera()`
         """
         if self.initialized:
             if ON_RASPI:    # Using PiCamera
