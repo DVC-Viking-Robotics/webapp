@@ -130,3 +130,6 @@ webapp/.project
 
 # Webapp-specific files/folders
 secret/secret.key
+
+# Ignore SQLite database files
+*.db

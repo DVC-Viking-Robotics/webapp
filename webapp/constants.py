@@ -10,7 +10,7 @@ from .utils.file_encryption import FernetVault
 __all__ = [
     'TECH_USED', 'PAGES_CONFIG', 'ONE_YEAR',
     'SECRET_KEYFILE', 'DB_CONFIG_FILE', 'FLASK_SECRET_FILE',
-    'DB_URI', 'FLASK_SECRET', 'STATIC_CACHE_CONFIG'
+    'DB_URI', 'FLASK_SECRET', 'LOCAL_DB_URI', 'STATIC_CACHE_CONFIG'
 ]
 
 # NOTE: When sphinx generates the docs automatically, it will try to import the file relative
@@ -46,6 +46,7 @@ else:
     DB_URI = 'sqlite://'
     FLASK_SECRET = os.urandom(24)
 
+LOCAL_DB_URI = 'sqlite:///../users.db'
 
 STATIC_CACHE_CONFIG = {
     'extensions': ['.js', '.css'],  # enabled extentions for caching
