@@ -6,7 +6,7 @@ logging services such as sentry.io
 
 import logging
 from flask import Flask
-# import colorama
+import colorama
 
 class SuperLogger:
     """
@@ -20,8 +20,7 @@ class SuperLogger:
         self.use_color = use_color
 
         if self.use_color:
-            pass
-            # colorama.init(autoreset=True)
+            colorama.init(autoreset=True)
 
         logging.basicConfig(
             format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',

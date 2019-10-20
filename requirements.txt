@@ -16,3 +16,4 @@ Flask-DebugToolbar==0.10.1
 PyMySQL==0.9.3
 cryptography==2.7
 sphinx==2.2.0
+colorama==0.4.1
