@@ -17,7 +17,6 @@ import logging
 import colorama
 from .singleton import Singleton
 
-@Singleton
 class SuperLogger:
     """
     This class is for managing logging of messages that are scattered throughout the web app.
@@ -31,7 +30,7 @@ class SuperLogger:
         self._use_color = False
 
         logging.basicConfig(
-            format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+            format='[%(asctime)s] %(levelname)s: %(message)s',
             datefmt='%m/%d/%Y %I:%M:%S %p'
         )
 
@@ -49,12 +48,12 @@ class SuperLogger:
         else:
             colorama.deinit()
 
-    def init_logger(self, logger):
+    def init_logger(self, _logger):
         """Initialize the logger with an instance of a `logging.Logger` and sets the log level to INFO"""
-        if not isinstance(logger, logging.Logger):
-            raise TypeError(f"Error: Provided app instance is of type {type(logger)}, not 'logging.Logger'")
+        if not isinstance(_logger, logging.Logger):
+            raise TypeError(f"Error: Provided app instance is of type {type(_logger)}, not 'logging.Logger'")
 
-        self._logger = logger
+        self._logger = _logger
         self.set_log_level('INFO')
 
     @property
@@ -155,3 +154,6 @@ class SuperLogger:
                 pass
 
             self._logger.critical(final_msg)
+
+# provide a default SuperLogger instance
+logger = SuperLogger()

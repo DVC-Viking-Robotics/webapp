@@ -9,14 +9,13 @@ from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_compress import Compress
 from flask_cachebuster import CacheBuster
-from .utils.super_logger import SuperLogger
+from .utils.super_logger import logger
 from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED, STATIC_CACHE_CONFIG, LOCAL_DB_URI
 from .config import DEBUG, LOCAL_DATABASE
 from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager, DB
 
-logger = SuperLogger.instance()
 
 def inject_constants():
     """ Allows Jinja to reference global python constants in HTML. """
@@ -33,6 +32,11 @@ def build_flask_app(use_local_db):
     app = Flask(__name__)
 
     app.config['DEBUG'] = DEBUG
+
+    # Enable the super logging class
+    logger.use_color = True
+    logger.init_logger(app.logger)
+    logger.set_log_level('DEBUG')
 
     # Secret key used by Flask to sign cookies.
     app.config['SECRET_KEY'] = FLASK_SECRET
