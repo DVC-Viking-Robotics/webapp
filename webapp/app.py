@@ -92,7 +92,7 @@ def run(port):
     app = build_flask_app(use_local_db=LOCAL_DATABASE)
 
     try:
-        print(f'Hosting @ http://localhost:{port}')
+        logger.info(f'Hosting @ http://localhost:{port}')
         socketio.run(app, host='0.0.0.0', port=port, debug=False)
     except KeyboardInterrupt:
         socketio.stop()
