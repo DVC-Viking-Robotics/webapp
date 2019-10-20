@@ -2,6 +2,15 @@
 This module provides a easy-to-use class for logging any messages in a systematic manner, using
 the built-in 'logging' module and colorama for colored logging. May support connecting to online
 logging services such as sentry.io
+
+Example:
+
+.. highlight:: python
+.. code-block:: python
+
+    logger = SuperLogger.instance()
+    logger.debug('CAMERA', 'Camera initialized');
+    logger.critical('CORE', 'The robot is burning!')
 """
 
 import logging

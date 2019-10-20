@@ -1,6 +1,22 @@
 """
 This module provides a helper class for implementing singletons. They prevent multiple instances of a class
 from being instantiated and enforce that only one instance may exists at any point.
+
+Example:
+
+.. highlight:: python
+.. code-block:: python
+
+    @Singleton
+    class Duck:
+        pass
+
+    albert = Duck()             # This will throw an exception
+    donald = Duck.instance()    # This will works
+    president = Duck.instance() # This will refer to the same instance as ``donald``
+
+    print(president is donald)  # prints True
+
 """
 
 # pylint: disable=attribute-defined-outside-init
