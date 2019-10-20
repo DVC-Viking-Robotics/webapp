@@ -75,9 +75,11 @@ def build_flask_app(use_local_db):
     debug_toolbar = DebugToolbarExtension()
     debug_toolbar.init_app(app)
 
-    # Enable the super logging class
-    logger.use_color = True
-    logger.init_logger(app.logger)
+    logger.debug('This is a debug message')
+    logger.info('This is an info message')
+    logger.warning('This is a warning message')
+    logger.error('This is a error message')
+    logger.critical('This is a critical message')
 
     # Inject certain constants defined in 'inject_constants' for Jinja processing
     app.context_processor(inject_constants)
