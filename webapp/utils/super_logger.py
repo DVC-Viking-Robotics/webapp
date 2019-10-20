@@ -6,25 +6,39 @@ logging services such as sentry.io
 
 import logging
 import colorama
+from singleton import Singleton
 
+@Singleton
 class SuperLogger:
     """
     This class is for managing logging of messages that are scattered throughout the web app.
     It's handled via a Logger instance, and it's default log level is 'INFO'.
 
-    :param `use_color`: If set to true, then enable colored logging support.
+    Note that for simplicity sake and the desire to not pollute the constants and config variables,
+    this class is marked as a singleton, to provide global access from a single instance.
     """
-    def __init__(self, use_color=False):
+    def __init__(self):
         self._logger = None
-        self.use_color = use_color
-
-        if self.use_color:
-            colorama.init(autoreset=True)
+        self._use_color = False
 
         logging.basicConfig(
             format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
             datefmt='%m/%d/%Y %I:%M:%S %p'
         )
+
+    @property
+    def use_color(self):
+        """If set to true, then enable colored logging support."""
+        return self._use_color
+
+    @use_color.setter
+    def use_color(self, val):
+        self._use_color = val
+
+        if self._use_color:
+            colorama.init(autoreset=True)
+        else:
+            colorama.deinit()
 
     def init_logger(self, logger):
         """Initialize the logger with an instance of a `logging.Logger` and sets the log level to INFO"""
@@ -65,7 +79,7 @@ class SuperLogger:
         """
         if self.initialized:
             final_msg = f'[{tag}]: {msg}'
-            if self.use_color:
+            if self._use_color:
                 pass
 
             self._logger.debug(final_msg)
@@ -78,7 +92,7 @@ class SuperLogger:
         """
         if self.initialized:
             final_msg = f'[{tag}]: {msg}'
-            if self.use_color:
+            if self._use_color:
                 pass
 
             self._logger.info(final_msg)
@@ -91,7 +105,7 @@ class SuperLogger:
         """
         if self.initialized:
             final_msg = f'[{tag}]: {msg}'
-            if self.use_color:
+            if self._use_color:
                 pass
 
             self._logger.warning(final_msg)
@@ -104,7 +118,7 @@ class SuperLogger:
         """
         if self.initialized:
             final_msg = f'[{tag}]: {msg}'
-            if self.use_color:
+            if self._use_color:
                 pass
 
             self._logger.error(final_msg)
@@ -116,7 +130,7 @@ class SuperLogger:
         """
         if self.initialized:
             final_msg = f'[{tag}]: {msg}'
-            if self.use_color:
+            if self._use_color:
                 pass
 
             self._logger.exception(final_msg)
@@ -128,7 +142,7 @@ class SuperLogger:
         """
         if self.initialized:
             final_msg = f'[{tag}]: {msg}'
-            if self.use_color:
+            if self._use_color:
                 pass
 
             self._logger.critical(final_msg)

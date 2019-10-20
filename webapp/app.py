@@ -16,6 +16,7 @@ from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager, DB
 
+logger = SuperLogger.instance()
 
 def inject_constants():
     """ Allows Jinja to reference global python constants in HTML. """
@@ -71,7 +72,8 @@ def build_flask_app(use_local_db):
     debug_toolbar.init_app(app)
 
     # Enable the super logging class
-    SuperLogger(use_color=True).init_logger(app.logger)
+    logger.use_color = True
+    logger.init_logger(app.logger)
 
     # Inject certain constants defined in 'inject_constants' for Jinja processing
     app.context_processor(inject_constants)
