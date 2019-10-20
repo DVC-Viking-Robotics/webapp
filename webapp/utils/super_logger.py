@@ -3,9 +3,12 @@ This module provides a easy-to-use class for logging any messages in a systemati
 the built-in 'logging' module and colorama for colored logging. May support connecting to online
 logging services such as sentry.io
 
+This is how the different log level colors appear on the terminal/command prompt.
+
+.. image:: images/logger_colors.png
+
 Example:
 
-.. highlight:: python
 .. code-block:: python
 
     logger = SuperLogger.instance()
@@ -58,7 +61,7 @@ class SuperLogger:
 
     @property
     def initialized(self):
-        """Return true only if `SuperLogger.init_app` was successfully called."""
+        """Return true only if `SuperLogger.init_logger` was successfully called."""
         return isinstance(self._logger, logging.Logger)
 
     def set_log_level(self, level):
