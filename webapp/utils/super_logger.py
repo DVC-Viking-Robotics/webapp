@@ -5,18 +5,17 @@ logging services such as sentry.io
 """
 
 import logging
-from flask import Flask
 import colorama
 
 class SuperLogger:
     """
     This class is for managing logging of messages that are scattered throughout the web app.
-    It's handled via Flask's app logger instance, and it's default log level is 'INFO'.
+    It's handled via a Logger instance, and it's default log level is 'INFO'.
 
     :param `use_color`: If set to true, then enable colored logging support.
     """
     def __init__(self, use_color=False):
-        self._app = None
+        self._logger = None
         self.use_color = use_color
 
         if self.use_color:
@@ -27,18 +26,18 @@ class SuperLogger:
             datefmt='%m/%d/%Y %I:%M:%S %p'
         )
 
-    def init_app(self, app):
-        """Initialize the logger with an instance of the Flask application and sets the log level to INFO"""
-        if not isinstance(app, Flask):
-            raise TypeError(f"Error: Provided app instance is of type {type(app)}, not 'flask.app.Flask'")
+    def init_logger(self, logger):
+        """Initialize the logger with an instance of a `logging.Logger` and sets the log level to INFO"""
+        if not isinstance(logger, logging.Logger):
+            raise TypeError(f"Error: Provided app instance is of type {type(logger)}, not 'logging.Logger'")
 
-        self._app = app
+        self._logger = logger
         self.set_log_level('INFO')
 
     @property
     def initialized(self):
         """Return true only if `SuperLogger.init_app` was successfully called."""
-        return isinstance(self._app, Flask)
+        return isinstance(self._logger, logging.Logger)
 
     def set_log_level(self, level):
         """
@@ -56,7 +55,7 @@ class SuperLogger:
 
         Note that exceptions will always be logged regardless of the log level.
         """
-        self._app.setLevel(level)
+        self._logger.setLevel(level)
 
     def debug(self, tag, msg):
         """
@@ -69,7 +68,7 @@ class SuperLogger:
             if self.use_color:
                 pass
 
-            self._app.logger.debug(final_msg)
+            self._logger.debug(final_msg)
 
     def info(self, tag, msg):
         """
@@ -82,7 +81,7 @@ class SuperLogger:
             if self.use_color:
                 pass
 
-            self._app.logger.info(final_msg)
+            self._logger.info(final_msg)
 
     def warning(self, tag, msg):
         """
@@ -95,7 +94,7 @@ class SuperLogger:
             if self.use_color:
                 pass
 
-            self._app.logger.warning(final_msg)
+            self._logger.warning(final_msg)
 
     def error(self, tag, msg):
         """
@@ -108,7 +107,7 @@ class SuperLogger:
             if self.use_color:
                 pass
 
-            self._app.logger.error(final_msg)
+            self._logger.error(final_msg)
 
     def exception(self, tag, msg):
         """
@@ -120,7 +119,7 @@ class SuperLogger:
             if self.use_color:
                 pass
 
-            self._app.logger.exception(final_msg)
+            self._logger.exception(final_msg)
 
     def critical(self, tag, msg):
         """
@@ -132,4 +131,4 @@ class SuperLogger:
             if self.use_color:
                 pass
 
-            self._app.logger.critical(final_msg)
+            self._logger.critical(final_msg)

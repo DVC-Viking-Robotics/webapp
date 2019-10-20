@@ -9,6 +9,7 @@ from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_compress import Compress
 from flask_cachebuster import CacheBuster
+from .utils.super_logger import SuperLogger
 from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED, STATIC_CACHE_CONFIG, LOCAL_DB_URI
 from .config import DEBUG, LOCAL_DATABASE
 from .routes import blueprint
@@ -48,6 +49,7 @@ def build_flask_app(use_local_db):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SQLALCHEMY_RECORD_QUERIES'] = True
 
+    # Initialize SQLAlchemy and integrate it with the Flask instance
     DB.init_app(app)
 
     app.register_blueprint(blueprint)
@@ -67,6 +69,9 @@ def build_flask_app(use_local_db):
     # Enable the Flask debug toolbar ONLY if debug mode is enabled
     debug_toolbar = DebugToolbarExtension()
     debug_toolbar.init_app(app)
+
+    # Enable the super logging class
+    SuperLogger(use_color=True).init_logger(app.logger)
 
     # Inject certain constants defined in 'inject_constants' for Jinja processing
     app.context_processor(inject_constants)
