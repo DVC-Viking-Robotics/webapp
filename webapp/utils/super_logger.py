@@ -127,17 +127,6 @@ class SuperLogger:
 
             self._logger.error(msg)
 
-    def exception(self, msg):
-        """
-        Prints a message in the 'exception' channel. This should be **ONLY** used when an exception has occurred.
-        Exception info is added to the logging message. This function should only be called from an exception handler.
-        """
-        if self.initialized:
-            if self._use_color:
-                msg = Style.BRIGHT + Fore.RED + msg + Style.RESET_ALL
-
-            self._logger.exception(msg)
-
     def critical(self, msg):
         """
         Prints a message in the 'critical' channel. This should be used when a critical event has occurred
