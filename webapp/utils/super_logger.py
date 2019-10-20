@@ -9,8 +9,8 @@ Example:
 .. code-block:: python
 
     logger = SuperLogger.instance()
-    logger.debug('CAMERA', 'Camera initialized');
-    logger.critical('CORE', 'The robot is burning!')
+    logger.debug('CAMERA', 'Camera initialized')
+    logger.critical('CORE', 'The robot is feeling emotions!')
 """
 
 import logging

@@ -45,10 +45,10 @@ def build_flask_app(use_local_db):
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
 
     if use_local_db:
-        print('Loading local database...')
+        logger.info('Loading local user database...')
         app.config['SQLALCHEMY_DATABASE_URI'] = LOCAL_DB_URI
     else:
-        print('Loading remote database...')
+        logger.info('Loading remote user database...')
         app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -94,7 +94,7 @@ def run(port):
     app = build_flask_app(use_local_db=LOCAL_DATABASE)
 
     try:
-        print(f'Hosting @ http://localhost:{port}')
+        logger.info(f'Hosting @ http://localhost:{port}')
         socketio.run(app, host='0.0.0.0', port=port, debug=False)
     except KeyboardInterrupt:
         socketio.stop()
