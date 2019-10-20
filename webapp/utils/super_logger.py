@@ -33,7 +33,7 @@ class SuperLogger:
     """
     def __init__(self, use_color=False):
         self._logger = None
-        self._use_color = False
+        self._use_color = use_color
 
         logging.basicConfig(
             format='[%(asctime)s] %(levelname)s: %(message)s',
