@@ -6,7 +6,7 @@ logging services such as sentry.io
 
 import logging
 import colorama
-from singleton import Singleton
+from .singleton import Singleton
 
 @Singleton
 class SuperLogger:

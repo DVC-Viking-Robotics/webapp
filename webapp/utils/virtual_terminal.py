@@ -17,7 +17,7 @@ if not ON_WINDOWS:
     import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
     import fcntl        # I/O for file descriptors; used for setting terminal window size
 
-# pylint: disable=invalid-name
+# pylint: disable=dangerous-default-value
 
 OUTPUT_SLEEP_DURATION = 0.01        # Amount of time to sleep between calls to read the terminal output buffer
 MAX_OUTPUT_READ_BYTES = 1024 * 20   # Maximum number of bytes to read from the terminal output buffer

@@ -2,7 +2,7 @@
 This script runs the flask_controller application using a development server.
 """
 
-# pylint: disable=invalid-name,no-value-for-parameter
+# pylint: disable=no-value-for-parameter
 
 import click
 from flask import Flask

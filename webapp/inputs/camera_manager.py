@@ -2,8 +2,6 @@
 This module provides an abstraction for managing cameras.
 """
 
-# pylint: disable=relative-beyond-top-level
-
 try:
     import cStringIO as io
 except ImportError:

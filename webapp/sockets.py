@@ -1,5 +1,4 @@
 """A collection of websocket routes"""
-# pylint: disable=invalid-name
 
 import base64
 from flask_socketio import SocketIO, emit

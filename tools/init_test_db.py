@@ -4,8 +4,6 @@ This script allows you to create a local database with a default admin user.
 Run it with ``python -m tools.init_test_db``
 """
 
-# pylint: disable=invalid-name
-
 from werkzeug.security import generate_password_hash
 from webapp.app import build_flask_app
 from webapp.users import User, DB

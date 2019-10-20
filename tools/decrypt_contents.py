@@ -8,8 +8,6 @@ import os
 from webapp.utils.file_encryption import FernetVault
 from webapp.constants import SECRET_KEYFILE, DB_CONFIG_FILE, FLASK_SECRET_FILE
 
-# pylint: disable=invalid-name
-
 if __name__ == '__main__':
     if not os.path.exists(SECRET_KEYFILE):
         print("Error: You must have the original key file to decrypt the encrypted contents.")

@@ -35,8 +35,6 @@ DB_CONFIG_FILE = os.path.join(ROOT_DIR, 'secret/db-config.encrypted')
 FLASK_SECRET_FILE = os.path.join(ROOT_DIR, 'secret/flask-secret.encrypted')
 """Location of encrypted flask secret file."""
 
-# pylint: disable=invalid-name
-
 # Read and decrypt the encrypted database URI and Flask secret
 # NOTE: If RTD is executing this file, it will never find the secret key as it's gitignored
 if not os.getenv('READTHEDOCS', None):
