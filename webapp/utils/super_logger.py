@@ -25,10 +25,13 @@ class SuperLogger:
     This class is for managing logging of messages that are scattered throughout the web app.
     It's handled via a Logger instance, and it's default log level is 'INFO'.
 
-    Note that for simplicity sake and the desire to not pollute the constants and config variables,
+    :param bool use_color: ``True`` enables the use specific colors for outputting text to the
+        terminal. ``False`` makes the text colors behave as they would normally.
+
+    .. note:: For simplicity sake and the desire to not pollute the constants and config variables,
     this class is marked as a singleton, to provide global access from a single instance.
     """
-    def __init__(self):
+    def __init__(self, use_color=False):
         self._logger = None
         self._use_color = False
 
