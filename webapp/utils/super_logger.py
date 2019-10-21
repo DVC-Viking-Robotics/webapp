@@ -27,9 +27,6 @@ class SuperLogger:
 
     :param bool use_color: ``True`` enables the use specific colors for outputting text to the
         terminal. ``False`` makes the text colors behave as they would normally.
-
-    .. note:: For simplicity sake and the desire to not pollute the constants and config variables,
-    this class is marked as a singleton, to provide global access from a single instance.
     """
     def __init__(self, use_color=False):
         self._logger = None
