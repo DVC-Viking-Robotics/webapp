@@ -11,7 +11,7 @@ from flask_compress import Compress
 from flask_cachebuster import CacheBuster
 from .utils.super_logger import logger
 from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED, STATIC_CACHE_CONFIG, LOCAL_DB_URI
-from .config import DEBUG, LOCAL_DATABASE
+from .config import DEBUG, LOCAL_DATABASE, LOG_LEVEL
 from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager, DB
@@ -33,10 +33,8 @@ def build_flask_app(use_local_db):
 
     app.config['DEBUG'] = DEBUG
 
-    # Enable the super logging class
-    logger.use_color = True
-    logger.init_logger(app.logger)
-    logger.set_log_level('DEBUG')
+    # Set the log level for the super logger
+    logger.set_log_level(LOG_LEVEL)
 
     # Secret key used by Flask to sign cookies.
     app.config['SECRET_KEY'] = FLASK_SECRET

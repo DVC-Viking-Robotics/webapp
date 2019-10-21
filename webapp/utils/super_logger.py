@@ -35,11 +35,6 @@ class SuperLogger:
         self._logger = None
         self._use_color = use_color
 
-        logging.basicConfig(
-            format='[%(asctime)s] %(levelname)s: %(message)s',
-            datefmt='%m/%d/%Y %I:%M:%S %p'
-        )
-
     @property
     def use_color(self):
         """If set to true, then enable colored logging support."""
@@ -60,6 +55,21 @@ class SuperLogger:
             raise TypeError(f"Error: Provided app instance is of type {type(_logger)}, not 'logging.Logger'")
 
         self._logger = _logger
+
+        # create a console stream handler
+        ch = logging.StreamHandler()
+
+        # modify the formatting of the logs
+        formatter = logging.Formatter(
+            fmt='[%(asctime)s] %(levelname)s: %(message)s',
+            datefmt='%m/%d/%Y %I:%M:%S %p'
+        )
+        ch.setFormatter(formatter)
+
+        # add the handler to the logger
+        self._logger.addHandler(ch)
+
+        # set the default logging level to 'INFO'
         self.set_log_level('INFO')
 
     @property
@@ -144,5 +154,9 @@ class SuperLogger:
 
             self._logger.critical(msg)
 
+# create logger with 'webapp'
+logger_inst = logging.getLogger('webapp')
+
 # provide a default SuperLogger instance
-logger = SuperLogger()
+logger = SuperLogger(use_color=True)
+logger.init_logger(logger_inst)
