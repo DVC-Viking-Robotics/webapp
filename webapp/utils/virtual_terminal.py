@@ -11,6 +11,7 @@ import select    # async I/O for file descriptors; used for retrieving terminal 
 import shlex     # used to shell-escape commands to prevent unsafe multi-commands (i.e "ls -l somefile; rm -rf ~")
 
 from ..inputs.check_platform import ON_WINDOWS
+from .super_logger import logger
 
 if not ON_WINDOWS:
     import pty          # docs @ https://docs.python.org/3/library/pty.html
@@ -50,8 +51,9 @@ class VTerminal:
         try:
             # os.stat will throw an error if an invalid file descriptor is given
             valid_fd = os.stat(self.fd) is not None
-        except OSError as e:
-            print('DAMMIT', e)
+        except OSError as ose:
+            logger.error('VTerminal', 'An OS-related error occurred while trying to validate the file descriptor!')
+            logger.error('VTerminal', ose)
             valid_fd = False
         return valid_fd
 
@@ -85,7 +87,7 @@ class VTerminal:
             try:
                 subprocess.run(term_cmd, check=False)  # `term_cmd` is a list of arguments that get passed to
             except KeyboardInterrupt:
-                print('Caught KeyboardInterrupt during the login prompt. Starting a new session...')
+                logger.info('VTerminal', 'Caught KeyboardInterrupt during the login prompt. Starting a new session...')
 
             # subprocess.Popen() docs: https://docs.python.org/3/library/subprocess.html#subprocess.Popen
             # Docs say term_cmd can be a simple string which (in our case) would be a little easier
@@ -97,10 +99,11 @@ class VTerminal:
             self.resize_terminal(init_rows, init_cols)
 
             # Now concatenate the term_cmd list into a " " delimited string for outputting in
-            # the debugging print() cmds. See also previous comment after Popen() docs link
+            # the debugging logger.info() cmds. See also previous comment after Popen() docs link
             term_cmd = " ".join(shlex.quote(c) for c in term_cmd)
-            print("Terminal thread's Process ID is", self.child_pid)
-            print(
+            logger.info('VTerminal', f"Terminal thread's Process ID is {self.child_pid}")
+            logger.info(
+                'VTerminal',
                 f"Starting background task with command `{term_cmd}` to continously read "
                 "and forward pty output to client..."
             )
@@ -116,9 +119,9 @@ class VTerminal:
                 # Since this method returns a `threading.Thread` object that is already
                 # start()-ed, we can simply capture the thread's instance for the multiprocessing
                 # module, but not until I (2bndy5) know how
-                print("Output listener thread for terminal started")
+                logger.info('VTerminal', 'Output listener thread for terminal started')
             else:
-                print("Output listener thread for terminal already started!")
+                logger.info('VTerminal', 'Output listener thread for terminal already started!')
 
     def cleanup(self):
         """ Stop the background task and clean up after ourselves. """
@@ -195,7 +198,7 @@ class VTerminal:
                         for listener in self.output_listeners:
                             listener(output)
                 except OSError as ose:
-                    print("An OS Error occurred during the output read loop:")
-                    print(ose)
-                    print("Stopping read loop...")
+                    logger.error('VTerminal', 'An OS Error occurred during the output read loop:')
+                    logger.error('VTerminal', ose)
+                    logger.warning('VTerminal', 'Stopping read loop...')
                     self.running_flag = False
