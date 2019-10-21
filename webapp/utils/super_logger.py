@@ -165,3 +165,11 @@ logger_inst = logging.getLogger('webapp')
 # provide a default SuperLogger instance
 logger = SuperLogger(use_color=True)
 logger.init_logger(logger_inst)
+
+if __name__ == "__main__":
+    logger.set_log_level('DEBUG')
+    logger.debug('SuperLogger', 'This is a debug message')
+    logger.info('SuperLogger', 'This is an info message')
+    logger.warning('SuperLogger', 'This is a warning message')
+    logger.error('SuperLogger', 'This is a error message')
+    logger.critical('SuperLogger', 'This is a critical message')
