@@ -104,7 +104,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.NORMAL + Fore.GREEN + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.GREEN + msg + Style.RESET_ALL
 
             self._logger.debug(msg)
 
@@ -130,7 +130,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.NORMAL + Fore.YELLOW + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.YELLOW + msg + Style.RESET_ALL
 
             self._logger.warning(msg)
 
@@ -143,7 +143,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.NORMAL + Fore.RED + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.RED + msg + Style.RESET_ALL
 
             self._logger.error(msg)
 
