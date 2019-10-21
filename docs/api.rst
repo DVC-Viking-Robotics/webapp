@@ -34,6 +34,11 @@ Fernet Vault
 .. automodule:: webapp.utils.file_encryption
     :members:
 
+Super Logger
+------------
+.. automodule:: webapp.utils.super_logger
+    :members:
+
 User Management
 ===============
 .. automodule:: webapp.users

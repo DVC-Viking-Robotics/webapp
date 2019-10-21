@@ -2,15 +2,16 @@
 This script runs the flask_controller application using a development server.
 """
 
-# pylint: disable=invalid-name,no-value-for-parameter
+# pylint: disable=no-value-for-parameter
 
 import click
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_compress import Compress
 from flask_cachebuster import CacheBuster
+from .utils.super_logger import logger
 from .constants import FLASK_SECRET, DB_URI, ONE_YEAR, PAGES_CONFIG, TECH_USED, STATIC_CACHE_CONFIG, LOCAL_DB_URI
-from .config import DEBUG, LOCAL_DATABASE
+from .config import DEBUG, LOCAL_DATABASE, LOG_LEVEL
 from .routes import blueprint
 from .sockets import socketio
 from .users import login_manager, DB
@@ -32,6 +33,9 @@ def build_flask_app(use_local_db):
 
     app.config['DEBUG'] = DEBUG
 
+    # Set the log level for the super logger
+    logger.set_log_level(LOG_LEVEL)
+
     # Secret key used by Flask to sign cookies.
     app.config['SECRET_KEY'] = FLASK_SECRET
 
@@ -39,15 +43,16 @@ def build_flask_app(use_local_db):
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
 
     if use_local_db:
-        print('Loading local database...')
+        logger.info('app', 'Loading local user database...')
         app.config['SQLALCHEMY_DATABASE_URI'] = LOCAL_DB_URI
     else:
-        print('Loading remote database...')
+        logger.info('app', 'Loading remote user database...')
         app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SQLALCHEMY_RECORD_QUERIES'] = True
 
+    # Initialize SQLAlchemy and integrate it with the Flask instance
     DB.init_app(app)
 
     app.register_blueprint(blueprint)
@@ -81,7 +86,7 @@ def run(port):
     app = build_flask_app(use_local_db=LOCAL_DATABASE)
 
     try:
-        print(f'Hosting @ http://localhost:{port}')
+        logger.info('app', f'Hosting @ http://localhost:{port}')
         socketio.run(app, host='0.0.0.0', port=port, debug=False)
     except KeyboardInterrupt:
         socketio.stop()

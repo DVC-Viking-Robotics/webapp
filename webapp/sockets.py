@@ -1,5 +1,4 @@
 """A collection of websocket routes"""
-# pylint: disable=invalid-name
 
 import base64
 from flask_socketio import SocketIO, emit
@@ -11,6 +10,7 @@ from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
 from .inputs.camera_manager import CameraManager
 from .utils.virtual_terminal import VTerminal
+from .utils.super_logger import logger
 
 socketio = SocketIO(logger=False, engineio_logger=False, async_mode='eventlet')
 
@@ -26,8 +26,10 @@ camera_manager = CameraManager()
 
 
 def getHYPR():
-    """This function will try to determine the robot's Heading, Yaw, Pitch, & Roll (HYPR)
-    dependent on the specific data returned from the IMU device connected to the robot."""
+    """
+    This function will try to determine the robot's Heading, Yaw, Pitch, & Roll (HYPR)
+    dependent on the specific data returned from the IMU device connected to the robot.
+    """
     heading = []
     yaw = 0
     pitch = 0
@@ -40,7 +42,7 @@ def getHYPR():
             heading.append(imu.get_heading())
     if not heading:
         heading.append(0)
-    print('heading:', heading[0], 'yaw:', yaw, 'pitch:', pitch, 'roll:', roll)
+    logger.debug('sensor data', f'Heading: {heading[0]}, Yaw: {yaw}, Pitch: {pitch}, Roll: {roll}')
     return [heading[0], yaw, pitch, roll]
 
 
@@ -74,13 +76,13 @@ def get_imu_data():
 @socketio.on('connect')
 def handle_connect():
     """This event fired when a websocket client establishes a connection to the server"""
-    print('websocket Client connected!')
+    logger.debug('web sockets', 'websocket Client connected!')
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
     """This event fired when a websocket client breaks connection to the server"""
-    print('websocket Client disconnected')
+    logger.debug('web sockets', 'websocket Client disconnected')
 
     # If the camera was recently opened, then close it and reopen it to free the resource for
     # future use. The reason for "rebooting" the camera is that the camera device will be
@@ -109,7 +111,6 @@ def handle_webcam_request():
     if camera_manager.initialized:
         buffer = camera_manager.capture_image()
         b64 = base64.b64encode(buffer)
-        # print('webcam buffer in bytes:', len(b64))
         emit('webcam-response', b64)
 
 @socketio.on('webcam-cleanup')
@@ -134,7 +135,7 @@ def build_wapypoints(waypoints, clear):
     if nav is not None:
         if clear:
             nav.clear()
-        print('received waypoints')
+        logger.debug('navigation', 'received waypoints')
         for point in waypoints:
             nav.insert(point)
         nav.printWP()
@@ -142,7 +143,7 @@ def build_wapypoints(waypoints, clear):
 @socketio.on('gps')
 def handle_gps_request():
     """This event fired when a websocket client's response to the server about GPS coordinates."""
-    print('gps data sent')
+    logger.debug('navigation', 'gps data sent')
     NESW = (0, 0)
     if gps:
         gps[0].get_data()
@@ -157,7 +158,7 @@ def handle_DoF_request():
     device's data."""
     senses = get_imu_data()
     emit('sensorDoF-response', senses)
-    print('DoF sensor data sent')
+    logger.debug('sensor data', 'DoF sensor data sent')
 
 @socketio.on('remoteOut')
 def handle_remoteOut(args):
@@ -167,7 +168,7 @@ def handle_remoteOut(args):
     :param list args: The list of motor inputs received from the remote control page.
 
     """
-    print('remote =', repr(args))
+    logger.debug('navigation', f'remote = {repr(args)}')
     if d_train: # if there is a drivetrain connected
         d_train[0].go([args[0] * 655.35, args[1] * 655.35])
 

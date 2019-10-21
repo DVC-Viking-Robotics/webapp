@@ -1,5 +1,4 @@
 """ A collection of Flask routes """
-# pylint: disable=invalid-name
 
 import os
 from flask import Blueprint, render_template, request, flash, redirect

@@ -8,3 +8,6 @@ LOCAL_DATABASE = False
 If set to true, it will attempt to use the local database via SQLITE.
 You can initialize this database with ``python -m tools.init_test_db``
 """
+
+LOG_LEVEL = 'DEBUG'
+"""A flag for the default log level output for the global SuperLogger"""

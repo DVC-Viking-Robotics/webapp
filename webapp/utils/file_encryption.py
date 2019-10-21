@@ -4,8 +4,6 @@ This module allows easy encryption/decryption of files via Fernet cryptography
 
 from cryptography.fernet import Fernet
 
-# pylint: disable=invalid-name
-
 class FernetVault:
     """ A file vault that decrypts the contents of an encrypted file given a key file. """
 
