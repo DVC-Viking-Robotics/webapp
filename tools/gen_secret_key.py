@@ -9,10 +9,11 @@ import os
 from cryptography.fernet import Fernet
 from webapp.utils.file_encryption import FernetVault
 from webapp.constants import SECRET_KEYFILE, DB_CONFIG_FILE, FLASK_SECRET_FILE
+from webapp.utils.super_logger import logger
 
 if __name__ == '__main__':
     if not os.path.exists(SECRET_KEYFILE):
-        print("Error: You must have the original key file before you can change to a new one.")
+        logger.error('Tools', 'Error: You must have the original key file before you can change to a new one.')
         exit(-1)
 
     # read URI with old key file
