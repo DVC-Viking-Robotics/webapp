@@ -95,65 +95,65 @@ class SuperLogger:
         """
         self._logger.setLevel(level)
 
-    def debug(self, msg):
+    def debug(self, tag, msg):
         """
         Prints a message in the 'debug' channel. This should be used for detailed logging of the
         internals of a specific module or script such as the number of bytes sent via the camera
         module or how much time was taken to handle an HTTP request.
         """
         if self.initialized:
-            msg = str(msg)
+            msg = f'[{tag}]: {msg}'
             if self._use_color:
                 msg = Style.NORMAL + Fore.GREEN + msg + Style.RESET_ALL
 
             self._logger.debug(msg)
 
-    def info(self, msg):
+    def info(self, tag, msg):
         """
         Prints a message in the 'info' channel. This should be used for general events or
         notes that the user should know but it isn't a priority, such as what's the port
         and host address of the Flask server or which web page did someone just access.
         """
         if self.initialized:
-            msg = str(msg)
+            msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.DIM + Fore.CYAN + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.CYAN + msg + Style.RESET_ALL
 
             self._logger.info(msg)
 
-    def warning(self, msg):
+    def warning(self, tag, msg):
         """
         Prints a message in the 'warning' channel. This should be used when an event in the web app
         has happened that the user should pay attention to, such as a missing config file or if
         a sensor isn't configured correctly (that won't greatly affect the performance of said sensor).
         """
         if self.initialized:
-            msg = str(msg)
+            msg = f'[{tag}]: {msg}'
             if self._use_color:
                 msg = Style.NORMAL + Fore.YELLOW + msg + Style.RESET_ALL
 
             self._logger.warning(msg)
 
-    def error(self, msg):
+    def error(self, tag, msg):
         """
         Prints a message in the 'error' channel. This should be used when an error has occurred
         that could make the web app unstable, such as a missing sensor attached, or if a 500 server
         error occurred internally.
         """
         if self.initialized:
-            msg = str(msg)
+            msg = f'[{tag}]: {msg}'
             if self._use_color:
                 msg = Style.NORMAL + Fore.RED + msg + Style.RESET_ALL
 
             self._logger.error(msg)
 
-    def critical(self, msg):
+    def critical(self, tag, msg):
         """
         Prints a message in the 'critical' channel. This should be used when a critical event has occurred
         that user **must** pay attention to it, such as if the camera module or web app crashed.
         """
         if self.initialized:
-            msg = str(msg)
+            msg = f'[{tag}]: {msg}'
             if self._use_color:
                 msg = Style.BRIGHT + Fore.MAGENTA + msg + Style.RESET_ALL
 
