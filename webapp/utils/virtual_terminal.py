@@ -18,8 +18,6 @@ if not ON_WINDOWS:
     import termios      # used to set the window size (look up "TIOCSWINSZ" in https://linux.die.net/man/4/tty_ioctl)
     import fcntl        # I/O for file descriptors; used for setting terminal window size
 
-# pylint: disable=dangerous-default-value
-
 OUTPUT_SLEEP_DURATION = 0.01        # Amount of time to sleep between calls to read the terminal output buffer
 MAX_OUTPUT_READ_BYTES = 1024 * 20   # Maximum number of bytes to read from the terminal output buffer
 
@@ -62,7 +60,7 @@ class VTerminal:
         """ Check if the virtual terminal is doing I/O as of now. """
         return self.bg_thread is not None
 
-    def init_connect(self, term_cmd=["/bin/bash"], init_rows=50, init_cols=50):
+    def init_connect(self, term_cmd, init_rows=50, init_cols=50):
         """ Initiate the virtual terminal connection by creating a subprocess. """
         if self.child_pid:
             # Already started child process, don't start another
