@@ -102,6 +102,7 @@ class SuperLogger:
         module or how much time was taken to handle an HTTP request.
         """
         if self.initialized:
+            msg = str(msg)
             if self._use_color:
                 msg = Style.NORMAL + Fore.GREEN + msg + Style.RESET_ALL
 
@@ -114,6 +115,7 @@ class SuperLogger:
         and host address of the Flask server or which web page did someone just access.
         """
         if self.initialized:
+            msg = str(msg)
             if self._use_color:
                 msg = Style.DIM + Fore.CYAN + msg + Style.RESET_ALL
 
@@ -126,6 +128,7 @@ class SuperLogger:
         a sensor isn't configured correctly (that won't greatly affect the performance of said sensor).
         """
         if self.initialized:
+            msg = str(msg)
             if self._use_color:
                 msg = Style.NORMAL + Fore.YELLOW + msg + Style.RESET_ALL
 
@@ -138,6 +141,7 @@ class SuperLogger:
         error occurred internally.
         """
         if self.initialized:
+            msg = str(msg)
             if self._use_color:
                 msg = Style.NORMAL + Fore.RED + msg + Style.RESET_ALL
 
@@ -149,6 +153,7 @@ class SuperLogger:
         that user **must** pay attention to it, such as if the camera module or web app crashed.
         """
         if self.initialized:
+            msg = str(msg)
             if self._use_color:
                 msg = Style.BRIGHT + Fore.MAGENTA + msg + Style.RESET_ALL
 
