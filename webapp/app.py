@@ -43,10 +43,10 @@ def build_flask_app(use_local_db):
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = ONE_YEAR
 
     if use_local_db:
-        logger.info('Loading local user database...')
+        logger.info('app', 'Loading local user database...')
         app.config['SQLALCHEMY_DATABASE_URI'] = LOCAL_DB_URI
     else:
-        logger.info('Loading remote user database...')
+        logger.info('app', 'Loading remote user database...')
         app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -73,12 +73,6 @@ def build_flask_app(use_local_db):
     debug_toolbar = DebugToolbarExtension()
     debug_toolbar.init_app(app)
 
-    logger.debug('This is a debug message')
-    logger.info('This is an info message')
-    logger.warning('This is a warning message')
-    logger.error('This is a error message')
-    logger.critical('This is a critical message')
-
     # Inject certain constants defined in 'inject_constants' for Jinja processing
     app.context_processor(inject_constants)
 
@@ -92,7 +86,7 @@ def run(port):
     app = build_flask_app(use_local_db=LOCAL_DATABASE)
 
     try:
-        logger.info(f'Hosting @ http://localhost:{port}')
+        logger.info('app', f'Hosting @ http://localhost:{port}')
         socketio.run(app, host='0.0.0.0', port=port, debug=False)
     except KeyboardInterrupt:
         socketio.stop()
