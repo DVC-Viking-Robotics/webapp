@@ -8,6 +8,7 @@ except ImportError:
     import io
 
 from .check_platform import ON_RASPI
+from ..utils.super_logger import logger
 
 CAMERA_AVAILABLE = False
 
@@ -17,13 +18,13 @@ if ON_RASPI:
         import picamera
         CAMERA_AVAILABLE = True
     except ImportError:
-        print('Warning: picamera is not installed')
+        logger.warning('Camera', 'The "picamera" module is not installed')
 else:  # running on a PC
     try:
         import cv2
         CAMERA_AVAILABLE = True
     except ImportError:
-        print('Warning: opencv-python is not installed')
+        logger.warning('Camera', 'The "opencv-python" is not installed')
         CAMERA_AVAILABLE = False
 
 class CameraManager:
@@ -61,14 +62,15 @@ class CameraManager:
                 self.camera = self._init_pi_camera()
             except picamera.exc.PiCameraError as picam_error:
                 self.camera = None
-                print('Error: picamera is not connected!')
-                print(picam_error)
+                logger.error('Camera', 'The picamera is not connected!')
+                logger.error('Camera', picam_error)
         else:  # running on a PC
             try:
                 self.camera = self._init_cv2_camera()
             except cv2.error as cv2_error:
                 self.camera = None
-                print("OpenCV Error:", cv2_error)
+                logger.error('Camera', 'An openCV error occurred!')
+                logger.error('Camera', cv2_error)
 
     def capture_image(self):
         """ Fetches an image from the camera feed and incodes it as a JPEG buffer """
