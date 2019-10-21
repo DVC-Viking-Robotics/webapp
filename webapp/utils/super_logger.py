@@ -18,7 +18,7 @@ Example:
 
 import logging
 import colorama
-from colorama import Fore, Style
+from colorama import Fore, Back, Style
 
 class SuperLogger:
     """
@@ -104,7 +104,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.BRIGHT + Fore.GREEN + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.GREEN + Back.BLACK + msg + Style.RESET_ALL
 
             self._logger.debug(msg)
 
@@ -117,7 +117,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.BRIGHT + Fore.CYAN + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.CYAN + Back.BLACK + msg + Style.RESET_ALL
 
             self._logger.info(msg)
 
@@ -130,7 +130,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.BRIGHT + Fore.YELLOW + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.YELLOW + Back.BLACK + msg + Style.RESET_ALL
 
             self._logger.warning(msg)
 
@@ -143,7 +143,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.BRIGHT + Fore.RED + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.RED + Back.BLACK + msg + Style.RESET_ALL
 
             self._logger.error(msg)
 
@@ -155,7 +155,7 @@ class SuperLogger:
         if self.initialized:
             msg = f'[{tag}]: {msg}'
             if self._use_color:
-                msg = Style.BRIGHT + Fore.MAGENTA + msg + Style.RESET_ALL
+                msg = Style.BRIGHT + Fore.MAGENTA + Back.BLACK + msg + Style.RESET_ALL
 
             self._logger.critical(msg)
 
