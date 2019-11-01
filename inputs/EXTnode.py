@@ -39,7 +39,7 @@ class EXTnode():
 
 class NRF24L01():
     def __init__(self, spi, csn, ce, address=b'rfpi0'):
-        from circuitpython_nrf24l01.rf24 import RF24
+        from circuitpython_nrf24l01 import RF24
         self.rf = RF24(spi, csn, ce)
         self.rf.open_tx_pipe(address)
         self.rf.what_happened(1)
