@@ -18,12 +18,21 @@
         {
             "motors":[
                 {
-                    "driver":"NRF24L01",
+                    "driver":"NRF24L01tx",
                     "address":"5,8",
                     "name":"rfpi0"
                 }
             ],
-            "type":"External"
+            "type":"NRF24L01"
+        },
+        {
+            "motors":[
+                {
+                    "driver":"ROBOCLAW",
+                    "address":"/dev/ttyUSB0"
+                }
+            ],
+            "type":"Roboclaw"
         }
     ],
     "IMU":[

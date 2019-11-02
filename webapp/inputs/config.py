@@ -6,10 +6,10 @@ except NotImplementedError:
     pass  # addressed by has_gpio_pins variable
 from gps_serial import GPSserial
 from .check_platform import ON_RASPI, ON_JETSON
+from .ext_node import ROBOCLAW
 
 if ON_RASPI:
-    from drivetrain.drivetrain import Tank, Automotive, External
-    from drivetrain.motor import Solenoid, BiMotor, PhasedMotor, NRF24L01, USB
+    from drivetrain import Tank, Automotive, Solenoid, BiMotor, PhasedMotor, NRF24L01tx
     from adafruit_lsm9ds1 import LSM9DS1_I2C
     from circuitpython_mpu6050 import MPU6050
 
@@ -67,7 +67,7 @@ if SYSTEM_CONF is not None:
     if 'Drivetrains' in SYSTEM_CONF['Check-Hardware']:
         # handle drivetrain
         for d in SYSTEM_CONF['Drivetrains']:
-            if d['type'] in ('Tank', 'Automotive', 'External'):
+            if d['type'] in ('Tank', 'Automotive', 'NRF24L01', 'Roboclaw'):
                 # instantiate motors
                 motors = []
                 for m in d['motors']:
@@ -83,18 +83,14 @@ if SYSTEM_CONF is not None:
                         motors.append(BiMotor(pins))
                     elif m['driver'].startswith('PhasedMotor') and len(pins) == 2 and has_gpio_pins:
                         motors.append(PhasedMotor(pins))
-                    elif m['driver'].startswith('NRF24L01') and has_gpio_pins:
-                        motors.append(
-                            NRF24L01(SPI_BUS, pins, bytes(m['name'].encode('utf-8'))))
-                    elif m['driver'].startswith('USB'):
-                        motors.append(USB(m['address']))
+                    elif m['driver'].startswith('ROBOCLAW'):
+                        d_train.append(ROBOCLAW(m['address']))
+                    elif m['driver'].startswith('NRF24L01tx') and has_gpio_pins:
+                        d_train.append(NRF24L01tx(SPI_BUS, pins, bytes(m['name'].encode('utf-8'))))
                 if d['type'].startswith('Tank') and has_gpio_pins:
                     d_train.append(Tank(motors, int(d['max speed'])))
                 elif d['type'].startswith('Automotive') and has_gpio_pins:
                     d_train.append(Automotive(motors, int(d['max speed'])))
-                elif d['type'].startswith('External'):
-                    if motors:
-                        d_train.append(External(motors[0]))
 
     if 'IMU' in SYSTEM_CONF['Check-Hardware']:
         for imu in SYSTEM_CONF['IMU']:
