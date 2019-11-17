@@ -35,6 +35,7 @@ class ROBOCLAW:
     def __init__(self, address, claw_address=0x80):
         self._address = claw_address
         self._device = Roboclaw(address, 38400)
+        self._device.Open()
 
     def go(self, cmds):
         if len(cmds) < 2:

@@ -55,21 +55,21 @@ function adjustSliderSizes() {
 function initRemote(){
     speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
     turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
-    
+
     console.log("selection:", selectRemote.value);
     let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
     adjustSliderSizes();
     window.addEventListener('resize', adjustSliderSizes);
     for (let ctrl of controls){
         ctrl.obj.draw();
-        ctrl.el.addEventListener('touchstart', touchStartOnSliders);
-        ctrl.el.addEventListener('touchmove', touchMoveOnSliders);
-        ctrl.el.addEventListener('touchend', touchEndOnSliders);
-        ctrl.el.addEventListener('touchcancel', touchEndOnSliders);
-        ctrl.el.addEventListener('mousedown', function(e){mouseStartOnSliders(e, ctrl.obj);});
-        ctrl.el.addEventListener('mouseup', function(e){mouseEndOnSliders(e, ctrl.obj);});
-        ctrl.el.addEventListener('mousemove', function(e){mouseMoveOnSliders(e, ctrl.obj);});
-        ctrl.el.addEventListener('mouseleave', function(e){mouseEndOnSliders(e, ctrl.obj);});
+        ctrl.el.addEventListener('touchstart', touchStartOnSliders, false);
+        ctrl.el.addEventListener('touchmove', touchMoveOnSliders, false);
+        ctrl.el.addEventListener('touchend', touchEndOnSliders, false);
+        ctrl.el.addEventListener('touchcancel', touchEndOnSliders, false);
+        ctrl.el.addEventListener('mousedown', function(e){mouseStartOnSliders(e, ctrl.obj);}, false);
+        ctrl.el.addEventListener('mouseup', function(e){mouseEndOnSliders(e, ctrl.obj);}, false);
+        ctrl.el.addEventListener('mousemove', function(e){mouseMoveOnSliders(e, ctrl.obj);}, false);
+        ctrl.el.addEventListener('mouseleave', function(e){mouseEndOnSliders(e, ctrl.obj);}, false);
     }
 
     // event listeners for connected gamepads
@@ -145,7 +145,7 @@ function mouseStartOnSliders(e, obj) {
 function mouseMoveOnSliders(e, obj) {
     if(e.buttons == 1){
         getMousePosOnSliders(e, obj);
-    }    
+    }
     e.preventDefault();
 }
 

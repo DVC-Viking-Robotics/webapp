@@ -11,8 +11,7 @@ login_manager.login_message_category = "warning"
 
 class Remote:
     """A class used for instantiating a user's saved remote control configurations.
-        There should be 1 object of this class type per remote control.
-
+    There should be 1 object of this class type per remote control.
     """
     def __init__(self, name, link='/remote'):
         self.name = name
@@ -20,8 +19,7 @@ class Remote:
 
 class User(UserMixin):
     """A class for instantiating saved user accounts.
-        There should be 1 object of this class type per user account.
-
+    There should be 1 object of this class type per user account.
     """
     def __init__(self, name):
         self._id = name
@@ -35,7 +33,8 @@ class User(UserMixin):
 
     def _load_config(self):
         """This function will load the information about a user's preferences
-            (including account settings and remote control configurations) from the backup json file titled with the self._id atrtribute.
+        (including account settings and remote control configurations) from the backup json
+        file titled with the self._id attribute.
         """
         try:
             with open('backup\\{}.json'.format(self._id), 'r') as acct_file:
