@@ -127,3 +127,6 @@ dmypy.json
 .vscode/
 webapp/inputs/HWconfig.json
 webapp/.project
+
+# SQL DB URI encryption
+secret/secret.key
