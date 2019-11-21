@@ -11,11 +11,7 @@ from .ext_node import ROBOCLAW
 if ON_RASPI:
     from drivetrain import Tank, Automotive, Locomotive, Solenoid, BiMotor, PhasedMotor, NRF24L01tx
     from adafruit_lsm9ds1 import LSM9DS1_I2C
-
     from adafruit_mpu6050 import MPU6050
-
-
-
     from circuitpython_nrf24l01 import RF24
     from digitalio import DigitalInOut as Dio
 
