@@ -32,7 +32,7 @@ function sendSpeedTurnValues(gamepadAxes = []) {
     speedOMeter.innerText = speed;
     turnOMeter.innerText = turn;
 
-    var args = [speed, turn];
+    var args = [turn, speed];
     // only send data if it has changed
     if (prevArgs[0] != args[0] || prevArgs[1] != args[1]){
         prevArgs = args;
