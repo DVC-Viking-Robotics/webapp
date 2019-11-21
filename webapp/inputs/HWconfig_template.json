@@ -13,17 +13,20 @@
                 }
             ],
             "type":"Tank",
-            "max speed":"85"
+            "max speed":"85",
+            "name":"integrated drive"
         },
         {
             "motors":[
                 {
                     "driver":"NRF24L01tx",
-                    "address":"5,8",
-                    "name":"rfpi0"
+                    "address":"5,4",
+                    "name":"rfpi0",
+                    "cmd_template":"llb"
                 }
             ],
-            "type":"NRF24L01"
+            "type":"nRF24L01",
+            "name":"RF 2.4GHz"
         },
         {
             "motors":[
@@ -32,7 +35,34 @@
                     "address":"/dev/ttyUSB0"
                 }
             ],
-            "type":"Roboclaw"
+            "type":"Roboclaw",
+            "name":"MIEL"
+        },
+        {
+            "motors":[
+                {
+                    "driver":"Solenoid",
+                    "address":"22,13"
+                }
+            ],
+            "switch_pin":"4",
+            "type":"Locomotive",
+            "name":"Railroad drive"
+        },
+        {
+            "motors":[
+                {
+                    "driver":"BiMotor",
+                    "address":"22,13"
+                },
+                {
+                    "driver":"BiMotor",
+                    "address":"17,18"
+                }
+            ],
+            "type":"Automotive",
+            "max speed":"85",
+            "name":"RC Car drive"
         }
     ],
     "IMU":[

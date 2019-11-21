@@ -6,7 +6,6 @@ import base64
 from flask_socketio import SocketIO, emit
 from circuitpython_mpu6050 import MPU6050
 from adafruit_lsm9ds1 import LSM9DS1_I2C
-
 from .inputs.check_platform import ON_RASPI, ON_WINDOWS  # , ON_JETSON
 from .inputs.config import d_train, IMUs, gps, nav
 from .inputs.imu import MAG3110, calc_heading, calc_yaw_pitch_roll
@@ -124,11 +123,14 @@ def handle_DoF_request():
     print('DoF sensor data sent')
 
 @socketio.on('remoteOut')
-def handle_remoteOut(arg):
+def handle_remoteOut(args, drivetrain_name):
+    # convert first 2 d_train cmds
+    for i in range(2):
+        args[i] = int(args[i] * 655.35)
     # for debugging
-    print('remote =', repr(arg))
-    if d_train: # if there is a drivetrain connected
-        d_train[0].go([arg[0] * 655.35, arg[1] * 655.35])
+    print(drivetrain_name, 'remote =', repr(args))
+    if not ON_WINDOWS: # if there is a compatible drivetrain
+        d_train[drivetrain_name].go(args)
 
 # NOTE: Source for virtual terminal functions: https://github.com/cs01/pyxterm.js
 

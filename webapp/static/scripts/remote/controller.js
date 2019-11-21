@@ -6,7 +6,7 @@ var speedOMeter = document.getElementById('speed-o-meter');
 var turnOMeter = document.getElementById('turn-o-meter');
 var speedSlider;
 var turnSlider;
-var selectRemote = document.getElementById("selectRemote");
+var selectDrivetrain = document.getElementById("selectDrivetrain");
 // prototype list of all data on any connected gamepads
 // each item in list represents a gamepad (if any)
 // each gamepad has all info about axis and buttons
@@ -36,7 +36,7 @@ function sendSpeedTurnValues(gamepadAxes = []) {
     // only send data if it has changed
     if (prevArgs[0] != args[0] || prevArgs[1] != args[1]){
         prevArgs = args;
-        socket.emit('remoteOut', args);
+        socket.emit('remoteOut', args, selectDrivetrain.value);
     }
 }
 
@@ -56,7 +56,7 @@ function initRemote(){
     speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
     turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
 
-    console.log("selection:", selectRemote.value);
+    // console.log("selection:", selectDrivetrain.value);
     let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
     adjustSliderSizes();
     window.addEventListener('resize', adjustSliderSizes);

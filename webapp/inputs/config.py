@@ -9,10 +9,11 @@ from .check_platform import ON_RASPI, ON_JETSON
 from .ext_node import ROBOCLAW
 
 if ON_RASPI:
-    from drivetrain import Tank, Automotive, Solenoid, BiMotor, PhasedMotor, NRF24L01tx
+    from drivetrain import Tank, Automotive, Locomotive, Solenoid, BiMotor, PhasedMotor, NRF24L01tx
     from adafruit_lsm9ds1 import LSM9DS1_I2C
     from circuitpython_mpu6050 import MPU6050
-
+    from circuitpython_nrf24l01 import RF24
+    from digitalio import DigitalInOut as Dio
 from .imu import MAG3110
 
 CONFIG_FILE_LOCATION = u'webapp/inputs/HWconfig.json'
@@ -58,7 +59,7 @@ if has_gpio_pins:
         '27': board.D27,
     }
 
-d_train = []
+d_train = {"test": 0x00}
 IMUs = []
 gps = []
 nav = None
@@ -67,7 +68,7 @@ if SYSTEM_CONF is not None:
     if 'Drivetrains' in SYSTEM_CONF['Check-Hardware']:
         # handle drivetrain
         for d in SYSTEM_CONF['Drivetrains']:
-            if d['type'] in ('Tank', 'Automotive', 'NRF24L01', 'Roboclaw'):
+            if d['type'] in ('Tank', 'Automotive', 'Locomotive', 'nRF24L01', 'Roboclaw'):
                 # instantiate motors
                 motors = []
                 for m in d['motors']:
@@ -84,13 +85,17 @@ if SYSTEM_CONF is not None:
                     elif m['driver'].startswith('PhasedMotor') and len(pins) == 2 and has_gpio_pins:
                         motors.append(PhasedMotor(pins))
                     elif m['driver'].startswith('ROBOCLAW'):
-                        d_train.append(ROBOCLAW(m['address']))
+                        d_train[d["name"]] = ROBOCLAW(m['address'])
                     elif m['driver'].startswith('NRF24L01tx') and has_gpio_pins:
-                        d_train.append(NRF24L01tx(SPI_BUS, pins, bytes(m['name'].encode('utf-8'))))
+                        d_train[d["name"]] = NRF24L01tx(
+                            RF24(SPI_BUS, Dio(pins[0]), Dio(pins[1])),
+                                bytes(m['name'].encode()))
                 if d['type'].startswith('Tank') and has_gpio_pins:
-                    d_train.append(Tank(motors, int(d['max speed'])))
+                    d_train[d["name"]] = Tank(motors, int(d['max speed']))
                 elif d['type'].startswith('Automotive') and has_gpio_pins:
-                    d_train.append(Automotive(motors, int(d['max speed'])))
+                    d_train[d["name"]] = Automotive(motors, int(d['max speed']))
+                elif d['type'].startswith('Locomotive') and has_gpio_pins:
+                    d_train[d["name"]] = Locomotive(motors, RPI_PIN_ALIAS[d['switch_pin']])
 
     if 'IMU' in SYSTEM_CONF['Check-Hardware']:
         for imu in SYSTEM_CONF['IMU']:
