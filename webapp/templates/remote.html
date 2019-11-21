@@ -17,9 +17,10 @@
 <div class="field">
     <div class="control">
         <div class="select is-warning">
-            <select class="has-background-black-bis has-text-success" id="selectRemote">
-                <option>Camera & Sliders</option>
-                <option>Joystick</option>
+            <select class="has-background-black-bis has-text-success" id="selectDrivetrain">
+                {% for drive_name in drivetrains.keys(): %}
+                    <option>{{ drive_name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>

@@ -2,6 +2,7 @@
 class Slider {
     constructor(canvas, horizontal = true) {
         this.canvas = canvas;
+        this.rect = this.canvas.getBoundingClientRect();
         this.height = this.canvas.width;
         this.width = this.canvas.height;
         this.horizontal = horizontal;
@@ -18,10 +19,10 @@ class Slider {
     }
     resize(){
         // let currentStyle = window.getComputedStyle(this.canvas.id);
-        let currentStyle = this.canvas.getBoundingClientRect();
+        this.rect = this.canvas.getBoundingClientRect();
         // console.log(this.canvas.id, currentStyle.width, currentStyle.height);
-        this.height = currentStyle.height;
-        this.width = currentStyle.width;
+        this.height = this.rect.height;
+        this.width = this.rect.width;
         this.draw();
     }
     set value(val){
@@ -31,7 +32,7 @@ class Slider {
     get value(){
         return this.pos;
     }
-    draw() {
+    draw(){
         let ctx = this.canvas.getContext("2d");
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.strokeStyle = this.color;
@@ -65,7 +66,7 @@ class Slider {
         let gradient = ctx.createRadialGradient(this.stick.x, this.stick.y, this.stick.radius * 0.25, this.stick.x, this.stick.y, this.stick.radius * 0.6);
         gradient.addColorStop(0, '#a3a3a3');
         gradient.addColorStop(0.7, '#f3f3f3');
-        ctx.fillStyle = gradient;        
+        ctx.fillStyle = gradient;
         ctx.fill();
     }
 }// end canvas's slider object

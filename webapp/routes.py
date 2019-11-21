@@ -6,9 +6,9 @@ from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import login_required, login_user, logout_user
 from .users import users, User
 from .sockets import socketio
+from webapp.inputs.config import d_train
 
 blueprint = Blueprint('blueprint', __name__)
-
 
 @blueprint.route('/', methods=['GET', 'POST'])
 @blueprint.route('/login', methods=['GET', 'POST'])
@@ -49,7 +49,7 @@ def home():
 @blueprint.route('/remote')
 @login_required
 def remote():
-    return render_template('remote.html', title='Remote Control')
+    return render_template('remote.html', title='Remote Control', drivetrains=d_train)
 
 
 @blueprint.route('/camera')
