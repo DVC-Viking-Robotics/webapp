@@ -59,7 +59,7 @@ if has_gpio_pins:
         '27': board.D27,
     }
 
-d_train = {"test": 0x00}
+d_train = {}
 IMUs = []
 gps = []
 nav = None
