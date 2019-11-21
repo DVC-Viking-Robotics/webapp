@@ -89,7 +89,8 @@ if SYSTEM_CONF is not None:
                     elif m['driver'].startswith('NRF24L01tx') and has_gpio_pins:
                         d_train[d["name"]] = NRF24L01tx(
                             RF24(SPI_BUS, Dio(pins[0]), Dio(pins[1])),
-                                bytes(m['name'].encode()))
+                                address=bytes(m['name'].encode()),
+                                cmd_template=m['cmd_template'])
                 if d['type'].startswith('Tank') and has_gpio_pins:
                     d_train[d["name"]] = Tank(motors, int(d['max speed']))
                 elif d['type'].startswith('Automotive') and has_gpio_pins:
