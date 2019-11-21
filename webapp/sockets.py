@@ -4,7 +4,7 @@
 
 import base64
 from flask_socketio import SocketIO, emit
-from circuitpython_mpu6050 import MPU6050
+from adafruit_mpu6050 import MPU6050
 from adafruit_lsm9ds1 import LSM9DS1_I2C
 
 from .inputs.check_platform import ON_RASPI, ON_WINDOWS  # , ON_JETSON
