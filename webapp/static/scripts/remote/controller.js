@@ -12,7 +12,7 @@ var selectDrivetrain = document.getElementById("selectDrivetrain");
 // each gamepad has all info about axis and buttons
 var gamepads = [];
 // avoid cluttering socket with duplicate data due to setInterval polling of gamepads
-var prevArgs = [];
+var prevArgs = [0, 0];
 
 // Grab the speed and turning values and update the text as well as send them to the robot
 function sendSpeedTurnValues(gamepadAxes = []) {
@@ -56,7 +56,6 @@ function initRemote(){
     speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
     turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
 
-    // console.log("selection:", selectDrivetrain.value);
     let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
     adjustSliderSizes();
     window.addEventListener('resize', adjustSliderSizes);
@@ -115,14 +114,15 @@ function getTouchPos(e) {
     let controls = [turnSlider, speedSlider];
     let touchesHandled = [false, false];
     for (let touch of e.touches) {
-        let touchX = touch.clientX;
-        let touchY = touch.clientY;
+        let touchX = touch.pageX;
+        let touchY = touch.pageY;
         for (let i = 0; i < controls.length; i++){
             if (isWithinRect([touchX, touchY], controls[i].rect)){
-                touchX = (touchX / controls[i].width * 2 - 1) / ((controls[i].width - controls[i].stick.radius * 2) / controls[i].width) * 100;
-                touchY = (touchY / controls[i].height * -2 + 1) / ((controls[i].height - controls[i].stick.radius * 2) / controls[i].height) * 100;
+                touchX = ((touchX - controls[i].rect.left) / controls[i].width * 2 - 1) / ((controls[i].width - controls[i].stick.radius * 2) / controls[i].width) * 100;
+                touchY = ((touchY - controls[i].rect.top) / controls[i].height * -2 + 1) / ((controls[i].height - controls[i].stick.radius * 2) / controls[i].height) * 100;
                 controls[i].manip = true;
                 controls[i].value = controls[i].horizontal ? touchX : touchY;
+                console.log((controls[i].horizontal ? "horizontal" : "vertical") + " slider value: ", controls[i].value);
                 touchesHandled[i] = true;
             }
         }
