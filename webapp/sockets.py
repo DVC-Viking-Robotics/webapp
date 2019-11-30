@@ -127,7 +127,6 @@ def handle_remoteOut(args, drivetrain_name):
     # convert first 2 d_train cmds
     for i in range(2):
         args[i] = int(args[i] * 655.35)
-    args.append(1) # hard-coding mecanum drive to strafe
     # for debugging
     print(drivetrain_name, 'remote =', repr(args))
     if not ON_WINDOWS: # if there is a compatible drivetrain

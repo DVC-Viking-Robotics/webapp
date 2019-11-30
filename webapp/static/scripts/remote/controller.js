@@ -4,6 +4,7 @@ var speedController = document.getElementById("speed");
 var turnController = document.getElementById("turn");
 var speedOMeter = document.getElementById('speed-o-meter');
 var turnOMeter = document.getElementById('turn-o-meter');
+var strafingToggle = document.getElementById('isStrafing');
 var speedSlider;
 var turnSlider;
 var selectDrivetrain = document.getElementById("selectDrivetrain");
@@ -12,19 +13,22 @@ var selectDrivetrain = document.getElementById("selectDrivetrain");
 // each gamepad has all info about axis and buttons
 var gamepads = [];
 // avoid cluttering socket with duplicate data due to setInterval polling of gamepads
-var prevArgs = [0, 0];
+var prevArgs = [0, 0, 0];
 
 // Grab the speed and turning values and update the text as well as send them to the robot
-function sendSpeedTurnValues(gamepadAxes = []) {
+function sendSpeedTurnValues(gamepadCtrls = []) {
     let speed = null;
     let turn = null;
-    if (gamepadAxes.length){
-        speed = Math.round(gamepadAxes[0] * 100);
-        turn = Math.round(gamepadAxes[1] * 100);
+    if (gamepadCtrls.length){
+        speed = Math.round(gamepadCtrls[0] * 100);
+        turn = Math.round(gamepadCtrls[1] * 100);
+        strafe = Boolean(gamepadCtrls[2]);
+        strafingToggle.checked = strafe;
         speedSlider.value = speed;
         turnSlider.value = turn;
     }
     else{
+        strafe = strafingToggle.checked;
         speed = speedSlider.value;
         turn = turnSlider.value;
     }
@@ -32,9 +36,9 @@ function sendSpeedTurnValues(gamepadAxes = []) {
     speedOMeter.innerText = speed;
     turnOMeter.innerText = turn;
 
-    var args = [turn, speed];
+    var args = [turn, speed, strafe];
     // only send data if it has changed
-    if (prevArgs[0] != args[0] || prevArgs[1] != args[1]){
+    if (prevArgs[0] != args[0] || prevArgs[1] != args[1] || prevArgs[0] != args[0] ){
         prevArgs = args;
         socket.emit('remoteOut', args, selectDrivetrain.value);
     }
@@ -194,9 +198,11 @@ function getGamepadChanges() {
                 else{ // axis is within deadzone
                     result.push(0);
                 }
+                result.push(gamepads[0].buttons[5].pressed);
             }
-        /*
-        for (i = 0; i < gamepads.length; i++){
+        }
+
+        /* for (i = 0; i < gamepads.length; i++){
             // show axes data
             for (j = 0; j < gamepads[i].axes.length; j++) {
                 var temp = gamepads[i].axes[j];
@@ -212,7 +218,6 @@ function getGamepadChanges() {
             }
         }
         */
-        }
     }
     // result is empty if no usable data was detected
     // otherwise result = [speed, turn]
