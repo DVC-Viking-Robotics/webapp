@@ -49,7 +49,7 @@ def home():
 @blueprint.route('/remote')
 @login_required
 def remote():
-    return render_template('remote.html', title='Remote Control', drivetrains=d_train)
+    return render_template('remotes/remote.html', title='Remote Control', drivetrains=d_train)
 
 
 @blueprint.route('/camera')
