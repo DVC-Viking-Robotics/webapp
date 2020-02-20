@@ -4,27 +4,31 @@ var speedController = document.getElementById("speed");
 var turnController = document.getElementById("turn");
 var speedOMeter = document.getElementById('speed-o-meter');
 var turnOMeter = document.getElementById('turn-o-meter');
+var strafingToggle = document.getElementById('isStrafing');
 var speedSlider;
 var turnSlider;
-var selectRemote = document.getElementById("selectRemote");
+var selectDrivetrain = document.getElementById("selectDrivetrain");
 // prototype list of all data on any connected gamepads
 // each item in list represents a gamepad (if any)
 // each gamepad has all info about axis and buttons
 var gamepads = [];
 // avoid cluttering socket with duplicate data due to setInterval polling of gamepads
-var prevArgs = [];
+var prevArgs = [0, 0, 0];
 
 // Grab the speed and turning values and update the text as well as send them to the robot
-function sendSpeedTurnValues(gamepadAxes = []) {
+function sendSpeedTurnValues(gamepadCtrls = []) {
     let speed = null;
     let turn = null;
-    if (gamepadAxes.length){
-        speed = Math.round(gamepadAxes[0] * 100);
-        turn = Math.round(gamepadAxes[1] * 100);
+    if (gamepadCtrls.length){
+        speed = Math.round(gamepadCtrls[0] * 100);
+        turn = Math.round(gamepadCtrls[1] * 100);
+        strafe = Boolean(gamepadCtrls[2]);
+        strafingToggle.checked = strafe;
         speedSlider.value = speed;
         turnSlider.value = turn;
     }
     else{
+        strafe = strafingToggle.checked;
         speed = speedSlider.value;
         turn = turnSlider.value;
     }
@@ -32,11 +36,11 @@ function sendSpeedTurnValues(gamepadAxes = []) {
     speedOMeter.innerText = speed;
     turnOMeter.innerText = turn;
 
-    var args = [speed, turn];
+    var args = [turn, speed, strafe];
     // only send data if it has changed
-    if (prevArgs[0] != args[0] || prevArgs[1] != args[1]){
+    if (prevArgs[0] != args[0] || prevArgs[1] != args[1] || prevArgs[0] != args[0] ){
         prevArgs = args;
-        socket.emit('remoteOut', args);
+        socket.emit('remoteOut', args, selectDrivetrain.value);
     }
 }
 
@@ -55,21 +59,20 @@ function adjustSliderSizes() {
 function initRemote(){
     speedSlider = new Slider(speedController, !speedController.className.includes("vertical"));
     turnSlider = new Slider(turnController, !turnController.className.includes("vertical"));
-    
-    console.log("selection:", selectRemote.value);
+
     let controls = [{el: turnController, obj: turnSlider}, {el: speedController, obj: speedSlider}];
     adjustSliderSizes();
     window.addEventListener('resize', adjustSliderSizes);
     for (let ctrl of controls){
         ctrl.obj.draw();
-        ctrl.el.addEventListener('touchstart', touchStartOnSliders);
-        ctrl.el.addEventListener('touchmove', touchMoveOnSliders);
-        ctrl.el.addEventListener('touchend', touchEndOnSliders);
-        ctrl.el.addEventListener('touchcancel', touchEndOnSliders);
-        ctrl.el.addEventListener('mousedown', function(e){mouseStartOnSliders(e, ctrl.obj);});
-        ctrl.el.addEventListener('mouseup', function(e){mouseEndOnSliders(e, ctrl.obj);});
-        ctrl.el.addEventListener('mousemove', function(e){mouseMoveOnSliders(e, ctrl.obj);});
-        ctrl.el.addEventListener('mouseleave', function(e){mouseEndOnSliders(e, ctrl.obj);});
+        ctrl.el.addEventListener('touchstart', touchStartOnSliders, false);
+        ctrl.el.addEventListener('touchmove', touchMoveOnSliders, false);
+        ctrl.el.addEventListener('touchend', touchEndOnSliders, false);
+        ctrl.el.addEventListener('touchcancel', touchEndOnSliders, false);
+        ctrl.el.addEventListener('mousedown', function(e){mouseStartOnSliders(e, ctrl.obj);}, false);
+        ctrl.el.addEventListener('mouseup', function(e){mouseEndOnSliders(e, ctrl.obj);}, false);
+        ctrl.el.addEventListener('mousemove', function(e){mouseMoveOnSliders(e, ctrl.obj);}, false);
+        ctrl.el.addEventListener('mouseleave', function(e){mouseEndOnSliders(e, ctrl.obj);}, false);
     }
 
     // event listeners for connected gamepads
@@ -115,14 +118,15 @@ function getTouchPos(e) {
     let controls = [turnSlider, speedSlider];
     let touchesHandled = [false, false];
     for (let touch of e.touches) {
-        let touchX = touch.clientX;
-        let touchY = touch.clientY;
+        let touchX = touch.pageX;
+        let touchY = touch.pageY;
         for (let i = 0; i < controls.length; i++){
             if (isWithinRect([touchX, touchY], controls[i].rect)){
-                touchX = (touchX / controls[i].width * 2 - 1) / ((controls[i].width - controls[i].stick.radius * 2) / controls[i].width) * 100;
-                touchY = (touchY / controls[i].height * -2 + 1) / ((controls[i].height - controls[i].stick.radius * 2) / controls[i].height) * 100;
+                touchX = ((touchX - controls[i].rect.left) / controls[i].width * 2 - 1) / ((controls[i].width - controls[i].stick.radius * 2) / controls[i].width) * 100;
+                touchY = ((touchY - controls[i].rect.top) / controls[i].height * -2 + 1) / ((controls[i].height - controls[i].stick.radius * 2) / controls[i].height) * 100;
                 controls[i].manip = true;
                 controls[i].value = controls[i].horizontal ? touchX : touchY;
+                console.log((controls[i].horizontal ? "horizontal" : "vertical") + " slider value: ", controls[i].value);
                 touchesHandled[i] = true;
             }
         }
@@ -145,7 +149,7 @@ function mouseStartOnSliders(e, obj) {
 function mouseMoveOnSliders(e, obj) {
     if(e.buttons == 1){
         getMousePosOnSliders(e, obj);
-    }    
+    }
     e.preventDefault();
 }
 
@@ -194,9 +198,11 @@ function getGamepadChanges() {
                 else{ // axis is within deadzone
                     result.push(0);
                 }
+                result.push(gamepads[0].buttons[5].pressed);
             }
-        /*
-        for (i = 0; i < gamepads.length; i++){
+        }
+
+        /* for (i = 0; i < gamepads.length; i++){
             // show axes data
             for (j = 0; j < gamepads[i].axes.length; j++) {
                 var temp = gamepads[i].axes[j];
@@ -212,7 +218,6 @@ function getGamepadChanges() {
             }
         }
         */
-        }
     }
     // result is empty if no usable data was detected
     // otherwise result = [speed, turn]
